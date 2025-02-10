@@ -1,17 +1,28 @@
-const express = require('express');
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const cors = require("cors"); // Import CORS middleware
+const itemRoutes = require("./routes/itemRoutes");
+const dotenv = require("dotenv");
+
+dotenv.config();
 const app = express();
-const cors = require('cors'); // Add this to enable CORS
+const PORT = process.env.PORT || 5000;
 
-// Use CORS to allow requests from frontend
-app.use(cors());
+// Middleware
+app.use(bodyParser.json());
+app.use(cors()); // Enable CORS for all origins
 
-// Define your API route
-app.get('/api/data', (req, res) => {
-  const responseData = { message: 'Hello from the backend!' };
-  res.json(responseData);
-});
+// MongoDB connection
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.log(err));
+
+// Use the routes
+app.use("/api/ITPM/items", itemRoutes);
 
 // Start the server
-app.listen(5000, () => {
-  console.log('Server running on port 5000');
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
