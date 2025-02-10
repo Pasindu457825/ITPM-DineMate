@@ -1,11 +1,28 @@
-const express = require('express');
-const connectDB = require('./config/db'); // Make sure the path is correct
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const cors = require("cors"); // Import CORS middleware
+const itemRoutes = require("./routes/itemRoutes");
+const dotenv = require("dotenv");
 
+dotenv.config();
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB
-connectDB();
+// Middleware
+app.use(bodyParser.json());
+app.use(cors()); // Enable CORS for all origins
 
-app.listen(5000, () => {
-  console.log('Server running on port 5000');
+// MongoDB connection
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.log(err));
+
+// Use the routes
+app.use("/api/ITPM/items", itemRoutes);
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
