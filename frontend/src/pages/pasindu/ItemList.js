@@ -34,27 +34,40 @@ const ItemsList = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold underline">Items List</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-4">Items List</h1>
       <ul>
         {items.map((item) => (
-          <li key={item._id} className="border-b p-4">
-            <h2 className="text-xl">{item.name}</h2>
-            <p>{item.description}</p>
-            <p>${item.price}</p>
-            <div className="mt-2">
-              {/* Update and Delete buttons */}
-              <button
-                onClick={() => handleUpdate(item._id)}
-                className="bg-yellow-500 text-white p-2 rounded mr-2"
-              >
-                Update
-              </button>
-              <button
-                onClick={() => handleDelete(item._id)}
-                className="bg-red-500 text-white p-2 rounded"
-              >
-                Delete
-              </button>
+          <li key={item._id} className="border-b p-4 mb-4 hover:shadow-lg transition duration-300 ease-in-out">
+            <div className="flex justify-between items-center mb-4">
+              {/* Item Name, Price, and Description */}
+              <div className="flex flex-row space-x-8">
+                <div className="flex flex-col">
+                  <h2 className="text-2xl font-semibold text-gray-800">{item.name}</h2>
+                </div>
+                <div className="flex flex-col w-1/2">
+                  <p className="text-gray-600">{item.description}</p>
+                </div>
+                <div className="flex flex-col">
+                  <p className="text-lg font-medium text-green-600">${item.price}</p>
+                </div>
+                
+              </div>
+
+              {/* Buttons */}
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => handleUpdate(item._id)}
+                  className="bg-yellow-600 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                >
+                  Update
+                </button>
+                <button
+                  onClick={() => handleDelete(item._id)}
+                  className="bg-red-600 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </li>
         ))}
