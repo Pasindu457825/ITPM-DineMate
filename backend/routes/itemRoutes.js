@@ -19,6 +19,23 @@ router.post('/add-item', async (req, res) => {
   }
 });
 
+
+// Get one item by ID
+router.get('/display-items/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const item = await Item.findById(id); // Using Mongoose's findById method
+    if (!item) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+    res.json(item); // Return the item data as JSON
+  } catch (error) {
+    console.error("Error fetching item:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 // Get all items
 router.get("/display-items", async (req, res) => {
   try {

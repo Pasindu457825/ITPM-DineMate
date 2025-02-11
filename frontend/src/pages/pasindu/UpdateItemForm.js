@@ -3,55 +3,61 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 
 const UpdateItemForm = () => {
-  const { id } = useParams();  // Get item ID from URL params
+  const { id } = useParams(); // Get item ID from URL params
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [loading, setLoading] = useState(true); // For loading state
   const navigate = useNavigate();
 
+  // Fetch the current item data before updating
   useEffect(() => {
     const fetchItem = async () => {
-      console.log("Fetching item with ID:", id); // Log the ID to verify
       try {
+        // Fetch item by ID
         const response = await axios.get(
-          `http://localhost:5000/api/ITPM/items/${id}`
+          `http://localhost:5000/api/ITPM/items/display-items/${id}`
         );
-        console.log("Fetched Item: ", response.data);  // Log the response data
-        if (response.data) {
-          setName(response.data.name);
-          setDescription(response.data.description);
-          setPrice(response.data.price);
+        const item = response.data;
+
+        // Populate the form fields with the current item data
+        if (item) {
+          setName(item.name);
+          setDescription(item.description);
+          setPrice(item.price);
         }
-        setLoading(false);  // Set loading to false when data is fetched
+        setLoading(false); // Set loading to false when data is fetched
       } catch (error) {
-        console.error("Error fetching item", error);
-        setLoading(false);  // Stop loading in case of error
+        console.error("Error fetching item:", error);
+        setLoading(false); // Stop loading in case of error
       }
     };
 
     fetchItem();
   }, [id]);
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const updatedItem = { name, description, price };
 
     try {
-      await axios.put(
+      // Send the updated data to the backend
+      const response = await axios.put(
         `http://localhost:5000/api/ITPM/items/update-item/${id}`,
         updatedItem
       );
-      console.log("Item updated");
-      navigate("/display-item");  // Redirect to items list page after updating
+      console.log("Item updated:", response.data);
+      navigate("/display-item"); // Redirect after successful update
     } catch (error) {
-      console.error("Error updating item", error);
+      console.error("Error updating item:", error);
     }
   };
 
+  // Show a loading message while data is being fetched
   if (loading) {
-    return <div>Loading...</div>; // Show loading message while data is being fetched
+    return <div>Loading...</div>;
   }
 
   return (
