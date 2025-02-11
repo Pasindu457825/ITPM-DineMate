@@ -1,11 +1,11 @@
-// frontend/src/components/ItemsList.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import deleteItem from "./DeleteItem"; // Import the delete function
 
 const ItemsList = () => {
   const [items, setItems] = useState([]);
-  const navigate = useNavigate();  // Use navigate function for redirection
+  const navigate = useNavigate(); // Use navigate function for redirection
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -23,14 +23,8 @@ const ItemsList = () => {
   }, []);
 
   // Function to handle item deletion
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5000/api/ITPM/items/delete-item/${id}`);
-      setItems(items.filter((item) => item._id !== id)); // Remove item from list
-      console.log("Item deleted");
-    } catch (error) {
-      console.error("Error deleting item", error);
-    }
+  const handleDelete = (id) => {
+    deleteItem(id, setItems, items); // Call the delete function from delete.js
   };
 
   // Function to navigate to the update page (passing item ID to pre-fill form)
