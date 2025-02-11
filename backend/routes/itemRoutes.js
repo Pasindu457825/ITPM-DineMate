@@ -19,4 +19,38 @@ router.post('/add-item', async (req, res) => {
   }
 });
 
+// Get all items
+router.get("/display-items", async (req, res) => {
+  try {
+    const items = await Item.find();
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Update item route
+router.put('/update-item/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, description, price } = req.body;
+
+  try {
+    // Find the item by its ID and update it
+    const updatedItem = await Item.findByIdAndUpdate(
+      id,
+      { name, description, price }, // Fields to update
+      { new: true } // Returns the updated document
+    );
+
+    if (!updatedItem) {
+      return res.status(404).json({ message: 'Item not found' });
+    }
+
+    res.status(200).json(updatedItem); // Return the updated item
+  } catch (error) {
+    console.error('Error updating item:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;
