@@ -1,23 +1,30 @@
 {
+  "dependencies": {
+    "@material-tailwind/react": "^2.1.10",
+    "axios": "^1.7.9",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.10.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^7.1.5",
+    "react-scripts": "^5.0.1"
+  },
   "name": "frontend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "tailwind.config.js",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "dependencies": {
-    "@material-tailwind/react": "^2.1.10",
-    "axios": "^1.7.9",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router-dom": "^7.1.5",
-    "react-scripts": "^5.0.1"
-  },
-  "license": "MIT",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "browserslist": {
     "production": [
       ">0.2%",
@@ -29,8 +36,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "tailwindcss": "^3.4.17"
   }
 }
