@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 
-const UpdateItemForm = () => {
+const UpdateOrder = () => {
   const { id } = useParams(); // Get item ID from URL params
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -92,4 +92,4 @@ const UpdateItemForm = () => {
   );
 };
 
-export default UpdateItemForm;
+export default UpdateOrder;

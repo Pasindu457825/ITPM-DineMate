@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import deleteItem from "./DeleteItem"; // Import the delete function
+import deleteItem from "./DeleteOrder"; // Import the delete function
 
 const ItemsList = () => {
   const [items, setItems] = useState([]);
