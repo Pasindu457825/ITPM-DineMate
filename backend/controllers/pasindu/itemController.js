@@ -1,5 +1,5 @@
 // controllers/itemController.js
-const Item = require("../../models/itemModel"); // Going up two directories
+const Item = require("../../models/pasindu/itemModel"); // Going up two directories
 
 const addItem = async (req, res) => {
   const { name, price, description } = req.body;
