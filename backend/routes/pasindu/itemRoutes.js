@@ -1,5 +1,5 @@
 const express = require('express');
-const Item = require('../models/itemModel'); // Assuming you have an itemModel.js file
+const Item = require('../../models/pasindu/itemModel'); // Assuming you have an itemModel.js file
 const router = express.Router();
 
 router.post('/add-item', async (req, res) => {
