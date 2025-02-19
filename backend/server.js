@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors"); // Import CORS middleware
-const itemRoutes = require("./routes/itemRoutes");
+const itemRoutes = require("./routes/pasindu/itemRoutes");
 const dotenv = require("dotenv");
 
 dotenv.config();

@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './pages/pasindu/HomePage';
-import AddItemForm from './pages/pasindu/AddItemForm'; //  // Import the AddItemForm component
-import DisplayItemForm from './pages/pasindu/ItemList';
-import UpdateItemForm from "./pages/pasindu/UpdateItemForm";  // Import UpdateItemForm
+import AddItemForm from './pages/pasindu/CreateOrder'; //  // Import the AddItemForm component
+import DisplayItemForm from './pages/pasindu/OrderList';
+import UpdateItemForm from "./pages/pasindu/UpdateOrder";  // Import UpdateItemForm
 
 
 const App = () => {
