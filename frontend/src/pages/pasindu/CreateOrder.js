@@ -1,9 +1,9 @@
-// frontend/src/components/AddItemForm.js
+// frontend/src/components/AddOrderForm.js
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";  // Import useNavigate
 
-const AddItemForm = () => {
+const AddOrderForm = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -13,7 +13,7 @@ const AddItemForm = () => {
     e.preventDefault();
 
     // Make sure the request data is properly structured
-    const itemData = {
+    const orderData = {
       name,
       description,
       price,
@@ -21,21 +21,21 @@ const AddItemForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/ITPM/items/add-item",
-        itemData
+        "http://localhost:5000/api/ITPM/orders/add-order",
+        orderData
       );
-      console.log("Item added:", response.data);
+      console.log("Order added:", response.data);
 
-      // Navigate to the items list page after the item is added
-      navigate("/display-item");  // Redirect to /items route
+      // Navigate to the orders list page after the order is added
+      navigate("/display-order");  // Redirect to /orders route
     } catch (error) {
-      console.error("Error adding item:", error);
+      console.error("Error adding order:", error);
     }
   };
 
-  // Add a function to navigate to the Items List page
-  const handleNavigateToItemsList = () => {
-    navigate("/display-item");  // Navigate to the items page
+  // Add a function to navigate to the orders List page
+  const handleNavigateToOrdersList = () => {
+    navigate("/display-order");  // Navigate to the order page
   };
 
   return (
@@ -43,14 +43,14 @@ const AddItemForm = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
-          placeholder="Item Name"
+          placeholder="Order Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
           className="p-2 border border-gray-300 rounded"
         />
         <textarea
-          placeholder="Item Description"
+          placeholder="Order Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
@@ -58,26 +58,26 @@ const AddItemForm = () => {
         />
         <input
           type="number"
-          placeholder="Item Price"
+          placeholder="Order Price"
           value={price}
           onChange={(e) => setPrice(parseInt(e.target.value, 10))}
           required
           className="p-2 border border-gray-300 rounded"
         />
         <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-          Add Item
+          Add Order
         </button>
       </form>
 
-      {/* Add a button to navigate to the Display Items page */}
+      {/* Add a button to navigate to the Display Orders page */}
       <button
-        onClick={handleNavigateToItemsList}
+        onClick={handleNavigateToOrdersList}
         className="mt-4 bg-green-500 text-white p-2 rounded"
       >
-        View Items List
+        View Orders List
       </button>
     </div>
   );
 };
 
-export default AddItemForm;
+export default AddOrderForm;

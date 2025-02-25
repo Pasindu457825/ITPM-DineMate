@@ -3,55 +3,55 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 
 const UpdateOrder = () => {
-  const { id } = useParams(); // Get item ID from URL params
+  const { id } = useParams(); // Get order ID from URL params
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [loading, setLoading] = useState(true); // For loading state
   const navigate = useNavigate();
 
-  // Fetch the current item data before updating
+  // Fetch the current orders data before updating
   useEffect(() => {
-    const fetchItem = async () => {
+    const fetchOrder = async () => {
       try {
-        // Fetch item by ID
+        // Fetch order by ID
         const response = await axios.get(
-          `http://localhost:5000/api/ITPM/items/display-items/${id}`
+          `http://localhost:5000/api/ITPM/orders/display-orders/${id}`
         );
-        const item = response.data;
+        const order = response.data;
 
-        // Populate the form fields with the current item data
-        if (item) {
-          setName(item.name);
-          setDescription(item.description);
-          setPrice(item.price);
+        // Populate the form fields with the current order data
+        if (order) {
+          setName(order.name);
+          setDescription(order.description);
+          setPrice(order.price);
         }
         setLoading(false); // Set loading to false when data is fetched
       } catch (error) {
-        console.error("Error fetching item:", error);
+        console.error("Error fetching order:", error);
         setLoading(false); // Stop loading in case of error
       }
     };
 
-    fetchItem();
+    fetchOrder();
   }, [id]);
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const updatedItem = { name, description, price };
+    const updatedOrder = { name, description, price };
 
     try {
       // Send the updated data to the backend
       const response = await axios.put(
-        `http://localhost:5000/api/ITPM/items/update-item/${id}`,
-        updatedItem
+        `http://localhost:5000/api/ITPM/orders/update-order/${id}`,
+        updatedOrder
       );
-      console.log("Item updated:", response.data);
-      navigate("/display-item"); // Redirect after successful update
+      console.log("Order updated:", response.data);
+      navigate("/display-order"); // Redirect after successful update
     } catch (error) {
-      console.error("Error updating item:", error);
+      console.error("Error updating order:", error);
     }
   };
 
@@ -67,14 +67,14 @@ const UpdateOrder = () => {
         value={name}
         onChange={(e) => setName(e.target.value)}
         required
-        placeholder="Item Name"
+        placeholder="Order Name"
         className="p-2 border border-gray-300 rounded w-full"
       />
       <textarea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         required
-        placeholder="Item Description"
+        placeholder="Order Description"
         className="p-2 border border-gray-300 rounded w-full"
       />
       <input
@@ -82,11 +82,11 @@ const UpdateOrder = () => {
         value={price}
         onChange={(e) => setPrice(e.target.value)}
         required
-        placeholder="Item Price"
+        placeholder="Order Price"
         className="p-2 border border-gray-300 rounded w-full"
       />
       <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">
-        Update Item
+        Update Order
       </button>
     </form>
   );
