@@ -7,7 +7,7 @@ const HomePage = () => {
   const navigate = useNavigate();  // Initialize the navigate function
 
   const handleButtonClick = () => {
-    navigate("/add-item");  // Navigate to the AddItem page
+    navigate("/add-order");  // Navigate to the AddOrder page
   };
 
   return (
@@ -17,7 +17,7 @@ const HomePage = () => {
         className="bg-blue-500 text-white" 
         onClick={handleButtonClick} // Handle button click to navigate
       >
-        Add Item
+        Add Order
       </Button>
     </div>
   );
