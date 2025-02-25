@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors"); // Import CORS middleware
-const itemRoutes = require("./routes/pasindu/itemRoutes");
+const orderRoutes = require("./routes/pasindu/orderRoutes");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -20,7 +20,7 @@ mongoose
   .catch((err) => console.log(err));
 
 // Use the routes
-app.use("/api/ITPM/items", itemRoutes);
+app.use("/api/ITPM/orders", orderRoutes);
 
 // Start the server
 app.listen(PORT, () => {
