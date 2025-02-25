@@ -1,17 +1,56 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
-  name: {
+  orderId: {
+    type: String,
+  },
+  customerName: {
     type: String,
     required: true,
   },
-  description: {
+  customerEmail: {
     type: String,
     required: true,
   },
-  price: {
+  orderType: {
+    type: String,
+    required: true,
+  },
+  paymentStatus: {
+    type: String,
+    required: true,
+  },
+  orderStatus: {
+    type: String,
+    required: true,
+  },
+  total: {
     type: Number,
-    required: true,
+    required: false,
+  },
+  items: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
+      },
+      price: {
+        type: Number,
+        required: true,
+      },
+      image: {
+        type: String,
+      },
+    },
+  ],
+  reservationStatus: {
+    type: mongoose.Schema.Types.ObjectId, // Stores reservationId reference
+    ref: "Reservation", // Reference to the Reservation model
+    default: null, // If no reservation, it is null
   },
 });
 
