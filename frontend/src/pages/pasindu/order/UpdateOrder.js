@@ -24,7 +24,7 @@ const UpdateOrderForm = () => {
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/ITPM/orders/display-orders/${id}`);
+        const response = await axios.get(`http://localhost:5000/api/ITPM/orders/get-order/${id}`);
         setOrder(response.data);
         setLoading(false);
       } catch (err) {
