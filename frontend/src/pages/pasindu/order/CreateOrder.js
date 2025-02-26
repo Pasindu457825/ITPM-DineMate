@@ -33,7 +33,7 @@ const AddOrderForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/ITPM/orders/add-order",
+        "http://localhost:5000/api/ITPM/orders/create-order",
         orderData
       );
       console.log("Order added:", response.data);

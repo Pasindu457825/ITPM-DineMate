@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors"); // Import CORS middleware
 const orderRoutes = require("./routes/pasindu/orderRoutes");
+const reservationRoutes = require("./routes/pasindu/reservationRoutes");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -21,6 +22,7 @@ mongoose
 
 // Use the routes
 app.use("/api/ITPM/orders", orderRoutes);
+app.use("/api/ITPM/reservations", reservationRoutes);
 
 // Start the server
 app.listen(PORT, () => {

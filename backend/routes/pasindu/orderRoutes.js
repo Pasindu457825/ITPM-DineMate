@@ -4,13 +4,13 @@ const router = express.Router();
 const orderController = require('../../controllers/pasindu/orderController'); // Path to your controller file
 
 // Add new order
-router.post('/add-order', orderController.addOrder);
+router.post('/create-order', orderController.addOrder);
 
 // Get one order by ID
-router.get('/display-orders/:id', orderController.getOrderById);
+router.get('/get-order/:id', orderController.getOrderById);
 
 // Get all orders
-router.get("/display-orders", orderController.getAllOrders);
+router.get("/get-all-orders", orderController.getAllOrders);
 
 // Update order route
 router.put('/update-order/:id', orderController.updateOrder);
