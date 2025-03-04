@@ -1,6 +1,5 @@
 // controllers/restaurantController.js
-const Restaurant = require("../../models/pamaa/restaurantModel"); // Assuming the path is correct
-
+const Restaurant = require("../../models/pamaa/restaurantModel");
 // Add new restaurant
 const addRestaurant = async (req, res) => {
   const {
@@ -33,12 +32,10 @@ const addRestaurant = async (req, res) => {
       seatsPerTable,
     });
     await newRestaurant.save();
-    res
-      .status(201)
-      .json({
-        message: "Restaurant added successfully",
-        restaurant: newRestaurant,
-      });
+    res.status(201).json({
+      message: "Restaurant added successfully",
+      restaurant: newRestaurant,
+    });
   } catch (error) {
     console.error("Error in adding restaurant:", error); // Detailed logging
     res
@@ -130,12 +127,10 @@ const deleteRestaurant = async (req, res) => {
         .json({ message: "Restaurant not found with ID: " + id });
     }
 
-    res
-      .status(200)
-      .json({
-        message: "Restaurant deleted successfully",
-        restaurant: deletedRestaurant,
-      });
+    res.status(200).json({
+      message: "Restaurant deleted successfully",
+      restaurant: deletedRestaurant,
+    });
   } catch (error) {
     console.error("Error deleting restaurant with ID: " + id + ":", error);
     res.status(500).json({ message: "Server error while deleting restaurant" });

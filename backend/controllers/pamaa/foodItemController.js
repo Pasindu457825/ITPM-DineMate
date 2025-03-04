@@ -1,10 +1,17 @@
 // controllers/foodMenuController.js
-const FoodItem = require("../../models/pamaa/foodItemModel"); // Assuming you have the correct path
+const FoodItem = require("../../models/pamaa/foodItemModel");
 
 // Add new food item
 const addFoodItem = async (req, res) => {
-  const { shopId, foodId, name, description, price, category, available } =
-    req.body;
+  const {
+    restaurantId,
+    foodId,
+    name,
+    description,
+    price,
+    category,
+    available,
+  } = req.body;
 
   if (!name || !description || !price || !category || !foodId) {
     return res
@@ -14,7 +21,7 @@ const addFoodItem = async (req, res) => {
 
   try {
     const newFoodItem = new FoodItem({
-      restaurandId,
+      restaurantId,
       foodId,
       name,
       description,
@@ -62,14 +69,15 @@ const getAllFoodItems = async (req, res) => {
 // Update food item by foodId
 const updateFoodItemByFoodId = async (req, res) => {
   const { foodId } = req.params;
-  const { shopId, name, description, price, category, available } = req.body;
+  const { restaurantId, name, description, price, category, available } =
+    req.body;
 
   try {
     // Find the food item by its foodId and update it
     const updatedFoodItem = await FoodItem.findOneAndUpdate(
       { foodId },
       {
-        restaurandId,
+        restaurantId,
         name,
         description,
         price,

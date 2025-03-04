@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const foodItemController = require("../../controllers/pamaa/foodItemController"); // Updated path to your controller file
+const foodItemController = require("../../controllers/pamaa/foodItemController");
 
 // Add new food item
 router.post("/create-food-item", foodItemController.addFoodItem);
