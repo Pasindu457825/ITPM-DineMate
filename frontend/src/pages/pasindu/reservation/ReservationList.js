@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import deleteReservation from "./DeleteReservation"; // Import the delete function
 
-const ReservationsList = () => {
+const ReservationList = () => {
   const [reservations, setReservations] = useState([]);
   const navigate = useNavigate(); // Use navigate function for redirection
 
@@ -87,4 +87,4 @@ const ReservationsList = () => {
   );
 };
 
-export default ReservationsList;
+export default ReservationList;
