@@ -2,16 +2,14 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const CreateReservation = () => {
+const CreateRestaurant = () => {
   const [formData, setFormData] = useState({
-    // reservationId: '',
-    shopName: "",
-    tableNumber: "",
-    customerName: "",
-    customerEmail: "",
-    NoofPerson: "",
-    date: "",
-    time: "",
+    name: "",
+    description: "",
+    location: "",
+    phoneNumber: "",
+    numberOfTables: "",
+    seatsPerTable: "",
   });
 
   const navigate = useNavigate();
@@ -25,41 +23,41 @@ const CreateReservation = () => {
     console.log("Form data submitted:", formData); // Log the form data
 
     try {
-      // Make the API call to create the reservation
+      // Make the API call to create the restaurant
       const response = await axios.post(
-        "http://localhost:5000/api/ITPM/reservations/create-reservation",
+        "http://localhost:5000/api/ITPM/restaurants/create-restaurant",
         formData
       );
-      console.log("Reservation created successfully:", response.data); // Log success response
-      navigate("/"); // Redirect after successful reservation creation
+      console.log("Restaurant created successfully:", response.data); // Log success response
+      navigate("/"); // Redirect after successful restaurant creation
     } catch (error) {
       console.error(
-        "Error creating reservation:",
+        "Error creating restaurant:",
         error.response || error.message
       ); // Log any errors
     }
   };
 
   const handleGoBack = () => {
-    navigate("/display-reservations"); // Navigate back to Reservation List
+    navigate("/display-restaurants"); // Navigate back to Restaurant List
   };
 
   return (
     <div className="p-4 bg-white rounded shadow-md">
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-        Create Reservation
+        Create Restaurant
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Reservation Details */}
+        {/* Restaurant Details */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Shop Name
+            Name
           </label>
           <input
             type="text"
-            name="shopName"
-            value={formData.shopName}
+            name="name"
+            value={formData.name}
             onChange={handleChange}
             required
             className="p-2 border border-gray-300 rounded w-full"
@@ -68,25 +66,26 @@ const CreateReservation = () => {
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Table Number
+            Description
           </label>
-          <input
-            type="text"
-            name="tableNumber"
-            value={formData.tableNumber}
+          <textarea
+            name="description"
+            value={formData.description}
             onChange={handleChange}
+            required
             className="p-2 border border-gray-300 rounded w-full"
+            rows="4"
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Customer Name
+            Location
           </label>
           <input
             type="text"
-            name="customerName"
-            value={formData.customerName}
+            name="location"
+            value={formData.location}
             onChange={handleChange}
             required
             className="p-2 border border-gray-300 rounded w-full"
@@ -95,12 +94,12 @@ const CreateReservation = () => {
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Customer Email
+            Phone Number
           </label>
           <input
-            type="email"
-            name="customerEmail"
-            value={formData.customerEmail}
+            type="tel"
+            name="phoneNumber"
+            value={formData.phoneNumber}
             onChange={handleChange}
             required
             className="p-2 border border-gray-300 rounded w-full"
@@ -109,12 +108,12 @@ const CreateReservation = () => {
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Number of People
+            Number of Tables
           </label>
           <input
             type="number"
-            name="NoofPerson"
-            value={formData.NoofPerson}
+            name="numberOfTables"
+            value={formData.numberOfTables}
             onChange={handleChange}
             required
             className="p-2 border border-gray-300 rounded w-full"
@@ -123,26 +122,12 @@ const CreateReservation = () => {
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Reservation Date
+            Seats Per Table
           </label>
           <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            required
-            className="p-2 border border-gray-300 rounded w-full"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Reservation Time
-          </label>
-          <input
-            type="time"
-            name="time"
-            value={formData.time}
+            type="number"
+            name="seatsPerTable"
+            value={formData.seatsPerTable}
             onChange={handleChange}
             required
             className="p-2 border border-gray-300 rounded w-full"
@@ -154,19 +139,19 @@ const CreateReservation = () => {
           type="submit"
           className="bg-blue-500 text-white p-2 rounded w-full mt-4"
         >
-          Create Reservation
+          Create Restaurant
         </button>
       </form>
 
-      {/* Back to Reservation List Button */}
+      {/* Back to Restaurant List Button */}
       <button
         onClick={handleGoBack}
         className="mt-4 bg-gray-500 text-white px-4 py-2 rounded w-full"
       >
-        Back to Reservation List
+        Back to Restaurant List
       </button>
     </div>
   );
 };
 
-export default CreateReservation;
+export default CreateRestaurant;
