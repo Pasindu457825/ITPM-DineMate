@@ -1,8 +1,5 @@
-
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import HomePage from './pages/pasindu/HomePage';
 import AddOrderForm from './pages/pasindu/order/CreateOrder'; //  // Import the AddItemForm component
@@ -13,9 +10,8 @@ import ReservationsList from './pages/pasindu/reservation/ReservationList';
 import UpdateReservationForm from './pages/pasindu/reservation/UpdateReservation';  // Import UpdateItemForm
 
 
-import AddReservationForm from "./pages/pasindu/reservation/CreateReservation"; //  // Import the AddItemForm component
-import ReservationList from "./pages/pasindu/reservation/ReservationList";
-import UpdateReservationForm from "./pages/pasindu/reservation/UpdateReservation"; // Import UpdateItemForm
+ //  // Import the AddItemForm component
+// Import UpdateItemForm
 import AddFood from "./pages/pamaa/foodmenu/AddFood";
 import UpdateFood from "./pages/pamaa/foodmenu/UpdateFood";
 import FoodList from "./pages/pamaa/foodmenu/FoodList";
@@ -33,7 +29,7 @@ const App = () => {
         <Route path="/update-order/:id" element={<UpdateOrderForm />} />
 
         <Route path="/add-reservation" element={<AddReservationForm />} />
-        <Route path="/display-reservations" element={<ReservationList />} />
+        <Route path="/display-reservations" element={<ReservationsList />} />
         <Route
           path="/update-reservation/:id"
           element={<UpdateReservationForm />}
