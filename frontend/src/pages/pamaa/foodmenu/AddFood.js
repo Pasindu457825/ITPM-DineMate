@@ -86,7 +86,7 @@ const AddFoodForm = () => {
       {/* Button to View Food Items List */}
       <button
         onClick={() => navigate("/display-food-items")}
-        className="mt-4 bg-green-500 text-white p-2 rounded w-full"
+        className="mt-4 bg-red-500 text-white p-2 rounded w-full"
       >
         View Food Items List
       </button>
