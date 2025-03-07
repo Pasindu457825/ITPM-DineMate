@@ -5,7 +5,6 @@ const FoodItem = require("../../models/pamaa/foodItemModel");
 const addFoodItem = async (req, res) => {
   const {
     restaurantId,
-    foodId,
     name,
     description,
     price,
@@ -13,7 +12,7 @@ const addFoodItem = async (req, res) => {
     available,
   } = req.body;
 
-  if (!name || !description || !price || !category || !foodId) {
+  if (!name || !description || !price || !category) {
     return res
       .status(400)
       .json({ message: "Required fields including foodId are missing" }); // Ensure all required fields including foodId are sent
@@ -22,7 +21,6 @@ const addFoodItem = async (req, res) => {
   try {
     const newFoodItem = new FoodItem({
       restaurantId,
-      foodId,
       name,
       description,
       price,
@@ -41,11 +39,11 @@ const addFoodItem = async (req, res) => {
   }
 };
 
-// Get one food item by foodId
-const getFoodItemByFoodId = async (req, res) => {
-  const { foodId } = req.params;
+// Get one food item by mongoid
+const getFoodItemById = async (req, res) => {
+  const { Id } = req.params;
   try {
-    const foodItem = await FoodItem.findOne({ foodId }); // Using Mongoose's findOne method to find by foodId
+    const foodItem = await FoodItem.findOne({ Id }); // Using Mongoose's findOne method to find by foodId
     if (!foodItem) {
       return res.status(404).json({ message: "Food item not found" });
     }
@@ -66,16 +64,15 @@ const getAllFoodItems = async (req, res) => {
   }
 };
 
-// Update food item by foodId
-const updateFoodItemByFoodId = async (req, res) => {
-  const { foodId } = req.params;
+// Update food item 
+const updateFoodItemById = async (req, res) => {
+  const { Id } = req.params;
   const { restaurantId, name, description, price, category, available } =
     req.body;
 
   try {
     // Find the food item by its foodId and update it
     const updatedFoodItem = await FoodItem.findOneAndUpdate(
-      { foodId },
       {
         restaurantId,
         name,
@@ -98,13 +95,13 @@ const updateFoodItemByFoodId = async (req, res) => {
   }
 };
 
-// Delete food item by foodId
-const deleteFoodItemByFoodId = async (req, res) => {
-  const { foodId } = req.params;
+// Delete food item 
+const deleteFoodItemById = async (req, res) => {
+  const { Id } = req.params;
 
   try {
-    // Find and delete the food item by its foodId
-    const deletedFoodItem = await FoodItem.findOneAndDelete({ foodId });
+    // Find and delete the food item 
+    const deletedFoodItem = await FoodItem.findOneAndDelete({ Id });
 
     if (!deletedFoodItem) {
       return res.status(404).json({ message: "Food item not found" });
@@ -122,8 +119,8 @@ const deleteFoodItemByFoodId = async (req, res) => {
 
 module.exports = {
   addFoodItem,
-  getFoodItemByFoodId,
+  getFoodItemById,
   getAllFoodItems,
-  updateFoodItemByFoodId,
-  deleteFoodItemByFoodId,
+  updateFoodItemById,
+  deleteFoodItemById,
 };
