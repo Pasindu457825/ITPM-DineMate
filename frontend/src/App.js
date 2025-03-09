@@ -1,13 +1,13 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-import HomePage from './pages/pasindu/HomePage';
-import AddOrderForm from './pages/pasindu/order/CreateOrder'; //  // Import the AddItemForm component
-import OrdersList  from './pages/pasindu/order/OrderList';
-import UpdateOrderForm from './pages/pasindu/order/UpdateOrder'; 
-import AddReservationForm from './pages/pasindu/reservation/CreateReservation';//  // Import the AddItemForm component
-import ReservationsList from './pages/pasindu/reservation/ReservationList';
-import UpdateReservationForm from './pages/pasindu/reservation/UpdateReservation';  // Import UpdateItemForm
+import HomePage from './user/pages/pasindu/HomePage';
+import AddOrderForm from './user/pages/pasindu/order/CreateOrder'; //  // Import the AddItemForm component
+import OrdersList  from './user/pages/pasindu/order/OrderList';
+import UpdateOrderForm from './user/pages/pasindu/order/UpdateOrder'; 
+import AddReservationForm from './user/pages/pasindu/reservation/CreateReservation';//  // Import the AddItemForm component
+import ReservationsList from './user/pages/pasindu/reservation/ReservationList';
+import UpdateReservationForm from './user/pages/pasindu/reservation/UpdateReservation';  // Import UpdateItemForm
 
 import LoginPage from './pages/tharusha/UserSignupPage';
 import UserSignupPage from './pages/tharusha/UserSignupPage';
