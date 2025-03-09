@@ -17,4 +17,5 @@ router.put("/update-restaurant/:id", restaurantController.updateRestaurant);
 // Delete a restaurant by ID
 router.delete("/delete-restaurant/:id", restaurantController.deleteRestaurant);
 
+
 module.exports = router;

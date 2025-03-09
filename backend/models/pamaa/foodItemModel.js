@@ -5,7 +5,10 @@ const foodItemSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "restaurant",
     required: true,
-    unique: false,
+  },
+  restaurantName: {
+    type: String,
+    required: true, // ✅ Ensures food items are linked to a restaurant name
   },
   name: {
     type: String,
@@ -27,10 +30,10 @@ const foodItemSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  // image: {
-  //  type: String,
-  //  default: "",
-  // },
+  image: { 
+    type: String, 
+    required: true 
+  },
 });
 
 module.exports = mongoose.model("FoodItem", foodItemSchema);
