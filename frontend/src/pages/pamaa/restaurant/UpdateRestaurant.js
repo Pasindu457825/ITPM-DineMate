@@ -149,6 +149,7 @@ const UpdateRestaurant = () => {
         {/* Submit Update */}
         <button
           type="submit"
+          onClick={() => navigate("/display-restaurant")}
           className="bg-blue-500 text-white p-2 rounded w-full mt-4"
           disabled={loading}
         >
