@@ -2,7 +2,7 @@
 const Order = require('../../models/pasindu/orderModel'); // Assuming you have the correct path
 
 // Add new order
-const addOrder = async (req, res) => {
+const createOrder = async (req, res) => {
   const { orderId, customerName, customerEmail, orderType, paymentStatus, orderStatus, total, items, reservationStatus } = req.body;
 
   if (!customerName || !customerEmail || !orderType || !paymentStatus || !orderStatus) {
@@ -108,7 +108,7 @@ const deleteOrder = async (req, res) => {
 };
 
 module.exports = {
-  addOrder,
+  createOrder,
   getOrderById,
   getAllOrders,
   updateOrder,

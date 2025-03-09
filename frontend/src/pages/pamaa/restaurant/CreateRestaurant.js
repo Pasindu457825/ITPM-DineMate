@@ -39,7 +39,7 @@ const CreateRestaurant = () => {
   };
 
   const handleGoBack = () => {
-    navigate("/display-restaurants"); // Navigate back to Restaurant List
+    navigate("/display-restaurant"); // Navigate back to Restaurant List
   };
 
   return (
