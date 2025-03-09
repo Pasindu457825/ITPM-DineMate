@@ -13,8 +13,6 @@ import LoginPage from './pages/tharusha/UserSignupPage';
 import UserSignupPage from './pages/tharusha/UserSignupPage';
 import ManagerSignupPage from './pages/tharusha/ManagerSignupPage';
 
- //  // Import the AddItemForm component
-// Import UpdateItemForm
 import AddFood from "./pages/pamaa/foodmenu/AddFood";
 import UpdateFood from "./pages/pamaa/foodmenu/UpdateFood";
 import FoodList from "./pages/pamaa/foodmenu/FoodList";
@@ -32,19 +30,18 @@ const App = () => {
         <Route path="/update-order/:id" element={<UpdateOrderForm />} />
 
         <Route path="/add-reservation" element={<AddReservationForm />} />
-
-        <Route path="/display-reservations" element={<ReservationList  />} />
-        <Route path="/update-reservation/:id" element={<UpdateReservationForm />} />  {/* Add route */}  {/* Add a route for the AddItemForm */}
+        <Route path="/display-reservations" element={<ReservationsList  />} />
+        <Route
+          path="/update-reservation/:id"
+          element={<UpdateReservationForm />}
+        />
+         
 
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup/user" element={<UserSignupPage />} />
         <Route path="/signup/manager" element={<ManagerSignupPage />} />
 
-        <Route path="/display-reservations" element={<ReservationsList />} />
-        <Route
-          path="/update-reservation/:id"
-          element={<UpdateReservationForm />}
-        />{" "}
+        
 
         {/* Add route */} {/* Add a route for the AddItemForm */}
         <Route path="/add-food" element={<AddFood />} />
