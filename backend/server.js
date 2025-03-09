@@ -20,7 +20,6 @@ const userRoutes = require("./routes/tharusha/userRoute");
 const foodItemRoutes = require("./routes/pamaa/foodItemRoutes");
 const restaurantRoutes = require("./routes/pamaa/restaurantRoutes");
 
-const dotenv = require("dotenv");
 
 
 dotenv.config();
