@@ -10,6 +10,7 @@ const AddFoodForm = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
+  const [available, setAvailable] = useState(true); // Default to true
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,11 +24,12 @@ const AddFoodForm = () => {
       description,
       price: itemPrice,
       category,
+      available, // Include availability in the payload
     };
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/ITPM/food-items/create-food-item",
+        "http://localhost:5000/api/ITPM/foodItems/create-food-item",
         foodData
       );
       console.log("Food item added:", response.data);
@@ -73,6 +75,16 @@ const AddFoodForm = () => {
           required
           className="p-2 border border-gray-300 rounded w-full"
         />
+        {/* Availability Checkbox */}
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            checked={available}
+            onChange={(e) => setAvailable(e.target.checked)}
+            className="mt-2"
+          />
+          <label className="ml-2 text-gray-700">Available</label>
+        </div>
 
         {/* Submit Food Item */}
         <button
