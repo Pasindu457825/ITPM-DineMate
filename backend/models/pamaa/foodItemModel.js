@@ -1,11 +1,6 @@
 const mongoose = require("mongoose");
 
 const foodItemSchema = new mongoose.Schema({
-  foodId: {
-    type: String,
-    required: true,
-    unique: true,
-  },
   restaurantId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "restaurant",
