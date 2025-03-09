@@ -5,7 +5,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from './user/pages/pasindu/HomePage';
 import AddOrderForm from './user/pages/pasindu/order/CreateOrder'; //  // Import the AddItemForm component
 import OrdersList  from './user/pages/pasindu/order/OrderList';
-import UpdateOrderForm from './user/pages/pasindu/order/UpdateOrder'; 
+import UpdateOrderForm from './user/pages/pasindu/order/UpdateOrder';
+import CartPage  from './user/pages/pasindu//order/CartPage'; 
 //Pasindu Reservation
 import AddReservationForm from './user/pages/pasindu/reservation/CreateReservation';//  // Import the AddItemForm component
 import ReservationsList from './user/pages/pasindu/reservation/ReservationList';
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/add-order" element={<AddOrderForm />} />
         <Route path="/display-orders" element={<OrdersList />} />
         <Route path="/update-order/:id" element={<UpdateOrderForm />} />
+        <Route path="/cart" element={<CartPage />} />
         {/* Pasindu Reservation*/}
         <Route path="/add-reservation" element={<AddReservationForm />} />
         <Route path="/display-reservations" element={<ReservationsList  />} />
