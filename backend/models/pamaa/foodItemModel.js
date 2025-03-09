@@ -27,10 +27,8 @@ const foodItemSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  // image: {
-  //  type: String,
-  //  default: "",
-  // },
+  image: { type: String, required: true }, // Store Firebase image URL
+
 });
 
 module.exports = mongoose.model("FoodItem", foodItemSchema);
