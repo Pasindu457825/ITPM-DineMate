@@ -11,7 +11,7 @@ const FoodList = () => {
     const fetchFoods = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/ITPM/food-items/get-all-food-items"
+          "http://localhost:5000/api/ITPM/foodItems/get-all-food-items"
         );
         setFoods(response.data);
       } catch (error) {
@@ -36,7 +36,7 @@ const FoodList = () => {
   const handleToggleAvailability = async (id, available) => {
     try {
       await axios.patch(
-        `http://localhost:5000/api/ITPM/food-items/toggle-availability/${id}`,
+        `http://localhost:5000/api/ITPM/fooditems/toggle-availability/${id}`,
         {
           available: !available,
         }

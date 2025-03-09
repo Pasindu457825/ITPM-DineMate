@@ -5,6 +5,7 @@ const foodItemSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "restaurant",
     required: true,
+    unique: false,
   },
   name: {
     type: String,
