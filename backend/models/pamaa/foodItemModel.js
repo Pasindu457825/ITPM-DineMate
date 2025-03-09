@@ -30,7 +30,10 @@ const foodItemSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  
+  image: { 
+    type: String, 
+    required: true 
+  },
 });
 
 module.exports = mongoose.model("FoodItem", foodItemSchema);

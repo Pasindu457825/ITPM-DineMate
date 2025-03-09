@@ -1,48 +1,60 @@
-const mongoose = require("mongoose"); // ✅ Ensure mongoose is imported
+const mongoose = require("mongoose");
 const FoodItem = require("../../models/pamaa/foodItemModel");
 const Restaurant = require("../../models/pamaa/restaurantModel");
 
-// ✅ Add new food item
+// ✅ Add new food item with image URL
 const addFoodItem = async (req, res) => {
-  const { restaurantId, name, description, price, category, available } = req.body;
-
-  if (!restaurantId || !name || !description || !price || !category) {
-    return res.status(400).json({ message: "Required fields are missing" });
-  }
-
   try {
-    // ✅ Convert price to a number
+    const { restaurantId, name, description, price, category, available, image } = req.body;
+
+    if (!restaurantId || !name || !description || !price || !category || !image) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // ✅ Convert price to a valid number
     const itemPrice = parseFloat(price);
     if (isNaN(itemPrice) || itemPrice < 0) {
       return res.status(400).json({ message: "Invalid price value" });
     }
 
-    // ✅ Fetch restaurant details using restaurantId
+    // ✅ Verify restaurant exists
     const restaurant = await Restaurant.findById(restaurantId);
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
     }
 
-    // ✅ Create new food item with restaurant name included
+    // ✅ Create new food item
     const newFoodItem = new FoodItem({
       restaurantId,
-      restaurantName: restaurant.name, // Store restaurant's name
+      restaurantName: restaurant.name,
       name,
       description,
-      price: itemPrice, // Ensure price is stored as a number
+      price: itemPrice,
       category,
       available,
+      image, // ✅ Store image URL
     });
 
     await newFoodItem.save();
     res.status(201).json({ message: "Food item added successfully", foodItem: newFoodItem });
+
   } catch (error) {
-    console.error("Error in adding food item:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    console.error("Error in addFoodItem:", error);
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };
 
-// ✅ Get one food item by ID
+// ✅ Get all food items
+const getAllFoodItems = async (req, res) => {
+  try {
+    const foodItems = await FoodItem.find();
+    res.json(foodItems);
+  } catch (error) {
+    res.status(500).json({ message: "Server error while retrieving food items", error: error.message });
+  }
+};
+
+// ✅ Get a food item by ID
 const getFoodItemById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -52,38 +64,24 @@ const getFoodItemById = async (req, res) => {
     }
     res.json(foodItem);
   } catch (error) {
-    console.error("Error fetching food item:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Server error while retrieving food item", error: error.message });
   }
 };
 
-// ✅ Get all food items
-const getAllFoodItems = async (req, res) => {
-  try {
-    const foodItems = await FoodItem.find().lean(); // ✅ Use .lean() for better performance
-    res.json(foodItems);
-  } catch (error) {
-    console.error("Error fetching all food items:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-};
-
-// ✅ Update food item by ID
-const updateFoodItemById = async (req, res) => {
+// ✅ Update food item including image URL
+const updateFoodItem = async (req, res) => {
   const { id } = req.params;
-  const { restaurantId, name, description, price, category, available } = req.body;
+  const { name, description, price, category, available, image } = req.body;
 
   try {
-    // ✅ Ensure price is valid
     if (price && (isNaN(price) || price < 0)) {
       return res.status(400).json({ message: "Invalid price value" });
     }
 
-    // ✅ Find food item by MongoDB _id and update
     const updatedFoodItem = await FoodItem.findByIdAndUpdate(
       id,
-      { restaurantId, name, description, price, category, available },
-      { new: true, runValidators: true }
+      { name, description, price, category, available, image }, // ✅ Ensure image update is included
+      { new: true }
     );
 
     if (!updatedFoodItem) {
@@ -92,27 +90,23 @@ const updateFoodItemById = async (req, res) => {
 
     res.status(200).json(updatedFoodItem);
   } catch (error) {
-    console.error("Error updating food item:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Server error while updating food item", error: error.message });
   }
 };
 
-// ✅ Delete food item by ID
-const deleteFoodItemById = async (req, res) => {
+// ✅ Delete food item
+const deleteFoodItem = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // ✅ Find and delete the food item
     const deletedFoodItem = await FoodItem.findByIdAndDelete(id);
-
     if (!deletedFoodItem) {
       return res.status(404).json({ message: "Food item not found" });
     }
 
-    res.status(200).json({ message: "Food item deleted successfully", foodItem: deletedFoodItem });
+    res.status(200).json({ message: "Food item deleted successfully" });
   } catch (error) {
-    console.error("Error deleting food item:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Server error while deleting food item", error: error.message });
   }
 };
 
@@ -121,27 +115,28 @@ const getFoodsByRestaurant = async (req, res) => {
   const { restaurantId } = req.params;
 
   try {
+    // ✅ Validate if restaurantId is a valid MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(restaurantId)) {
       return res.status(400).json({ message: "Invalid restaurant ID format" });
     }
 
-    // ✅ Fetch food items that belong to this restaurant
-    const foodItems = await FoodItem.find({ restaurantId }).lean();
-
-    if (!foodItems.length) {
-      return res.status(404).json({ message: "No food items found for this restaurant" });
+    // ✅ Fetch restaurant details to get the name
+    const restaurant = await Restaurant.findById(restaurantId).lean();
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
     }
 
-    // ✅ Get the restaurant name from the first food item
-    const restaurantName = foodItems[0].restaurantName;
+    // ✅ Fetch food items related to this restaurant
+    const foodItems = await FoodItem.find({ restaurantId }).lean();
 
     res.json({
-      restaurantName, // ✅ Send restaurant name
-      foods: foodItems, // ✅ Send food items
+      restaurantName: restaurant.name, // ✅ Returns restaurant name
+      foods: foodItems || [], // ✅ Ensures foods is always an array
     });
+
   } catch (error) {
     console.error("Error fetching food items:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Server error while retrieving food items", error: error.message });
   }
 };
 
@@ -151,7 +146,7 @@ module.exports = {
   addFoodItem,
   getFoodItemById,
   getAllFoodItems,
-  updateFoodItemById,
-  deleteFoodItemById,
+  updateFoodItem,
+  deleteFoodItem,
   getFoodsByRestaurant,
 };
