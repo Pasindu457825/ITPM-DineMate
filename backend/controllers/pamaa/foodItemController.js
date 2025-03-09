@@ -41,9 +41,9 @@ const addFoodItem = async (req, res) => {
 
 // Get one food item by mongoid
 const getFoodItemById = async (req, res) => {
-  const { Id } = req.params;
+  const { id } = req.params;
   try {
-    const foodItem = await FoodItem.findOne({ Id }); // Using Mongoose's findOne method to find by foodId
+    const foodItem = await FoodItem.findOne({id}); // Using Mongoose's findOne method to find by foodId
     if (!foodItem) {
       return res.status(404).json({ message: "Food item not found" });
     }
@@ -66,7 +66,7 @@ const getAllFoodItems = async (req, res) => {
 
 // Update food item 
 const updateFoodItemById = async (req, res) => {
-  const { Id } = req.params;
+  const { id } = req.params;
   const { restaurantId, name, description, price, category, available } =
     req.body;
 
@@ -97,7 +97,7 @@ const updateFoodItemById = async (req, res) => {
 
 // Delete food item 
 const deleteFoodItemById = async (req, res) => {
-  const { Id } = req.params;
+  const { id } = req.params;
 
   try {
     // Find and delete the food item 
