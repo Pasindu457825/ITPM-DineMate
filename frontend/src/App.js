@@ -9,6 +9,9 @@ import AddReservationForm from './pages/pasindu/reservation/CreateReservation'; 
 import ReservationList  from './pages/pasindu/reservation/ReservationList';
 import UpdateReservationForm from './pages/pasindu/reservation/UpdateReservation';  // Import UpdateItemForm
 
+import LoginPage from './pages/tharusha/UserSignupPage';
+import UserSignupPage from './pages/tharusha/UserSignupPage';
+import ManagerSignupPage from './pages/tharusha/ManagerSignupPage';
 
 const App = () => {
   return (
@@ -22,6 +25,11 @@ const App = () => {
         <Route path="/add-reservation" element={<AddReservationForm />} />
         <Route path="/display-reservations" element={<ReservationList  />} />
         <Route path="/update-reservation/:id" element={<UpdateReservationForm />} />  {/* Add route */}  {/* Add a route for the AddItemForm */}
+
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup/user" element={<UserSignupPage />} />
+        <Route path="/signup/manager" element={<ManagerSignupPage />} />
+
       </Routes>
     </Router>
   );
