@@ -13,8 +13,15 @@ const User = require("./models/tharusha/userModel");
 const orderRoutes = require("./routes/pasindu/orderRoutes");
 const reservationRoutes = require("./routes/pasindu/reservationRoutes");
 
+
 // tharusha
 const userRoutes = require("./routes/tharusha/userRoute");
+
+const foodItemRoutes = require("./routes/pamaa/foodItemRoutes");
+const restaurantRoutes = require("./routes/pamaa/restaurantRoutes");
+
+const dotenv = require("dotenv");
+
 
 dotenv.config();
 
@@ -37,7 +44,12 @@ mongoose
 // Route definitions
 app.use("/api/ITPM/orders", orderRoutes);
 app.use("/api/ITPM/reservations", reservationRoutes);
+
 app.use("/api/ITPM/users", userRoutes);
+
+app.use("/api/ITPM/foodItems", foodItemRoutes);
+app.use("/api/ITPM/restaurants", restaurantRoutes);
+
 
 // Start the server
 app.listen(PORT, () => {
