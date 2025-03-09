@@ -32,7 +32,7 @@ const App = () => {
         />{" "}
         {/* Add route */} {/* Add a route for the AddItemForm */}
         <Route path="/add-food/:restaurantId" element={<AddFood />} />
-        <Route path="/update-food/:foodId" element={<UpdateFood />} />
+        <Route path="/update-food/:id" element={<UpdateFood />} />
         <Route path="/display-food" element={<FoodList />} />
         <Route path="/add-restaurant" element={<CreateRestaurant />} />
         <Route path="/display-restaurant" element={<RestaurantList />} />
