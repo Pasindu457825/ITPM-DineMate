@@ -1,28 +1,15 @@
-// controllers/restaurantController.js
+const mongoose = require("mongoose");
 const Restaurant = require("../../models/pamaa/restaurantModel");
-// Add new restaurant
+
 const addRestaurant = async (req, res) => {
-  const {
-    name,
-    description,
-    location,
-    phoneNumber,
-    numberOfTables,
-    seatsPerTable,
-  } = req.body;
-
-  if (
-    !name ||
-    !description ||
-    !location ||
-    !phoneNumber ||
-    !numberOfTables ||
-    !seatsPerTable
-  ) {
-    return res.status(400).json({ message: "Required fields are missing" }); // Ensure all required fields are sent
-  }
-
   try {
+    const { name, description, location, phoneNumber, numberOfTables, seatsPerTable, image } = req.body;
+
+    if (!name || !description || !location || !phoneNumber || !numberOfTables || !seatsPerTable || !image) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // ✅ Allow adding multiple restaurants without `restaurantId`
     const newRestaurant = new Restaurant({
       name,
       description,
@@ -30,36 +17,15 @@ const addRestaurant = async (req, res) => {
       phoneNumber,
       numberOfTables,
       seatsPerTable,
+      image,
     });
-    await newRestaurant.save();
-    res.status(201).json({
-      message: "Restaurant added successfully",
-      restaurant: newRestaurant,
-    });
-  } catch (error) {
-    console.error("Error in adding restaurant:", error); // Detailed logging
-    res
-      .status(500)
-      .json({ message: "Error adding restaurant", error: error.message });
-  }
-};
 
-// Get one restaurant by ID
-const getRestaurantById = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const restaurant = await Restaurant.findById(id); // Using Mongoose's findById method
-    if (!restaurant) {
-      return res
-        .status(404)
-        .json({ message: "Restaurant not found with ID: " + id });
-    }
-    res.json(restaurant); // Return the restaurant data as JSON
+    await newRestaurant.save();
+    res.status(201).json({ message: "Restaurant added successfully", restaurant: newRestaurant });
+
   } catch (error) {
-    console.error("Error fetching restaurant with ID: " + id + ":", error);
-    res
-      .status(500)
-      .json({ message: "Server error while retrieving restaurant" });
+    console.error("Error in addRestaurant:", error);
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };
 
@@ -73,42 +39,40 @@ const getAllRestaurants = async (req, res) => {
   }
 };
 
-// Update restaurant
+// Get restaurant
+const getRestaurantById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const restaurant = await Restaurant.findById(id);
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+    res.json(restaurant);
+  } catch (error) {
+    console.error("Error fetching restaurant:", error);
+    res.status(500).json({ message: "Server error while retrieving restaurant" });
+  }
+};
+
+// Update restaurant (including image)
 const updateRestaurant = async (req, res) => {
   const { id } = req.params;
-  const {
-    name,
-    description,
-    location,
-    phoneNumber,
-    numberOfTables,
-    seatsPerTable,
-  } = req.body;
+  const { name, description, location, phoneNumber, numberOfTables, seatsPerTable, image } = req.body;
 
   try {
-    // Find the restaurant by its ID and update it
     const updatedRestaurant = await Restaurant.findByIdAndUpdate(
       id,
-      {
-        name,
-        description,
-        location,
-        phoneNumber,
-        numberOfTables,
-        seatsPerTable,
-      }, // Fields to update
-      { new: true } // Returns the updated document
+      { name, description, location, phoneNumber, numberOfTables, seatsPerTable, image },
+      { new: true }
     );
 
     if (!updatedRestaurant) {
-      return res
-        .status(404)
-        .json({ message: "Restaurant not found with ID: " + id });
+      return res.status(404).json({ message: "Restaurant not found" });
     }
 
-    res.status(200).json(updatedRestaurant); // Return the updated restaurant
+    res.status(200).json(updatedRestaurant);
   } catch (error) {
-    console.error("Error updating restaurant with ID: " + id + ":", error);
+    console.error("Error updating restaurant:", error);
     res.status(500).json({ message: "Server error while updating restaurant" });
   }
 };
@@ -118,21 +82,15 @@ const deleteRestaurant = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Find and delete the restaurant by its ID
     const deletedRestaurant = await Restaurant.findByIdAndDelete(id);
 
     if (!deletedRestaurant) {
-      return res
-        .status(404)
-        .json({ message: "Restaurant not found with ID: " + id });
+      return res.status(404).json({ message: "Restaurant not found" });
     }
 
-    res.status(200).json({
-      message: "Restaurant deleted successfully",
-      restaurant: deletedRestaurant,
-    });
+    res.status(200).json({ message: "Restaurant deleted successfully" });
   } catch (error) {
-    console.error("Error deleting restaurant with ID: " + id + ":", error);
+    console.error("Error deleting restaurant:", error);
     res.status(500).json({ message: "Server error while deleting restaurant" });
   }
 };
