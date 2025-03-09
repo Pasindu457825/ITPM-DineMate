@@ -9,6 +9,9 @@ import AddReservationForm from './pages/pasindu/reservation/CreateReservation';/
 import ReservationsList from './pages/pasindu/reservation/ReservationList';
 import UpdateReservationForm from './pages/pasindu/reservation/UpdateReservation';  // Import UpdateItemForm
 
+import LoginPage from './pages/tharusha/UserSignupPage';
+import UserSignupPage from './pages/tharusha/UserSignupPage';
+import ManagerSignupPage from './pages/tharusha/ManagerSignupPage';
 
  //  // Import the AddItemForm component
 // Import UpdateItemForm
@@ -29,6 +32,14 @@ const App = () => {
         <Route path="/update-order/:id" element={<UpdateOrderForm />} />
 
         <Route path="/add-reservation" element={<AddReservationForm />} />
+
+        <Route path="/display-reservations" element={<ReservationList  />} />
+        <Route path="/update-reservation/:id" element={<UpdateReservationForm />} />  {/* Add route */}  {/* Add a route for the AddItemForm */}
+
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup/user" element={<UserSignupPage />} />
+        <Route path="/signup/manager" element={<ManagerSignupPage />} />
+
         <Route path="/display-reservations" element={<ReservationsList />} />
         <Route
           path="/update-reservation/:id"
@@ -42,6 +53,7 @@ const App = () => {
         <Route path="/add-restaurant" element={<CreateRestaurant />} />
         <Route path="/display-restaurant" element={<RestaurantList />} />
         <Route path="/update-restaurant/:id" element={<UpdateRestaurant />} />
+
 
 
       </Routes>
