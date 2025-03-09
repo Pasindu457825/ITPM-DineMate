@@ -13,6 +13,7 @@ import LoginPage from './pages/tharusha/UserSignupPage';
 import UserSignupPage from './pages/tharusha/UserSignupPage';
 import ManagerSignupPage from './pages/tharusha/ManagerSignupPage';
 
+
 import AddFood from "./pages/pamaa/foodmenu/AddFood";
 import UpdateFood from "./pages/pamaa/foodmenu/UpdateFood";
 import FoodList from "./pages/pamaa/foodmenu/FoodList";
@@ -28,12 +29,12 @@ const App = () => {
         <Route path="/add-order" element={<AddOrderForm />} />
         <Route path="/display-orders" element={<OrdersList />} />
         <Route path="/update-order/:id" element={<UpdateOrderForm />} />
-
         <Route path="/add-reservation" element={<AddReservationForm />} />
         <Route path="/display-reservations" element={<ReservationsList  />} />
         <Route
           path="/update-reservation/:id"
           element={<UpdateReservationForm />}
+
         />
          
 
@@ -44,14 +45,12 @@ const App = () => {
         
 
         {/* Add route */} {/* Add a route for the AddItemForm */}
-        <Route path="/add-food" element={<AddFood />} />
+        <Route path="/add-food/:restaurantId" element={<AddFood />} />
         <Route path="/update-food/:id" element={<UpdateFood />} />
         <Route path="/display-food" element={<FoodList />} />
         <Route path="/add-restaurant" element={<CreateRestaurant />} />
         <Route path="/display-restaurant" element={<RestaurantList />} />
         <Route path="/update-restaurant/:id" element={<UpdateRestaurant />} />
-
-
 
       </Routes>
     </Router>

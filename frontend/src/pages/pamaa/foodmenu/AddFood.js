@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate, useParams } from "react-router-dom"; // Import useNavigate
 
 const AddFoodForm = () => {
   const navigate = useNavigate(); // Initialize navigate function
+  const params = useParams();
 
   // State variables for food item details
   const [name, setName] = useState("");
@@ -25,6 +26,7 @@ const AddFoodForm = () => {
       price: itemPrice,
       category,
       available, // Include availability in the payload
+      restaurantId: params.restaurantId,
     };
 
     try {
@@ -35,7 +37,7 @@ const AddFoodForm = () => {
       console.log("Food item added:", response.data);
 
       // Redirect to food items list after adding
-      navigate("/display-food-items");
+      navigate("/display-food");
     } catch (error) {
       console.error("Error adding food item:", error);
     }
@@ -97,7 +99,7 @@ const AddFoodForm = () => {
 
       {/* Button to View Food Items List */}
       <button
-        onClick={() => navigate("/display-food-items")}
+        onClick={() => navigate("/display-food")}
         className="mt-4 bg-red-500 text-white p-2 rounded w-full"
       >
         View Food Items List

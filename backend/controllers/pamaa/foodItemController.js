@@ -41,9 +41,9 @@ const addFoodItem = async (req, res) => {
 
 // Get one food item by mongoid
 const getFoodItemById = async (req, res) => {
-  const { Id } = req.params;
+  const { id } = req.params;
   try {
-    const foodItem = await FoodItem.findOne({ Id }); // Using Mongoose's findOne method to find by foodId
+    const foodItem = await FoodItem.findById(id); // Using Mongoose's findOne method to find by foodId
     if (!foodItem) {
       return res.status(404).json({ message: "Food item not found" });
     }
@@ -66,42 +66,36 @@ const getAllFoodItems = async (req, res) => {
 
 // Update food item 
 const updateFoodItemById = async (req, res) => {
-  const { Id } = req.params;
-  const { restaurantId, name, description, price, category, available } =
-    req.body;
+  const { id } = req.params;
+  const { restaurantId, name, description, price, category, available } = req.body;
 
   try {
-    // Find the food item by its foodId and update it
-    const updatedFoodItem = await FoodItem.findOneAndUpdate(
-      {
-        restaurantId,
-        name,
-        description,
-        price,
-        category,
-        available,
-      }, // Fields to update
-      { new: true } // Returns the updated document
+    // ✅ Find food item by MongoDB _id and update
+    const updatedFoodItem = await FoodItem.findByIdAndUpdate(
+      id, // ✅ Correctly filter by _id
+      { restaurantId, name, description, price, category, available }, // Fields to update
+      { new: true, runValidators: true } // ✅ Returns updated document & ensures validation
     );
 
     if (!updatedFoodItem) {
       return res.status(404).json({ message: "Food item not found" });
     }
 
-    res.status(200).json(updatedFoodItem); // Return the updated food item
+    res.status(200).json(updatedFoodItem); // ✅ Return updated food item
   } catch (error) {
     console.error("Error updating food item:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
+
 // Delete food item 
 const deleteFoodItemById = async (req, res) => {
-  const { Id } = req.params;
+  const { id } = req.params; // Get ID from request parameters
 
   try {
-    // Find and delete the food item 
-    const deletedFoodItem = await FoodItem.findOneAndDelete({ Id });
+    // ✅ Find and delete the food item using the correct method
+    const deletedFoodItem = await FoodItem.findByIdAndDelete(id);
 
     if (!deletedFoodItem) {
       return res.status(404).json({ message: "Food item not found" });
@@ -116,6 +110,7 @@ const deleteFoodItemById = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 module.exports = {
   addFoodItem,
