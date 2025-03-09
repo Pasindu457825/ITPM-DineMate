@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom"; // Import useNavigate
+import { useNavigate, useParams } from "react-router-dom"; // Import useNavigate and useParams
 
 const AddFoodForm = () => {
   const navigate = useNavigate(); // Initialize navigate function
-  const params = useParams();
+  const { restaurantId } = useParams(); // ✅ Extract restaurantId from URL params
 
   // State variables for food item details
   const [name, setName] = useState("");
@@ -26,7 +26,7 @@ const AddFoodForm = () => {
       price: itemPrice,
       category,
       available, // Include availability in the payload
-      restaurantId: params.restaurantId,
+      restaurantId, // ✅ Use extracted restaurantId from useParams()
     };
 
     try {
@@ -34,12 +34,12 @@ const AddFoodForm = () => {
         "http://localhost:5000/api/ITPM/foodItems/create-food-item",
         foodData
       );
-      console.log("Food item added:", response.data);
+      console.log("✅ Food item added:", response.data);
 
-      // Redirect to food items list after adding
-      navigate("/display-food");
+      // Redirect to food items list for this restaurant
+      navigate(`/restaurant/${restaurantId}/foods`);
     } catch (error) {
-      console.error("Error adding food item:", error);
+      console.error("❌ Error adding food item:", error);
     }
   };
 
@@ -97,9 +97,12 @@ const AddFoodForm = () => {
         </button>
       </form>
 
-      {/* Button to View Food Items List */}
+      {/* ✅ Fixed "View Food Items List" Button */}
       <button
-        onClick={() => navigate("/display-food")}
+        onClick={() => {
+          console.log("🍽️ Viewing Food Menu for Restaurant ID:", restaurantId);
+          navigate(`/restaurant/${restaurantId}/foods`); // ✅ Corrected navigation
+        }}
         className="mt-4 bg-red-500 text-white p-2 rounded w-full"
       >
         View Food Items List

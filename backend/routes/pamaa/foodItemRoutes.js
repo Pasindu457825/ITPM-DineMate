@@ -17,4 +17,7 @@ router.put("/update-food-item/:id", foodItemController.updateFoodItemById);
 // Delete food item by ID
 router.delete("/delete-food-item/:id", foodItemController.deleteFoodItemById);
 
+// get a foods by restaurant
+router.get("/restaurant/:restaurantId", foodItemController.getFoodsByRestaurant);
+
 module.exports = router;

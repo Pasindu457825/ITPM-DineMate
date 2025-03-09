@@ -25,6 +25,7 @@ import FoodList from "./pages/pamaa/foodmenu/FoodList";
 import CreateRestaurant from "./pages/pamaa/restaurant/CreateRestaurant";
 import RestaurantList from "./pages/pamaa/restaurant/RestaurantList";
 import UpdateRestaurant from "./pages/pamaa/restaurant/UpdateRestaurant";
+import FoodsByRestaurant from "./manager/pages/pamaa/restaurent/FoodsByRestaurant";
 
 const App = () => {
   return (
@@ -56,6 +57,7 @@ const App = () => {
         <Route path="/add-restaurant" element={<CreateRestaurant />} />
         <Route path="/display-restaurant" element={<RestaurantList />} />
         <Route path="/update-restaurant/:id" element={<UpdateRestaurant />} />
+        <Route path="/restaurant/:restaurantId/foods" element={<FoodsByRestaurant  />} />
 
       </Routes>
     </Router>
