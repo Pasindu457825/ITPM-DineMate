@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate, useParams } from "react-router-dom"; // Import useNavigate
 
 const AddFoodForm = () => {
   const navigate = useNavigate(); // Initialize navigate function
+  const params = useParams();
 
   // State variables for food item details
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
+  const [available, setAvailable] = useState(true); // Default to true
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,17 +25,19 @@ const AddFoodForm = () => {
       description,
       price: itemPrice,
       category,
+      available, // Include availability in the payload
+      restaurantId: params.restaurantId,
     };
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/ITPM/food-items/create-food-item",
+        "http://localhost:5000/api/ITPM/foodItems/create-food-item",
         foodData
       );
       console.log("Food item added:", response.data);
 
       // Redirect to food items list after adding
-      navigate("/display-food-items");
+      navigate("/display-food");
     } catch (error) {
       console.error("Error adding food item:", error);
     }
@@ -73,6 +77,16 @@ const AddFoodForm = () => {
           required
           className="p-2 border border-gray-300 rounded w-full"
         />
+        {/* Availability Checkbox */}
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            checked={available}
+            onChange={(e) => setAvailable(e.target.checked)}
+            className="mt-2"
+          />
+          <label className="ml-2 text-gray-700">Available</label>
+        </div>
 
         {/* Submit Food Item */}
         <button
@@ -85,7 +99,7 @@ const AddFoodForm = () => {
 
       {/* Button to View Food Items List */}
       <button
-        onClick={() => navigate("/display-food-items")}
+        onClick={() => navigate("/display-food")}
         className="mt-4 bg-red-500 text-white p-2 rounded w-full"
       >
         View Food Items List

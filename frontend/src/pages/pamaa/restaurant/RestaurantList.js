@@ -37,6 +37,7 @@ const RestaurantsList = () => {
       <h1 className="text-3xl font-bold text-gray-800 mb-6">
         Restaurants List
       </h1>
+     
       {restaurants.length === 0 ? (
         <p className="text-gray-500">No restaurants found.</p>
       ) : (
@@ -47,7 +48,6 @@ const RestaurantsList = () => {
               className="border p-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out"
             >
               <div className="flex flex-col space-y-2">
-                {/* Restaurant Details */}
                 <h2 className="text-2xl font-semibold text-gray-800">
                   {restaurant.name}
                 </h2>
@@ -64,9 +64,13 @@ const RestaurantsList = () => {
                 <p className="text-gray-700">
                   <strong>Seats Per Table:</strong> {restaurant.seatsPerTable}
                 </p>
-
-                {/* Action Buttons */}
                 <div className="flex space-x-4 mt-4">
+                  <button
+                    onClick={() => navigate(`/add-food/${restaurant?._id}`)} // Adjust the route as necessary
+                    className="bg-green-500 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 mb-4"
+                  >
+                    Add Food Item
+                  </button>
                   <button
                     onClick={() => handleUpdate(restaurant._id)}
                     className="bg-yellow-600 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500"

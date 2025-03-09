@@ -5,22 +5,16 @@ const foodItemController = require("../../controllers/pamaa/foodItemController")
 // Add new food item
 router.post("/create-food-item", foodItemController.addFoodItem);
 
-// Get one food item by ID using foodId
-router.get("/get-food-item/:foodId", foodItemController.getFoodItemByFoodId);
+// Get one food item by ID
+router.get("/get-food-item/:id", foodItemController.getFoodItemById);
 
 // Get all food items
 router.get("/get-all-food-items", foodItemController.getAllFoodItems);
 
-// Update food item by ID using foodId
-router.put(
-  "/update-food-item/:foodId",
-  foodItemController.updateFoodItemByFoodId
-);
+// Update food item by ID
+router.put("/update-food-item/:id", foodItemController.updateFoodItemById);
 
-// Delete food item by ID using foodId
-router.delete(
-  "/delete-food-item/:foodId",
-  foodItemController.deleteFoodItemByFoodId
-);
+// Delete food item by ID
+router.delete("/delete-food-item/:id", foodItemController.deleteFoodItemById);
 
 module.exports = router;
