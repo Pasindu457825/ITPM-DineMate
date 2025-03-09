@@ -4,7 +4,7 @@ import axios from "axios";
 const deleteFood = async (id, setFoods, foods) => {
   try {
     await axios.delete(
-      `http://localhost:5000/api/ITPM/fooditems/delete-food/${id}`
+      `http://localhost:5000/api/ITPM/fooditems/delete-food-item/${id}`
     );
     setFoods(foods.filter((food) => food._id !== id)); // Remove the deleted food item from the list
     console.log("Food item deleted");
