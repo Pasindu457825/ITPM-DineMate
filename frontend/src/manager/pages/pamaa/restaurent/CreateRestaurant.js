@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { storage } from "../../../firebaseConfig"; // Ensure correct path
+import { storage } from "../../../../firebaseConfig"; // Ensure correct path
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const CreateRestaurant = () => {
