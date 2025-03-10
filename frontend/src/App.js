@@ -9,7 +9,7 @@ import AddReservationForm from './pages/pasindu/reservation/CreateReservation';/
 import ReservationsList from './pages/pasindu/reservation/ReservationList';
 import UpdateReservationForm from './pages/pasindu/reservation/UpdateReservation';  // Import UpdateItemForm
 
-import LoginPage from './pages/tharusha/UserSignupPage';
+import LoginPage from './pages/tharusha/LoginPage';
 import UserSignupPage from './pages/tharusha/UserSignupPage';
 import ManagerSignupPage from './pages/tharusha/ManagerSignupPage';
 

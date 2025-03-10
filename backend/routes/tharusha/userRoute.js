@@ -4,8 +4,8 @@ const User = require("../../models/tharusha/userModel");
 
 const router = express.Router();
 
-// User Signup
-router.post("/signup/user", async (req, res) => {
+// User Signup - Adjusted to match frontend API
+router.post("/register", async (req, res) => {
     const { fname, lname, email, pwd, phone_no } = req.body;
 
     try {
@@ -18,8 +18,8 @@ router.post("/signup/user", async (req, res) => {
     }
 });
 
-// Restaurant Manager Signup
-router.post("/signup/manager", async (req, res) => {
+// Restaurant Manager Signup - Adjusted API path
+router.post("/register/manager", async (req, res) => {
     const { fname, lname, email, pwd, phone_no } = req.body;
 
     try {
@@ -32,7 +32,7 @@ router.post("/signup/manager", async (req, res) => {
     }
 });
 
-// Common Login Route
+// Common Login Route - No change needed
 router.post("/login", async (req, res) => {
     const { email, pwd } = req.body;
 
