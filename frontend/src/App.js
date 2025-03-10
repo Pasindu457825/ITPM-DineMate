@@ -39,7 +39,7 @@ const App = () => {
         <Route path="/update-order/:id" element={<UpdateOrderForm />} />
         <Route path="/cart" element={<CartPage />} />
         {/* Pasindu Reservation*/}
-        <Route path="/add-reservation" element={<AddReservationForm />} />
+        <Route path="/add-reservation/:restaurantId" element={<AddReservationForm />} />
         <Route path="/display-reservations" element={<ReservationsList  />} />
         <Route path="/update-reservation/:id" element={<UpdateReservationForm />}/>
         {/* Pasindu Restaurent*/}

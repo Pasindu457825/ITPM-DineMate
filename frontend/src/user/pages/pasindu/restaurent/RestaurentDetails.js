@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import CartSidebar from "../order/CartPage"; // Import the sliding cart component
+import CartSidebar from "../order/CartPage";
 
 const RestaurantDetails = () => {
   const { id: restaurantId } = useParams();
@@ -11,6 +11,7 @@ const RestaurantDetails = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [quantities, setQuantities] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate(); // Initialize navigate function
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -62,12 +63,16 @@ const RestaurantDetails = () => {
       }
     }
 
-    const existingItemIndex = storedCart.findIndex((item) => item._id === food._id);
+    const existingItemIndex = storedCart.findIndex(
+      (item) => item._id === food._id
+    );
     let updatedCart;
 
     if (existingItemIndex !== -1) {
       updatedCart = storedCart.map((item, index) =>
-        index === existingItemIndex ? { ...item, quantity: item.quantity + quantity } : item
+        index === existingItemIndex
+          ? { ...item, quantity: item.quantity + quantity }
+          : item
       );
     } else {
       updatedCart = [...storedCart, { ...food, quantity, restaurantId }];
@@ -77,7 +82,8 @@ const RestaurantDetails = () => {
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  if (!restaurant) return <p className="text-center text-gray-500">Loading...</p>;
+  if (!restaurant)
+    return <p className="text-center text-gray-500">Loading...</p>;
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white shadow-lg rounded-lg">
@@ -88,7 +94,9 @@ const RestaurantDetails = () => {
         View Cart 🛒
       </button>
 
-      <h1 className="text-4xl font-bold text-gray-800 text-center mb-4">{restaurant.name}</h1>
+      <h1 className="text-4xl font-bold text-gray-800 text-center mb-4">
+        {restaurant.name}
+      </h1>
       <img
         src={restaurant.image || "https://via.placeholder.com/600"}
         alt={restaurant.name}
@@ -96,14 +104,19 @@ const RestaurantDetails = () => {
       />
 
       <div className="mt-6 space-y-4">
-        <p className="text-lg text-gray-700"><strong>Description:</strong> {restaurant.description}</p>
-        <p className="text-lg text-gray-700"><strong>Location:</strong> {restaurant.location}</p>
-        <p className="text-lg text-gray-700"><strong>Phone:</strong> {restaurant.phoneNumber}</p>
+        <p className="text-lg text-gray-700">
+          <strong>Description:</strong> {restaurant.description}
+        </p>
+        <p className="text-lg text-gray-700">
+          <strong>Location:</strong> {restaurant.location}
+        </p>
+        <p className="text-lg text-gray-700">
+          <strong>Phone:</strong> {restaurant.phoneNumber}
+        </p>
       </div>
 
       <h2 className="text-2xl font-bold text-gray-800 mt-8">Food Menu</h2>
-      
-      {/* Search Bar with Clear Button */}
+
       <div className="flex mt-4 gap-2">
         <input
           type="text"
@@ -121,46 +134,83 @@ const RestaurantDetails = () => {
           </button>
         )}
       </div>
-      
+
+      {/* Navigate Button to CreateReservation */}
+      <button
+        onClick={() =>
+          navigate(`/add-reservation/${restaurantId}`, {
+            state: {
+              restaurantId,
+              name: restaurant.name,
+              numberOfTables: restaurant.numberOfTables,
+              seatsPerTable: restaurant.seatsPerTable,
+            },
+          })
+        }
+        className="mt-6 w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition"
+      >
+        Make a Reservation 📅
+      </button>
+
       <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        {foods.filter(food => food.name.toLowerCase().includes(searchQuery.toLowerCase())).map((food) => (
-          <li key={food._id} className="border p-4 rounded shadow-lg flex flex-col items-center">
-            <h3 className="text-lg font-semibold">{food.name}</h3>
-            <p className="text-gray-700">{food.description}</p>
-            <p className="text-green-600 font-bold">${food.price.toFixed(2)}</p>
-
-            {food.image && (
-              <img src={food.image} alt={food.name} className="w-40 h-40 object-cover rounded mt-2" />
-            )}
-
-            <div className="flex items-center mt-3">
-              <button
-                onClick={() => handleQuantityChange(food._id, -1)}
-                className="bg-gray-300 text-black px-3 py-1 rounded-l hover:bg-gray-400"
-                disabled={(quantities[food._id] || 1) === 1}
-              >
-                -
-              </button>
-              <span className="px-4 py-1 border">{quantities[food._id] || 1}</span>
-              <button
-                onClick={() => handleQuantityChange(food._id, 1)}
-                className="bg-gray-300 text-black px-3 py-1 rounded-r hover:bg-gray-400"
-              >
-                +
-              </button>
-            </div>
-
-            <button
-              onClick={() => handleAddToCart(food)}
-              className="mt-3 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+        {foods
+          .filter((food) =>
+            food.name.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+          .map((food) => (
+            <li
+              key={food._id}
+              className="border p-4 rounded shadow-lg flex flex-col items-center"
             >
-              Add to Cart
-            </button>
-          </li>
-        ))}
+              <h3 className="text-lg font-semibold">{food.name}</h3>
+              <p className="text-gray-700">{food.description}</p>
+              <p className="text-green-600 font-bold">
+                ${food.price.toFixed(2)}
+              </p>
+
+              {food.image && (
+                <img
+                  src={food.image}
+                  alt={food.name}
+                  className="w-40 h-40 object-cover rounded mt-2"
+                />
+              )}
+
+              <div className="flex items-center mt-3">
+                <button
+                  onClick={() => handleQuantityChange(food._id, -1)}
+                  className="bg-gray-300 text-black px-3 py-1 rounded-l hover:bg-gray-400"
+                  disabled={(quantities[food._id] || 1) === 1}
+                >
+                  -
+                </button>
+                <span className="px-4 py-1 border">
+                  {quantities[food._id] || 1}
+                </span>
+                <button
+                  onClick={() => handleQuantityChange(food._id, 1)}
+                  className="bg-gray-300 text-black px-3 py-1 rounded-r hover:bg-gray-400"
+                >
+                  +
+                </button>
+              </div>
+
+              <button
+                onClick={() => handleAddToCart(food)}
+                className="mt-3 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+              >
+                Add to Cart
+              </button>
+            </li>
+          ))}
       </ul>
 
-      <CartSidebar cartOpen={cartOpen} setCartOpen={setCartOpen} cart={cart} setCart={setCart} />
+      <CartSidebar
+        cartOpen={cartOpen}
+        setCartOpen={setCartOpen}
+        cart={cart}
+        setCart={setCart}
+      />
     </div>
   );
 };
