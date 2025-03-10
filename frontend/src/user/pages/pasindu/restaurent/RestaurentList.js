@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 const RestaurantsList = () => {
   const [restaurants, setRestaurants] = useState([]);
-  const navigate = useNavigate(); // Hook for navigation
+  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -21,21 +22,45 @@ const RestaurantsList = () => {
     fetchRestaurants();
   }, []);
 
+  // Filter restaurants based on search query
+  const filteredRestaurants = restaurants.filter((restaurant) =>
+    restaurant.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
         Restaurants List
       </h1>
 
-      {restaurants.length === 0 ? (
+      {/* Search Bar */}
+      <div className="mb-6 flex justify-center gap-2">
+        <input
+          type="text"
+          placeholder="Search restaurants..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="border p-2 rounded-md w-full max-w-md text-gray-800 shadow-sm focus:outline-none focus:ring focus:border-blue-300"
+        />
+        {searchQuery && (
+          <button
+            onClick={() => setSearchQuery("")}
+            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
+      {filteredRestaurants.length === 0 ? (
         <p className="text-gray-500 text-center">No restaurants found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {restaurants.map((restaurant) => (
+          {filteredRestaurants.map((restaurant) => (
             <div
               key={restaurant._id}
               className="bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out overflow-hidden cursor-pointer"
-              onClick={() => navigate(`/user/restaurent-details/${restaurant._id}`)} // Navigate on click
+              onClick={() => navigate(`/user/restaurent-details/${restaurant._id}`)}
             >
               {/* Restaurant Image */}
               <img
