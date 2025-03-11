@@ -4,6 +4,11 @@ const reservationSchema = new mongoose.Schema({
   reservationId: {
     type: String,
   },
+  restaurantId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "restaurant",
+    required: true,
+  },
   shopName: {
     type: String,
     required: true,
