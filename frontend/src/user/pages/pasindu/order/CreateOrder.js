@@ -88,7 +88,7 @@ const AddOrderForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/ITPM/orders/create-order",
+        "http://localhost:5000/api/ITPM/orders/add-order",
         orderData,
         { headers: { "Content-Type": "application/json" } }
       );

@@ -27,8 +27,11 @@ const addReservation = async (req, res) => {
     return res.status(400).json({ message: "Required fields are missing" }); // Ensure all required fields are sent
   }
 
+  const reservationId = `RES-${Date.now()}`;
+
   try {
     const newReservation = new Reservation({
+      reservationId,
       restaurantId, // ✅ Now storing restaurantId
       shopName,
       tableNumber,
@@ -43,7 +46,7 @@ const addReservation = async (req, res) => {
 
     res.status(201).json({
       message: "Reservation added successfully",
-      reservationId: newReservation._id, // ✅ Send reservationId explicitly
+      reservationId: newReservation.reservationId, // ✅ Send reservationId explicitly
     });
   } catch (error) {
     console.error("Error in adding reservation:", error);
@@ -57,12 +60,13 @@ const addReservation = async (req, res) => {
 const getReservationById = async (req, res) => {
   const { id } = req.params;
   try {
-    const reservation = await Reservation.findById(id).populate({
+    const reservation = await Reservation.findOne({
+      reservationId: id,
+    }).populate({
       path: "restaurantId",
       model: "Restaurant",
       select: "name location",
     });
-
     if (!reservation) {
       return res.status(404).json({ message: "Reservation not found" });
     }

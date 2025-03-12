@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-
 //Pasindu Order
 import HomePage from './user/pages/pasindu/HomePage';
 import AddOrderForm from './user/pages/pasindu/order/CreateOrder'; //  // Import the AddItemForm component
@@ -48,7 +47,7 @@ const App = () => {
         <Route path="/user/display-restaurent" element={<RestaurentList  />} />
         <Route path="/user/restaurent-details/:id" element={<RestaurentDetails  />} />
 
-        <Route path="/login" element={<UserSignupPage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/signup/user" element={<UserSignupPage />} />
         <Route path="/signup/manager" element={<ManagerSignupPage />} />
 
