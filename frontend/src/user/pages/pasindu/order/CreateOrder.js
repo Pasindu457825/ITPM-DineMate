@@ -6,7 +6,6 @@ const AddOrderForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Extract restaurant details and cart items from navigation state
   const { restaurantId, restaurantName, cart, orderType, reservationId } = location.state || {
     restaurantId: "",
     restaurantName: "Unknown Restaurant",
@@ -15,16 +14,13 @@ const AddOrderForm = () => {
     reservationId: "",
   };
 
-  // State variables for order details
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
-  const [paymentStatus, setPaymentStatus] = useState("Pending");
   const [orderStatus, setOrderStatus] = useState("Processing");
-  const [reservationStatus, setReservationStatus] = useState("None");
   const [total, setTotal] = useState(0);
   const [items, setItems] = useState([]);
+  const [isOnlinePayment, setIsOnlinePayment] = useState(false);
 
-  // Automatically populate items from cart and calculate total price
   useEffect(() => {
     setItems(
       cart.map((item) => ({
@@ -44,43 +40,37 @@ const AddOrderForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const orderTotal = parseFloat(total) || 0;
-
     const orderData = {
       restaurantId,
       customerName,
       customerEmail,
-      orderType: orderType,
-      paymentStatus,
+      orderType,
+      paymentStatus: isOnlinePayment ? "Online" : "Branch",
       orderStatus,
-      total: orderTotal,
+      total: parseFloat(total),
       items,
-      reservationStatus:reservationId,
+      reservationId,
     };
 
-    console.log("🚀 Sending Order Data:", orderData); // Debug Log
+    console.log("🚀 Sending Order Data:", orderData);
 
     try {
       const response = await axios.post(
         "http://localhost:5000/api/ITPM/orders/create-order",
         orderData,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
 
       console.log("✅ Order Created:", response.data);
-      navigate("/display-orders");
+
+      if (isOnlinePayment) {
+        navigate("/payment-page", { state: { orderId: response.data._id, total } });
+      } else {
+        navigate("/success-page");
+      }
     } catch (error) {
-      console.error(
-        "❌ Order Submission Error:",
-        error.response?.data || error
-      );
-      alert(
-        `Order submission failed: ${
-          error.response?.data?.message || "Unknown error"
-        }`
-      );
+      console.error("❌ Order Submission Error:", error.response?.data || error);
+      alert(`Order submission failed: ${error.response?.data?.message || "Unknown error"}`);
     }
   };
 
@@ -109,7 +99,6 @@ const AddOrderForm = () => {
           className="p-2 border rounded w-full"
         />
 
-        {/* ✅ Display Selected Order Type */}
         <p className="text-gray-600">
           <strong>Order Type:</strong>{" "}
           <span className="text-lg font-semibold text-blue-500">
@@ -117,9 +106,8 @@ const AddOrderForm = () => {
           </span>
         </p>
 
-        
         <p className="text-gray-600">
-          <strong>reservationId:</strong>{" "}
+          <strong>Reservation ID:</strong>{" "}
           <span className="text-lg font-semibold text-blue-500">
             {reservationId || "Not Selected"}
           </span>
@@ -132,10 +120,23 @@ const AddOrderForm = () => {
           </p>
         ))}
 
-        <button
-          type="submit"
-          className="bg-blue-500 text-white p-2 rounded w-full mt-4"
-        >
+        <div className="flex items-center justify-between">
+          <span className="font-semibold">Payment Method:</span>
+          <label className="inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={isOnlinePayment}
+              onChange={() => setIsOnlinePayment(!isOnlinePayment)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer dark:bg-gray-700 peer-checked:bg-blue-600"></div>
+            <span className="ml-3 text-sm font-medium">
+              {isOnlinePayment ? "Online Payment" : "Branch Payment"}
+            </span>
+          </label>
+        </div>
+
+        <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">
           Place Order
         </button>
       </form>
