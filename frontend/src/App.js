@@ -15,7 +15,7 @@ import UpdateReservationForm from './user/pages/pasindu/reservation/UpdateReserv
 import RestaurentList from './user/pages/pasindu/restaurent/RestaurentList';
 import RestaurentDetails from './user/pages/pasindu/restaurent/RestaurentDetails';
 
-import LoginPage from './user/pages/tharusha/UserSignupPage';
+import LoginPage from './user/pages/tharusha/LoginPage';
 import UserSignupPage from './user/pages/tharusha/UserSignupPage';
 import ManagerSignupPage from './manager/pages/tharusha/ManagerSignupPage';
 
@@ -28,13 +28,14 @@ import RestaurantList from "./admin/pages/pamaa/restaurent/RestaurantList";
 import UpdateRestaurant from "./manager/pages/pamaa/restaurent/UpdateRestaurant";
 import FoodsByRestaurant from "./manager/pages/pamaa/restaurent/FoodsByRestaurant";
 
+
 const App = () => {
   return (
     <Router>
       <Routes>
         {/* Pasindu Order*/}
         <Route path="/" element={<HomePage />} />
-        <Route path="/add-order" element={<AddOrderForm />} />
+        <Route path="/add-order-details" element={<AddOrderForm />} />
         <Route path="/display-orders" element={<OrdersList />} />
         <Route path="/update-order/:id" element={<UpdateOrderForm />} />
         <Route path="/cart" element={<CartPage />} />

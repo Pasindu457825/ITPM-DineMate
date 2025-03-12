@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import CartSidebar from "../order/CartPage";
 
@@ -11,7 +11,13 @@ const RestaurantDetails = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [quantities, setQuantities] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [orderType, setOrderType] = useState(""); // Track order type
   const navigate = useNavigate(); // Initialize navigate function
+
+  const location = useLocation(); // ✅ Add useLocation()
+
+  // Retrieve reservationId from state
+  const { reservationId } = location.state || {};
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -46,6 +52,11 @@ const RestaurantDetails = () => {
   };
 
   const handleAddToCart = (food) => {
+    if (!orderType) {
+      alert("Please select an order type before adding items.");
+      return;
+    }
+
     const quantity = quantities[food._id] || 1;
     let storedCart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -75,7 +86,10 @@ const RestaurantDetails = () => {
           : item
       );
     } else {
-      updatedCart = [...storedCart, { ...food, quantity, restaurantId }];
+      updatedCart = [
+        ...storedCart,
+        { ...food, quantity, restaurantId, orderType },
+      ];
     }
 
     setCart(updatedCart);
@@ -117,6 +131,21 @@ const RestaurantDetails = () => {
 
       <h2 className="text-2xl font-bold text-gray-800 mt-8">Food Menu</h2>
 
+      {/* Order Type Selection */}
+      <div className="mt-4">
+        <label className="block text-lg font-semibold mb-2">Order Type:</label>
+        <select
+          value={orderType}
+          onChange={(e) => setOrderType(e.target.value)}
+          className="w-full p-2 border rounded"
+        >
+          <option value="">Select Order Type</option>
+          <option value="Dine-in">Dine-in</option>
+          <option value="Takeaway">Takeaway</option>
+        </select>
+      </div>
+
+      {/* Search Bar */}
       <div className="flex mt-4 gap-2">
         <input
           type="text"
@@ -135,7 +164,7 @@ const RestaurantDetails = () => {
         )}
       </div>
 
-      {/* Navigate Button to CreateReservation */}
+      {/* Make a Reservation Button */}
       <button
         onClick={() =>
           navigate(`/add-reservation/${restaurantId}`, {
@@ -151,6 +180,13 @@ const RestaurantDetails = () => {
       >
         Make a Reservation 📅
       </button>
+
+      {reservationId && (
+        <p className="text-lg font-semibold text-green-500">
+          ✅ Your reservation has been created successfully! (ID:{" "}
+          {reservationId})
+        </p>
+      )}
 
       <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
         {foods
@@ -210,6 +246,8 @@ const RestaurantDetails = () => {
         setCartOpen={setCartOpen}
         cart={cart}
         setCart={setCart}
+        orderType={orderType}
+        reservationId={reservationId} 
       />
     </div>
   );

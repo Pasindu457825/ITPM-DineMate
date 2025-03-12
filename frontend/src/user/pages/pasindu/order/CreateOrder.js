@@ -1,73 +1,135 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate, useLocation } from "react-router-dom";
 
 const AddOrderForm = () => {
-  const navigate = useNavigate(); // Initialize navigate function
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // State variables for required order details
+  const { restaurantId, restaurantName, cart, orderType, reservationId } =
+    location.state || {
+      restaurantId: "",
+      restaurantName: "Unknown Restaurant",
+      cart: [],
+      orderType: "",
+      reservationId: "",
+    };
+
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
-  const [orderType, setOrderType] = useState("");
-  const [paymentStatus, setPaymentStatus] = useState("");
-  const [orderStatus, setOrderStatus] = useState("");
-  const [total, setTotal] = useState("");
-  const [items, setItems] = useState([{ name: "", quantity: 1, price: 0 }]);
+  const [orderStatus, setOrderStatus] = useState("Processing");
+  const [total, setTotal] = useState(0);
+  const [items, setItems] = useState([]);
+  const [isOnlinePayment, setIsOnlinePayment] = useState(false);
+  const [reservationDetails, setReservationDetails] = useState(null);
+
+  useEffect(() => {
+    setItems(
+      cart.map((item) => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+      }))
+    );
+
+    const totalAmount = cart.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+    setTotal(totalAmount.toFixed(2));
+  }, [cart]);
+
+  // Fetch reservation details if reservationId is provided
+  useEffect(() => {
+    if (!reservationId) {
+      console.warn("⚠️ No reservation ID provided. Skipping API call.");
+      return;
+    }
+
+    const fetchReservationDetails = async () => {
+      try {
+        console.log("🔍 Fetching reservation details for ID:", reservationId);
+
+        const response = await axios.get(
+          `http://localhost:5000/api/ITPM/reservations/get-reservation/${reservationId}`
+        );
+
+        console.log("✅ Reservation Details Fetched:", response.data);
+        setReservationDetails(response.data);
+      } catch (error) {
+        console.error("❌ Failed to fetch reservation details:", error);
+        alert(
+          `Error fetching reservation: ${
+            error.response?.data?.message || "Unknown error"
+          }`
+        );
+      }
+    };
+
+    fetchReservationDetails();
+  }, [reservationId]); // Ensure it runs when reservationId changes
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Ensure total is a number
-    const orderTotal = parseFloat(total) || 0;
-
-    // Order object matching backend structure
     const orderData = {
+      restaurantId,
       customerName,
       customerEmail,
       orderType,
-      paymentStatus,
+      paymentStatus: isOnlinePayment ? "Online" : "Branch",
       orderStatus,
-      total: orderTotal,
+      total: parseFloat(total),
       items,
+      reservationId,
     };
+
+    console.log("🚀 Sending Order Data:", orderData);
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/ITPM/orders/create-order",
-        orderData
+        "http://localhost:5000/api/ITPM/orders/add-order",
+        orderData,
+        { headers: { "Content-Type": "application/json" } }
       );
-      console.log("Order added:", response.data);
 
-      // Redirect to orders list after adding order
-      navigate("/display-orders");
+      console.log("✅ Order Created:", response.data);
+
+      if (isOnlinePayment) {
+        navigate("/payment-page", {
+          state: { orderId: response.data._id, total },
+        });
+      } else {
+        navigate("/success-page");
+      }
     } catch (error) {
-      console.error("Error adding order:", error);
+      console.error(
+        "❌ Order Submission Error:",
+        error.response?.data || error
+      );
+      alert(
+        `Order submission failed: ${
+          error.response?.data?.message || "Unknown error"
+        }`
+      );
     }
   };
 
-  // Function to handle item updates
-  const handleItemChange = (index, field, value) => {
-    const updatedItems = [...items];
-    updatedItems[index][field] = field === "price" || field === "quantity" ? parseFloat(value) || 0 : value;
-    setItems(updatedItems);
-  };
-
-  // Add a new item to the list
-  const addItem = () => {
-    setItems([...items, { name: "", quantity: 1, price: 0 }]);
-  };
-
   return (
-    <div>
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">Order Details</h2>
+      <p className="text-gray-600">
+        <strong>Restaurant:</strong> {restaurantName}
+      </p>
+
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Customer Details */}
         <input
           type="text"
           placeholder="Customer Name"
           value={customerName}
           onChange={(e) => setCustomerName(e.target.value)}
           required
-          className="p-2 border border-gray-300 rounded w-full"
+          className="p-2 border rounded w-full"
         />
         <input
           type="email"
@@ -75,91 +137,77 @@ const AddOrderForm = () => {
           value={customerEmail}
           onChange={(e) => setCustomerEmail(e.target.value)}
           required
-          className="p-2 border border-gray-300 rounded w-full"
+          className="p-2 border rounded w-full"
         />
 
-        {/* Order Details */}
-        <input
-          type="text"
-          placeholder="Order Type"
-          value={orderType}
-          onChange={(e) => setOrderType(e.target.value)}
-          required
-          className="p-2 border border-gray-300 rounded w-full"
-        />
-        <input
-          type="text"
-          placeholder="Payment Status"
-          value={paymentStatus}
-          onChange={(e) => setPaymentStatus(e.target.value)}
-          required
-          className="p-2 border border-gray-300 rounded w-full"
-        />
-        <input
-          type="text"
-          placeholder="Order Status"
-          value={orderStatus}
-          onChange={(e) => setOrderStatus(e.target.value)}
-          required
-          className="p-2 border border-gray-300 rounded w-full"
-        />
+        <p className="text-gray-600">
+          <strong>Order Type:</strong>{" "}
+          <span className="text-lg font-semibold text-blue-500">
+            {orderType || "Not Selected"}
+          </span>
+        </p>
 
-        {/* Total Price */}
-        <input
-          type="number"
-          placeholder="Total Price"
-          value={total}
-          onChange={(e) => setTotal(e.target.value)}
-          className="p-2 border border-gray-300 rounded w-full"
-        />
+        <p className="text-gray-600">
+          <strong>Reservation ID:</strong>{" "}
+          <span className="text-lg font-semibold text-blue-500">
+            {reservationId || "Not Selected"}
+          </span>
+        </p>
 
-        {/* Order Items */}
+        {reservationDetails ? (
+          <div className="border p-4 rounded bg-gray-100">
+            <h3 className="text-lg font-semibold">Reservation Details</h3>
+            <p>
+              <strong>Customer Name:</strong> {reservationDetails.customerName}
+            </p>
+            <p>
+              <strong>Reservation Date:</strong> {reservationDetails.date}
+            </p>
+            <p>
+              <strong>Time:</strong> {reservationDetails.time}
+            </p>
+            <p>
+              <strong>Number of Guests:</strong> {reservationDetails.NoofPerson}
+            </p>
+            {/* <p>
+              <strong>Special Requests:</strong>{" "}
+              {reservationDetails.specialRequests || "None"}
+            </p> */}
+          </div>
+        ) : reservationId ? (
+          <p className="text-red-500">Fetching reservation details...</p>
+        ) : null}
+
         <h3 className="text-lg font-semibold mt-4">Order Items</h3>
         {items.map((item, index) => (
-          <div key={index} className="space-y-2">
-            <input
-              type="text"
-              placeholder="Item Name"
-              value={item.name}
-              onChange={(e) => handleItemChange(index, "name", e.target.value)}
-              required
-              className="p-2 border border-gray-300 rounded w-full"
-            />
-            <input
-              type="number"
-              placeholder="Quantity"
-              value={item.quantity}
-              onChange={(e) => handleItemChange(index, "quantity", e.target.value)}
-              required
-              className="p-2 border border-gray-300 rounded w-full"
-            />
-            <input
-              type="number"
-              placeholder="Price"
-              value={item.price}
-              onChange={(e) => handleItemChange(index, "price", e.target.value)}
-              required
-              className="p-2 border border-gray-300 rounded w-full"
-            />
-          </div>
+          <p key={index}>
+            {item.name} - {item.quantity} x ${item.price.toFixed(2)}
+          </p>
         ))}
-        <button type="button" onClick={addItem} className="bg-gray-500 text-white p-2 rounded mt-2">
-          + Add Item
-        </button>
 
-        {/* Submit Order */}
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full mt-4">
-          Add Order
+        <div className="flex items-center justify-between">
+          <span className="font-semibold">Payment Method:</span>
+          <label className="inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={isOnlinePayment}
+              onChange={() => setIsOnlinePayment(!isOnlinePayment)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer dark:bg-gray-700 peer-checked:bg-blue-600"></div>
+            <span className="ml-3 text-sm font-medium">
+              {isOnlinePayment ? "Online Payment" : "Branch Payment"}
+            </span>
+          </label>
+        </div>
+
+        <button
+          type="submit"
+          className="bg-blue-500 text-white p-2 rounded w-full"
+        >
+          Place Order
         </button>
       </form>
-
-      {/* Button to View Orders List */}
-      <button
-        onClick={() => navigate("/display-orders")}
-        className="mt-4 bg-green-500 text-white p-2 rounded w-full"
-      >
-        View Orders List
-      </button>
     </div>
   );
 };

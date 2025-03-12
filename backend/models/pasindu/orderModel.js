@@ -4,6 +4,10 @@ const orderSchema = new mongoose.Schema({
   orderId: {
     type: String,
   },
+  restaurantId: { 
+    type: String,
+    required: true, // Ensure that each order is linked to a restaurant
+  },
   customerName: {
     type: String,
     required: true,
@@ -48,11 +52,10 @@ const orderSchema = new mongoose.Schema({
     },
   ],
   reservationStatus: {
-    type: mongoose.Schema.Types.ObjectId, // Stores reservationId reference
-    ref: "Reservation", // Reference to the Reservation model
+    type: mongoose.Schema.Types.ObjectId, // Stores reference to Reservation model
+    ref: "Reservation",
     default: null, // If no reservation, it is null
   },
-});
-
+}, { timestamps: true }); // Adds createdAt and updatedAt timestamps
 
 module.exports = mongoose.model('Order', orderSchema);
