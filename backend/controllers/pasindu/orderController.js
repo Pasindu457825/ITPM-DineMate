@@ -4,8 +4,6 @@ const Order = require("../../models/pasindu/orderModel"); // Assuming you have t
 // Add new order
 const createOrder = async (req, res) => {
   try {
-    console.log("📩 Incoming Order Data:", req.body);
-
     const {
       restaurantId,
       customerName,
@@ -46,7 +44,6 @@ const createOrder = async (req, res) => {
     });
 
     await newOrder.save();
-    console.log("✅ Order saved:", newOrder);
 
     res
       .status(201)

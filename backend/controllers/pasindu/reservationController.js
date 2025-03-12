@@ -38,11 +38,14 @@ const addReservation = async (req, res) => {
       date,
       time,
     });
+
     await newReservation.save();
+
     res.status(201).json({
       message: "Reservation added successfully",
-      reservation: newReservation,
+      reservationId: newReservation._id, // ✅ Send reservationId explicitly
     });
+    
   } catch (error) {
     console.error("Error in adding reservation:", error);
     res
