@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import CartSidebar from "../order/CartPage";
 
@@ -14,13 +14,19 @@ const RestaurantDetails = () => {
   const [orderType, setOrderType] = useState(""); // Track order type
   const navigate = useNavigate(); // Initialize navigate function
 
-  const queryParams = new URLSearchParams(location.search);
-  const reservationId = queryParams.get("reservationId");
+  const location = useLocation(); // ✅ Add useLocation()
+
+  // Retrieve reservationId from state
+  const { reservationId } = location.state || {};
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCart(storedCart);
   }, []);
+
+  useEffect(() => {
+    console.log("Reservation ID:", reservationId); // Check if it logs correctly
+  }, [reservationId]);
 
   useEffect(() => {
     const fetchRestaurantAndFoods = async () => {
@@ -127,18 +133,6 @@ const RestaurantDetails = () => {
         </p>
       </div>
 
-      {/* Display Reservation ID if available */}
-      {reservationId && (
-        <div className="mt-6 p-4 bg-green-100 border-l-4 border-green-500">
-          <p className="text-lg font-semibold text-green-700">
-            ✅ Reservation Confirmed!
-          </p>
-          <p className="text-gray-700">
-            Your Reservation ID: <strong>{reservationId}</strong>
-          </p>
-        </div>
-      )}
-
       <h2 className="text-2xl font-bold text-gray-800 mt-8">Food Menu</h2>
 
       {/* Order Type Selection */}
@@ -174,18 +168,6 @@ const RestaurantDetails = () => {
         )}
       </div>
 
-      {/* Display Reservation ID if available */}
-      {reservationId && (
-        <div className="mt-6 p-4 bg-green-100 border-l-4 border-green-500">
-          <p className="text-lg font-semibold text-green-700">
-            ✅ Reservation Confirmed!
-          </p>
-          <p className="text-gray-700">
-            Your Reservation ID: <strong>{reservationId}</strong>
-          </p>
-        </div>
-      )}
-
       {/* Make a Reservation Button */}
       <button
         onClick={() =>
@@ -202,6 +184,13 @@ const RestaurantDetails = () => {
       >
         Make a Reservation 📅
       </button>
+
+      {reservationId && (
+        <p className="text-lg font-semibold text-green-500">
+          ✅ Your reservation has been created successfully! (ID:{" "}
+          {reservationId})
+        </p>
+      )}
 
       <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
         {foods

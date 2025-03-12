@@ -111,9 +111,13 @@ const CreateReservation = () => {
         { ...formData, tableNumber: selectedTables.join(", ") }
       );
 
-      const reservationId = response.data.reservationId; 
-      // Extract reservationId from response
-      navigate(`/user/restaurent-details/${restaurantId}`); // Redirect to another page with reservationId
+      const reservationId = response.data.reservationId; // Extract reservationId from response
+      // console.log("Backend Reservation ID:", reservationId); // ✅ Check this line
+
+      // ✅ Redirect to another page with reservationId using state
+      navigate(`/user/restaurent-details/${restaurantId}`, {
+        state: { reservationId }, // ✅ Pass only reservationId (restaurantId is in the URL)
+      });
     } catch (error) {
       console.error("Error creating reservation:", error);
     }
