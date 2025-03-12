@@ -34,7 +34,7 @@ const App = () => {
       <Routes>
         {/* Pasindu Order*/}
         <Route path="/" element={<HomePage />} />
-        <Route path="/add-order" element={<AddOrderForm />} />
+        <Route path="/add-order-details" element={<AddOrderForm />} />
         <Route path="/display-orders" element={<OrdersList />} />
         <Route path="/update-order/:id" element={<UpdateOrderForm />} />
         <Route path="/cart" element={<CartPage />} />
