@@ -7,17 +7,17 @@ const AddOrderForm = () => {
   const location = useLocation();
 
   // Extract restaurant details and cart items from navigation state
-  const { restaurantId, restaurantName, cart, orderType } = location.state || {
+  const { restaurantId, restaurantName, cart, orderType, reservationId } = location.state || {
     restaurantId: "",
     restaurantName: "Unknown Restaurant",
     cart: [],
     orderType: "",
+    reservationId: "",
   };
 
   // State variables for order details
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
-  const [selectedOrderType, setSelectedOrderType] = useState(orderType);
   const [paymentStatus, setPaymentStatus] = useState("Pending");
   const [orderStatus, setOrderStatus] = useState("Processing");
   const [reservationStatus, setReservationStatus] = useState("None");
@@ -50,12 +50,12 @@ const AddOrderForm = () => {
       restaurantId,
       customerName,
       customerEmail,
-      orderType: selectedOrderType,
+      orderType: orderType,
       paymentStatus,
       orderStatus,
       total: orderTotal,
       items,
-      reservationStatus,
+      reservationStatus:reservationId,
     };
 
     console.log("🚀 Sending Order Data:", orderData); // Debug Log
@@ -113,7 +113,15 @@ const AddOrderForm = () => {
         <p className="text-gray-600">
           <strong>Order Type:</strong>{" "}
           <span className="text-lg font-semibold text-blue-500">
-            {selectedOrderType || "Not Selected"}
+            {orderType || "Not Selected"}
+          </span>
+        </p>
+
+        
+        <p className="text-gray-600">
+          <strong>reservationId:</strong>{" "}
+          <span className="text-lg font-semibold text-blue-500">
+            {reservationId || "Not Selected"}
           </span>
         </p>
 

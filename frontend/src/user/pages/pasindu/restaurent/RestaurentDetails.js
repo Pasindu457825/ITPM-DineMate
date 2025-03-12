@@ -25,10 +25,6 @@ const RestaurantDetails = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Reservation ID:", reservationId); // Check if it logs correctly
-  }, [reservationId]);
-
-  useEffect(() => {
     const fetchRestaurantAndFoods = async () => {
       try {
         const restaurantResponse = await axios.get(
@@ -250,7 +246,8 @@ const RestaurantDetails = () => {
         setCartOpen={setCartOpen}
         cart={cart}
         setCart={setCart}
-        orderType={orderType} // ✅ Pass selected order type
+        orderType={orderType}
+        reservationId={reservationId} 
       />
     </div>
   );

@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const CartSidebar = ({ cartOpen, setCartOpen, cart, setCart, orderType }) => {
+const CartSidebar = ({ cartOpen, setCartOpen, cart, setCart, orderType, reservationId }) => {
   const navigate = useNavigate();
 
   // Assuming all items in the cart are from the same restaurant
@@ -111,7 +111,7 @@ const CartSidebar = ({ cartOpen, setCartOpen, cart, setCart, orderType }) => {
               }
 
               navigate("/add-order-details", {
-                state: { restaurantId, restaurantName, cart, orderType }, // ✅ Include orderType
+                state: { restaurantId, restaurantName, cart, orderType, reservationId }, // ✅ Include orderType
               });
             }}
             className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg mt-4 hover:bg-blue-600 transition"
