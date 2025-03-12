@@ -48,13 +48,13 @@ const AddOrderForm = () => {
 
     const fetchReservationDetails = async () => {
       try {
-        console.log("🔍 Fetching reservation details for ID:", reservationId);
+        // console.log("🔍 Fetching reservation details for ID:", reservationId);
 
         const response = await axios.get(
           `http://localhost:5000/api/ITPM/reservations/get-reservation/${reservationId}`
         );
 
-        console.log("✅ Reservation Details Fetched:", response.data);
+        // console.log("✅ Reservation Details Fetched:", response.data);
         setReservationDetails(response.data);
       } catch (error) {
         console.error("❌ Failed to fetch reservation details:", error);
@@ -81,7 +81,10 @@ const AddOrderForm = () => {
       orderStatus,
       total: parseFloat(total),
       items,
-      reservationId,
+      reservationStatus:
+        reservationId && reservationId.trim() !== ""
+          ? { reservationId: reservationId, status: "Available" }
+          : { reservationId: "No", status: "Unavailable" }, // Store as an array
     };
 
     console.log("🚀 Sending Order Data:", orderData);
@@ -169,10 +172,10 @@ const AddOrderForm = () => {
             <p>
               <strong>Number of Guests:</strong> {reservationDetails.NoofPerson}
             </p>
-            {/* <p>
+            <p>
               <strong>Special Requests:</strong>{" "}
               {reservationDetails.specialRequests || "None"}
-            </p> */}
+            </p>
           </div>
         ) : reservationId ? (
           <p className="text-red-500">Fetching reservation details...</p>
