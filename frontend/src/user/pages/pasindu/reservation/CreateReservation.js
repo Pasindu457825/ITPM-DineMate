@@ -25,6 +25,17 @@ const CreateReservation = () => {
     time: "",
   });
 
+  // Time slots for selection
+  const timeSlots = [
+    "08:00 - 10:00 AM",
+    "10:00 - 12:00 PM",
+    "12:00 - 02:00 PM",
+    "02:00 - 04:00 PM",
+    "04:00 - 06:00 PM",
+    "06:00 - 08:00 PM",
+    "08:00 - 10:00 PM",
+  ];
+  
   // Fetch restaurant details if not provided
   useEffect(() => {
     if (!state?.name) {
@@ -236,14 +247,20 @@ const CreateReservation = () => {
 
         <div>
           <label className="block text-sm font-medium">Reservation Time</label>
-          <input
-            type="time"
+          <select
             name="time"
             value={formData.time}
             onChange={handleChange}
             required
             className="p-2 border border-gray-300 rounded w-full"
-          />
+          >
+            <option value="">Select Time Slot</option>
+            {timeSlots.map((slot, index) => (
+              <option key={index} value={slot}>
+                {slot}
+              </option>
+            ))}
+          </select>
         </div>
 
         <button
