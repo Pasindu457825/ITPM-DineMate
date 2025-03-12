@@ -106,18 +106,21 @@ const CreateReservation = () => {
     }
 
     try {
-      await axios.post(
+      const response = await axios.post(
         "http://localhost:5000/api/ITPM/reservations/create-reservation",
         { ...formData, tableNumber: selectedTables.join(", ") }
       );
-      navigate(`/user/restaurent-details/${restaurantId}`);
+
+      const reservationId = response.data.reservationId; 
+      // Extract reservationId from response
+      navigate(`/user/restaurent-details/${restaurantId}`); // Redirect to another page with reservationId
     } catch (error) {
       console.error("Error creating reservation:", error);
     }
   };
 
   const handleGoBack = () => {
-    navigate(`/display-reservations/${restaurantId}`);
+    navigate(`/user/restaurent-details/${restaurantId}`);
   };
 
   const totalCapacity =
@@ -318,7 +321,7 @@ const CreateReservation = () => {
         onClick={handleGoBack}
         className="mt-4 bg-gray-500 text-white px-4 py-2 rounded w-full hover:bg-gray-600"
       >
-        Back to Reservation List
+        Back to Restaurant
       </button>
     </div>
   );
