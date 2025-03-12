@@ -6,13 +6,14 @@ const AddOrderForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { restaurantId, restaurantName, cart, orderType, reservationId } = location.state || {
-    restaurantId: "",
-    restaurantName: "Unknown Restaurant",
-    cart: [],
-    orderType: "",
-    reservationId: "",
-  };
+  const { restaurantId, restaurantName, cart, orderType, reservationId } =
+    location.state || {
+      restaurantId: "",
+      restaurantName: "Unknown Restaurant",
+      cart: [],
+      orderType: "",
+      reservationId: "",
+    };
 
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
@@ -20,6 +21,7 @@ const AddOrderForm = () => {
   const [total, setTotal] = useState(0);
   const [items, setItems] = useState([]);
   const [isOnlinePayment, setIsOnlinePayment] = useState(false);
+  const [reservationDetails, setReservationDetails] = useState(null);
 
   useEffect(() => {
     setItems(
@@ -36,6 +38,36 @@ const AddOrderForm = () => {
     );
     setTotal(totalAmount.toFixed(2));
   }, [cart]);
+
+  // Fetch reservation details if reservationId is provided
+  useEffect(() => {
+    if (!reservationId) {
+      console.warn("⚠️ No reservation ID provided. Skipping API call.");
+      return;
+    }
+
+    const fetchReservationDetails = async () => {
+      try {
+        console.log("🔍 Fetching reservation details for ID:", reservationId);
+
+        const response = await axios.get(
+          `http://localhost:5000/api/ITPM/reservations/get-reservation/${reservationId}`
+        );
+
+        console.log("✅ Reservation Details Fetched:", response.data);
+        setReservationDetails(response.data);
+      } catch (error) {
+        console.error("❌ Failed to fetch reservation details:", error);
+        alert(
+          `Error fetching reservation: ${
+            error.response?.data?.message || "Unknown error"
+          }`
+        );
+      }
+    };
+
+    fetchReservationDetails();
+  }, [reservationId]); // Ensure it runs when reservationId changes
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,7 +88,7 @@ const AddOrderForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/ITPM/orders/create-order",
+        "http://localhost:5000/api/ITPM/orders/add-order",
         orderData,
         { headers: { "Content-Type": "application/json" } }
       );
@@ -64,13 +96,22 @@ const AddOrderForm = () => {
       console.log("✅ Order Created:", response.data);
 
       if (isOnlinePayment) {
-        navigate("/payment-page", { state: { orderId: response.data._id, total } });
+        navigate("/payment-page", {
+          state: { orderId: response.data._id, total },
+        });
       } else {
         navigate("/success-page");
       }
     } catch (error) {
-      console.error("❌ Order Submission Error:", error.response?.data || error);
-      alert(`Order submission failed: ${error.response?.data?.message || "Unknown error"}`);
+      console.error(
+        "❌ Order Submission Error:",
+        error.response?.data || error
+      );
+      alert(
+        `Order submission failed: ${
+          error.response?.data?.message || "Unknown error"
+        }`
+      );
     }
   };
 
@@ -113,6 +154,30 @@ const AddOrderForm = () => {
           </span>
         </p>
 
+        {reservationDetails ? (
+          <div className="border p-4 rounded bg-gray-100">
+            <h3 className="text-lg font-semibold">Reservation Details</h3>
+            <p>
+              <strong>Customer Name:</strong> {reservationDetails.customerName}
+            </p>
+            <p>
+              <strong>Reservation Date:</strong> {reservationDetails.date}
+            </p>
+            <p>
+              <strong>Time:</strong> {reservationDetails.time}
+            </p>
+            <p>
+              <strong>Number of Guests:</strong> {reservationDetails.NoofPerson}
+            </p>
+            {/* <p>
+              <strong>Special Requests:</strong>{" "}
+              {reservationDetails.specialRequests || "None"}
+            </p> */}
+          </div>
+        ) : reservationId ? (
+          <p className="text-red-500">Fetching reservation details...</p>
+        ) : null}
+
         <h3 className="text-lg font-semibold mt-4">Order Items</h3>
         {items.map((item, index) => (
           <p key={index}>
@@ -136,7 +201,10 @@ const AddOrderForm = () => {
           </label>
         </div>
 
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">
+        <button
+          type="submit"
+          className="bg-blue-500 text-white p-2 rounded w-full"
+        >
           Place Order
         </button>
       </form>
