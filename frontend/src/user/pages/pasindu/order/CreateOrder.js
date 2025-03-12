@@ -77,7 +77,9 @@ const AddOrderForm = () => {
       customerName,
       customerEmail,
       orderType,
-      paymentStatus: isOnlinePayment ? "Online" : "Branch",
+      paymentType: isOnlinePayment 
+        ? {paymentMethod: "Online Payment", paymentStatus: "Pending"} // Online payments have "Pending" status
+        : {paymentMethod: "Cash Payment", paymentStatus: "No"}, // Cash payments are directly marked
       orderStatus,
       total: parseFloat(total),
       items,
@@ -199,7 +201,7 @@ const AddOrderForm = () => {
             />
             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer dark:bg-gray-700 peer-checked:bg-blue-600"></div>
             <span className="ml-3 text-sm font-medium">
-              {isOnlinePayment ? "Online Payment" : "Branch Payment"}
+              {isOnlinePayment ? "Online Payment" : "Cash Payment"}
             </span>
           </label>
         </div>

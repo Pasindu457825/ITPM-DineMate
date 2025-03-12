@@ -21,8 +21,11 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    paymentStatus: {
-      type: String,
+    paymentType: {
+      type: {
+        paymentMethod: { type: String, default: "No" },
+        paymentStatus: { type: String, required: true },
+      },
       required: true,
     },
     orderStatus: {
