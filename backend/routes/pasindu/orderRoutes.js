@@ -4,7 +4,7 @@ const router = express.Router();
 const orderController = require('../../controllers/pasindu/orderController'); // Path to your controller file
 
 // Add new order
-router.post('/create-order', orderController.addOrder);
+router.post('/create-order', orderController.createOrder);
 
 // Get one order by ID
 router.get('/get-order/:id', orderController.getOrderById);

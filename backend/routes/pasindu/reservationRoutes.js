@@ -17,4 +17,7 @@ router.put('/update-reservation/:id', reservationController.updateReservation);
 // Delete a reservation by ID
 router.delete('/delete-reservation/:id', reservationController.deleteReservation);
 
+// Get available tables for a restaurant at a specific date & time
+router.get("/available-tables", reservationController.getAvailableTables);
+
 module.exports = router;
