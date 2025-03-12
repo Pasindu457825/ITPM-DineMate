@@ -11,7 +11,11 @@ const RestaurantDetails = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [quantities, setQuantities] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [orderType, setOrderType] = useState(""); // Track order type
   const navigate = useNavigate(); // Initialize navigate function
+
+  const queryParams = new URLSearchParams(location.search);
+  const reservationId = queryParams.get("reservationId");
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -46,6 +50,11 @@ const RestaurantDetails = () => {
   };
 
   const handleAddToCart = (food) => {
+    if (!orderType) {
+      alert("Please select an order type before adding items.");
+      return;
+    }
+
     const quantity = quantities[food._id] || 1;
     let storedCart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -75,7 +84,10 @@ const RestaurantDetails = () => {
           : item
       );
     } else {
-      updatedCart = [...storedCart, { ...food, quantity, restaurantId }];
+      updatedCart = [
+        ...storedCart,
+        { ...food, quantity, restaurantId, orderType },
+      ];
     }
 
     setCart(updatedCart);
@@ -115,8 +127,35 @@ const RestaurantDetails = () => {
         </p>
       </div>
 
+      {/* Display Reservation ID if available */}
+      {reservationId && (
+        <div className="mt-6 p-4 bg-green-100 border-l-4 border-green-500">
+          <p className="text-lg font-semibold text-green-700">
+            ✅ Reservation Confirmed!
+          </p>
+          <p className="text-gray-700">
+            Your Reservation ID: <strong>{reservationId}</strong>
+          </p>
+        </div>
+      )}
+
       <h2 className="text-2xl font-bold text-gray-800 mt-8">Food Menu</h2>
 
+      {/* Order Type Selection */}
+      <div className="mt-4">
+        <label className="block text-lg font-semibold mb-2">Order Type:</label>
+        <select
+          value={orderType}
+          onChange={(e) => setOrderType(e.target.value)}
+          className="w-full p-2 border rounded"
+        >
+          <option value="">Select Order Type</option>
+          <option value="Dine-in">Dine-in</option>
+          <option value="Takeaway">Takeaway</option>
+        </select>
+      </div>
+
+      {/* Search Bar */}
       <div className="flex mt-4 gap-2">
         <input
           type="text"
@@ -135,7 +174,19 @@ const RestaurantDetails = () => {
         )}
       </div>
 
-      {/* Navigate Button to CreateReservation */}
+      {/* Display Reservation ID if available */}
+      {reservationId && (
+        <div className="mt-6 p-4 bg-green-100 border-l-4 border-green-500">
+          <p className="text-lg font-semibold text-green-700">
+            ✅ Reservation Confirmed!
+          </p>
+          <p className="text-gray-700">
+            Your Reservation ID: <strong>{reservationId}</strong>
+          </p>
+        </div>
+      )}
+
+      {/* Make a Reservation Button */}
       <button
         onClick={() =>
           navigate(`/add-reservation/${restaurantId}`, {
@@ -210,6 +261,7 @@ const RestaurantDetails = () => {
         setCartOpen={setCartOpen}
         cart={cart}
         setCart={setCart}
+        orderType={orderType} // ✅ Pass selected order type
       />
     </div>
   );

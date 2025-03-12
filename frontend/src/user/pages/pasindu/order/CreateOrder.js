@@ -1,73 +1,104 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate, useLocation } from "react-router-dom";
 
 const AddOrderForm = () => {
-  const navigate = useNavigate(); // Initialize navigate function
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // State variables for required order details
+  // Extract restaurant details and cart items from navigation state
+  const { restaurantId, restaurantName, cart, orderType } = location.state || {
+    restaurantId: "",
+    restaurantName: "Unknown Restaurant",
+    cart: [],
+    orderType: "",
+  };
+
+  // State variables for order details
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
-  const [orderType, setOrderType] = useState("");
-  const [paymentStatus, setPaymentStatus] = useState("");
-  const [orderStatus, setOrderStatus] = useState("");
-  const [total, setTotal] = useState("");
-  const [items, setItems] = useState([{ name: "", quantity: 1, price: 0 }]);
+  const [selectedOrderType, setSelectedOrderType] = useState(orderType);
+  const [paymentStatus, setPaymentStatus] = useState("Pending");
+  const [orderStatus, setOrderStatus] = useState("Processing");
+  const [reservationStatus, setReservationStatus] = useState("None");
+  const [total, setTotal] = useState(0);
+  const [items, setItems] = useState([]);
+
+  // Automatically populate items from cart and calculate total price
+  useEffect(() => {
+    setItems(
+      cart.map((item) => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+      }))
+    );
+
+    const totalAmount = cart.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+    setTotal(totalAmount.toFixed(2));
+  }, [cart]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Ensure total is a number
     const orderTotal = parseFloat(total) || 0;
 
-    // Order object matching backend structure
     const orderData = {
+      restaurantId,
       customerName,
       customerEmail,
-      orderType,
+      orderType: selectedOrderType,
       paymentStatus,
       orderStatus,
       total: orderTotal,
       items,
+      reservationStatus,
     };
+
+    console.log("🚀 Sending Order Data:", orderData); // Debug Log
 
     try {
       const response = await axios.post(
         "http://localhost:5000/api/ITPM/orders/create-order",
-        orderData
+        orderData,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
       );
-      console.log("Order added:", response.data);
 
-      // Redirect to orders list after adding order
+      console.log("✅ Order Created:", response.data);
       navigate("/display-orders");
     } catch (error) {
-      console.error("Error adding order:", error);
+      console.error(
+        "❌ Order Submission Error:",
+        error.response?.data || error
+      );
+      alert(
+        `Order submission failed: ${
+          error.response?.data?.message || "Unknown error"
+        }`
+      );
     }
   };
 
-  // Function to handle item updates
-  const handleItemChange = (index, field, value) => {
-    const updatedItems = [...items];
-    updatedItems[index][field] = field === "price" || field === "quantity" ? parseFloat(value) || 0 : value;
-    setItems(updatedItems);
-  };
-
-  // Add a new item to the list
-  const addItem = () => {
-    setItems([...items, { name: "", quantity: 1, price: 0 }]);
-  };
-
   return (
-    <div>
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">Order Details</h2>
+      <p className="text-gray-600">
+        <strong>Restaurant:</strong> {restaurantName}
+      </p>
+
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Customer Details */}
         <input
           type="text"
           placeholder="Customer Name"
           value={customerName}
           onChange={(e) => setCustomerName(e.target.value)}
           required
-          className="p-2 border border-gray-300 rounded w-full"
+          className="p-2 border rounded w-full"
         />
         <input
           type="email"
@@ -75,91 +106,31 @@ const AddOrderForm = () => {
           value={customerEmail}
           onChange={(e) => setCustomerEmail(e.target.value)}
           required
-          className="p-2 border border-gray-300 rounded w-full"
+          className="p-2 border rounded w-full"
         />
 
-        {/* Order Details */}
-        <input
-          type="text"
-          placeholder="Order Type"
-          value={orderType}
-          onChange={(e) => setOrderType(e.target.value)}
-          required
-          className="p-2 border border-gray-300 rounded w-full"
-        />
-        <input
-          type="text"
-          placeholder="Payment Status"
-          value={paymentStatus}
-          onChange={(e) => setPaymentStatus(e.target.value)}
-          required
-          className="p-2 border border-gray-300 rounded w-full"
-        />
-        <input
-          type="text"
-          placeholder="Order Status"
-          value={orderStatus}
-          onChange={(e) => setOrderStatus(e.target.value)}
-          required
-          className="p-2 border border-gray-300 rounded w-full"
-        />
+        {/* ✅ Display Selected Order Type */}
+        <p className="text-gray-600">
+          <strong>Order Type:</strong>{" "}
+          <span className="text-lg font-semibold text-blue-500">
+            {selectedOrderType || "Not Selected"}
+          </span>
+        </p>
 
-        {/* Total Price */}
-        <input
-          type="number"
-          placeholder="Total Price"
-          value={total}
-          onChange={(e) => setTotal(e.target.value)}
-          className="p-2 border border-gray-300 rounded w-full"
-        />
-
-        {/* Order Items */}
         <h3 className="text-lg font-semibold mt-4">Order Items</h3>
         {items.map((item, index) => (
-          <div key={index} className="space-y-2">
-            <input
-              type="text"
-              placeholder="Item Name"
-              value={item.name}
-              onChange={(e) => handleItemChange(index, "name", e.target.value)}
-              required
-              className="p-2 border border-gray-300 rounded w-full"
-            />
-            <input
-              type="number"
-              placeholder="Quantity"
-              value={item.quantity}
-              onChange={(e) => handleItemChange(index, "quantity", e.target.value)}
-              required
-              className="p-2 border border-gray-300 rounded w-full"
-            />
-            <input
-              type="number"
-              placeholder="Price"
-              value={item.price}
-              onChange={(e) => handleItemChange(index, "price", e.target.value)}
-              required
-              className="p-2 border border-gray-300 rounded w-full"
-            />
-          </div>
+          <p key={index}>
+            {item.name} - {item.quantity} x ${item.price.toFixed(2)}
+          </p>
         ))}
-        <button type="button" onClick={addItem} className="bg-gray-500 text-white p-2 rounded mt-2">
-          + Add Item
-        </button>
 
-        {/* Submit Order */}
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full mt-4">
-          Add Order
+        <button
+          type="submit"
+          className="bg-blue-500 text-white p-2 rounded w-full mt-4"
+        >
+          Place Order
         </button>
       </form>
-
-      {/* Button to View Orders List */}
-      <button
-        onClick={() => navigate("/display-orders")}
-        className="mt-4 bg-green-500 text-white p-2 rounded w-full"
-      >
-        View Orders List
-      </button>
     </div>
   );
 };
