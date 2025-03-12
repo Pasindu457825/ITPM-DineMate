@@ -32,7 +32,7 @@ router.post("/register/manager", async (req, res) => {
     }
 });
 
-// Common Login Route
+// Common Login Route - No change needed
 router.post("/login", async (req, res) => {
     const { email, pwd } = req.body;
 
