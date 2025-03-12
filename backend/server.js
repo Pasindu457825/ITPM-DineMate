@@ -20,6 +20,9 @@ const userRoutes = require("./routes/tharusha/userRoute");
 const foodItemRoutes = require("./routes/pamaa/foodItemRoutes");
 const restaurantRoutes = require("./routes/pamaa/restaurantRoutes");
 
+// isuri - Payment Management
+const paymentRoutes = require("./routes/Isuri/paymentRoutes");
+
 
 
 dotenv.config();
@@ -48,6 +51,8 @@ app.use("/api/ITPM/users", userRoutes);
 
 app.use("/api/ITPM/foodItems", foodItemRoutes);
 app.use("/api/ITPM/restaurants", restaurantRoutes);
+
+app.use("/api/ITPM/payments", paymentRoutes);
 
 
 // Start the server

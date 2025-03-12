@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import deleteRestaurant from "./DeleteRestaurant"; // Import the delete function for restaurants
+import deleteRestaurant from "../../../../manager/pages/pamaa/restaurent/DeleteRestaurant"; // Import the delete function for restaurants
 
 const RestaurantsList = () => {
   const [restaurants, setRestaurants] = useState([]);
