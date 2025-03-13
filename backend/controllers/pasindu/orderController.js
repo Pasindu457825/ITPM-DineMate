@@ -9,7 +9,7 @@ const createOrder = async (req, res) => {
       customerName,
       customerEmail,
       orderType,
-      paymentStatus,
+      paymentType,
       orderStatus,
       total,
       items,
@@ -21,7 +21,7 @@ const createOrder = async (req, res) => {
       !customerName ||
       !customerEmail ||
       !orderType ||
-      !paymentStatus ||
+      !paymentType ||
       !orderStatus
     ) {
       console.error("❌ Missing required fields");
@@ -36,7 +36,7 @@ const createOrder = async (req, res) => {
       customerName,
       customerEmail,
       orderType,
-      paymentStatus,
+      paymentType,
       orderStatus,
       total,
       items,
@@ -89,7 +89,7 @@ const updateOrder = async (req, res) => {
     customerName,
     customerEmail,
     orderType,
-    paymentStatus,
+    paymentType,
     orderStatus,
     total,
     items,
@@ -105,7 +105,7 @@ const updateOrder = async (req, res) => {
         customerName,
         customerEmail,
         orderType,
-        paymentStatus,
+        paymentType,
         orderStatus,
         total,
         items,
