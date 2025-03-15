@@ -1,101 +1,126 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import deleteOrder from "./DeleteOrder"; // Import the delete function
+import { useNavigate } from "react-router-dom";
 
-const OrdersList = () => {
+const OrderDetails = () => {
+  const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
-  const navigate = useNavigate(); // Use navigate function for redirection
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchOrders = async () => {
+    const fetchProfile = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:5000/api/ITPM/orders/get-all-orders"
-        );
-        setOrders(response.data);
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.log("No token found. Redirecting to login.");
+          navigate("/login");
+          return;
+        }
+
+        const res = await axios.get("http://localhost:5000/api/ITPM/users/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setUser(res.data);
       } catch (error) {
-        console.error("Error fetching orders:", error);
+        console.error(
+          "Error fetching profile:",
+          error.response?.data || error.message
+        );
+        setError("Failed to fetch user data");
       }
     };
 
-    fetchOrders();
-  }, []);
+    fetchProfile();
+  }, [navigate]);
 
-  // Function to handle order deletion
-  const handleDelete = async (id) => {
-    await deleteOrder(id, setOrders, orders); // Call the delete function from delete.js
-  };
+  useEffect(() => {
+    if (user && user.email) {
+      const fetchOrders = async () => {
+        try {
+          console.log("📢 Fetching orders for:", user.email); // Debugging
 
-  // Function to navigate to the update page (passing order ID to pre-fill form)
-  const handleUpdate = (id) => {
-    navigate(`/update-order/${id}`); // Navigate to Update order page
-  };
+          const response = await axios.get(
+            `http://localhost:5000/api/ITPM/orders/my-orders/${user.email}`
+          );
+
+          console.log("✅ Orders Response Data:", response.data); // Debugging
+
+          if (Array.isArray(response.data)) {
+            setOrders(response.data);
+          } else {
+            console.error("❌ Invalid data format received:", response.data);
+            setOrders([]); // Ensure orders is always an array
+          }
+        } catch (error) {
+          console.error(
+            "❌ Error fetching orders:",
+            error.response?.data || error.message
+          );
+          setError("Failed to fetch order details");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchOrders();
+    }
+  }, [user]);
+
+  if (loading) return <p className="text-gray-600">Loading order details...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Orders List</h1>
+      <h2 className="text-2xl font-bold mb-4">Your Orders</h2>
+
       {orders.length === 0 ? (
-        <p className="text-gray-500">No orders found.</p>
+        <p className="text-gray-600">No orders found.</p>
       ) : (
-        <ul className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {orders.map((order) => (
-            <li key={order._id} className="border p-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out">
-              <div className="flex flex-col space-y-2">
-                {/* Customer Details */}
-                <h2 className="text-2xl font-semibold text-gray-800">{order.customerName}</h2>
-                <p className="text-gray-600">Email: {order.customerEmail}</p>
+            <div
+              key={order._id}
+              className="border p-4 rounded bg-white shadow-md"
+            >
+              <h3 className="text-lg font-semibold">Order ID: {order._id}</h3>
+              <p>
+                <strong>Restaurant:</strong> {order.restaurantName || "N/A"}
+              </p>
+              <p>
+                <strong>Status:</strong>{" "}
+                <span
+                  className={`font-bold ${
+                    order.orderStatus === "Completed"
+                      ? "text-green-600"
+                      : "text-red-500"
+                  }`}
+                >
+                  {order.orderStatus}
+                </span>
+              </p>
+              <p>
+                <strong>Payment Method:</strong>{" "}
+                {order.paymentType.paymentMethod}
+              </p>
+              <p>
+                <strong>Total:</strong> ${order.total.toFixed(2)}
+              </p>
 
-                {/* Order Details */}
-                <p className="text-gray-700">
-                  <strong>Order Type:</strong> {order.orderType}
-                </p>
-                <p className="text-gray-700">
-                  <strong>Payment Status:</strong> {order.paymentStatus}
-                </p>
-                <p className="text-gray-700">
-                  <strong>Order Status:</strong> {order.orderStatus}
-                </p>
-                <p className="text-lg font-medium text-green-600">
-                  <strong>Total:</strong> ${order.total}
-                </p>
-
-                {/* Display Ordered Items */}
-                {order.items && order.items.length > 0 && (
-                  <div className="mt-3">
-                    <h3 className="text-lg font-semibold text-gray-800">Items:</h3>
-                    <ul className="list-disc list-inside text-gray-600">
-                      {order.items.map((item, index) => (
-                        <li key={index}>
-                          {item.name} - {item.quantity} x ${item.price}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Action Buttons */}
-                <div className="flex space-x-4 mt-4">
-                  <button
-                    onClick={() => handleUpdate(order._id)}
-                    className="bg-yellow-600 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                  >
-                    Update
-                  </button>
-                  <button
-                    onClick={() => handleDelete(order._id)}
-                    className="bg-red-600 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </li>
+              <button
+                onClick={() => navigate(`/order/${order._id}`)}
+                className="bg-blue-500 text-white p-2 rounded mt-2 w-full"
+              >
+                View Details
+              </button>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
 };
 
-export default OrdersList;
+export default OrderDetails;

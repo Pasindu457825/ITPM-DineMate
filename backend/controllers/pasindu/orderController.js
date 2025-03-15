@@ -1,5 +1,6 @@
 const Order = require("../../models/pasindu/orderModel");
-const FoodItem = require("../../models/pamaa/foodItemModel"); // ✅ Update with the correct path
+const FoodItem = require("../../models/pamaa/foodItemModel");
+const User = require("../../models/tharusha/userModel"); // ✅ Update with the correct path
 
 // Add new order
 const createOrder = async (req, res) => {
@@ -87,6 +88,26 @@ const getOrderById = async (req, res) => {
   }
 };
 
+// ✅ Get all orders of the logged-in user
+const getOrdersByCustomerEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    const orders = await Order.find({
+      customerEmail: new RegExp(`^${email}$`, "i"), // Case-insensitive search
+    });
+
+    if (!orders.length) {
+      return res.status(404).json({ message: "No orders found" });
+    }
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("❌ Error fetching orders:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
 // Get all orders
 const getAllOrders = async (req, res) => {
   try {
@@ -166,6 +187,7 @@ module.exports = {
   createOrder,
   getOrderById,
   getAllOrders,
+  getOrdersByCustomerEmail,
   updateOrder,
   deleteOrder,
 };
