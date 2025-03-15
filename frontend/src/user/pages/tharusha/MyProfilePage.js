@@ -7,39 +7,50 @@ const MyProfilePage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("token"); // Get token from localStorage
+        const token = localStorage.getItem("token");
         if (!token) {
-          console.log("No token are found in. User might not be logged in.");
+          console.warn("⚠️ No token found. Redirecting to login...");
           return;
         }
 
-        // Send token in Authorization header
         const res = await axios.get("http://localhost:5000/api/ITPM/users/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
+
+        console.log("✅ Profile fetched:", res.data);
+
+        // ✅ Store profile in sessionStorage
+        sessionStorage.setItem("userProfile", JSON.stringify(res.data));
+
         setUser(res.data);
       } catch (error) {
-        console.error("Error fetching profile:", error.response?.data || error.message);
+        console.error(
+          "❌ Error fetching profile:",
+          error.response?.data || error.message
+        );
       }
     };
 
     fetchProfile();
   }, []);
 
-  if (!user) {
-    return <div>Loading or not logged in...</div>;
-  }
+  if (!user) return <div>Loading or not logged in...</div>;
 
   return (
     <div>
       <h2>My Profile</h2>
-      <p><strong>First Name:</strong> {user.fname}</p>
-      <p><strong>Last Name:</strong> {user.lname}</p>
-      <p><strong>Email:</strong> {user.email}</p>
-      <p><strong>Phone:</strong> {user.phone_no}</p>
-      {/* <p><strong>Role:</strong> {user.role}</p> */}
+      <p>
+        <strong>First Name:</strong> {user.fname}
+      </p>
+      <p>
+        <strong>Last Name:</strong> {user.lname}
+      </p>
+      <p>
+        <strong>Email:</strong> {user.email}
+      </p>
+      <p>
+        <strong>phoneNumber:</strong> {user.phone_no}
+      </p>
     </div>
   );
 };
