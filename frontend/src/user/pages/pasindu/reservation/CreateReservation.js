@@ -6,7 +6,7 @@ const CreateReservation = () => {
   const { restaurantId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-
+  const [user, setUser] = useState(null);
   const { state } = location || {};
 
   const [restaurant, setRestaurant] = useState(null);
@@ -19,8 +19,8 @@ const CreateReservation = () => {
     restaurantId: state?.restaurantId || restaurantId,
     shopName: state?.name || "",
     tableNumber: "",
-    customerName: "",
-    customerEmail: "",
+    customerName: state?.fname || "", // Prefill first name
+    customerEmail: state?.email || "", // Prefill email
     NoofPerson: "",
     date: "",
     time: "",
@@ -88,6 +88,51 @@ const CreateReservation = () => {
 
     fetchAvailableTables();
   }, [formData.date, formData.time, restaurantId]);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token"); // Get token from localStorage
+        if (!token) {
+          console.log("No token found. User might not be logged in.");
+          return;
+        }
+
+        // Send token in Authorization header
+        const res = await axios.get("http://localhost:5000/api/ITPM/users/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUser(res.data);
+      } catch (error) {
+        console.error(
+          "Error fetching profile:",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  // Update formData when user is fetched
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        customerName: `${state?.fname || user.fname} ${
+          state?.lname || user.lname
+        }`.trim(),
+        customerEmail: state?.email || user.email,
+      }));
+    }
+  }, [user, state]);
+
+
+  if (!user) {
+    return <div>Loading or not logged in...</div>;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -247,8 +292,7 @@ const CreateReservation = () => {
             type="text"
             name="customerName"
             value={formData.customerName}
-            onChange={handleChange}
-            required
+             readOnly // 🔒 Make the field read-only
             className="p-2 border border-gray-300 rounded w-full"
           />
         </div>
@@ -259,8 +303,7 @@ const CreateReservation = () => {
             type="email"
             name="customerEmail"
             value={formData.customerEmail}
-            onChange={handleChange}
-            required
+            readOnly // 🔒 Make the field read-only
             className="p-2 border border-gray-300 rounded w-full"
           />
         </div>
