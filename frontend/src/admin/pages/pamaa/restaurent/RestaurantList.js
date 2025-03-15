@@ -81,7 +81,7 @@ const RestaurantsList = () => {
                     onClick={() => handleDelete(restaurant._id)}
                     className="bg-red-600 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
                   >
-                    Delete
+                    Delete button
                   </button>
                 </div>
               </div>
