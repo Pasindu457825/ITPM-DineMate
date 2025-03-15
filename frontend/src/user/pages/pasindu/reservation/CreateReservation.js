@@ -22,6 +22,7 @@ const CreateReservation = () => {
     customerName: state?.fname || "", // Prefill first name
     customerEmail: state?.email || "", // Prefill email
     NoofPerson: "",
+    specialRequests: "",
     date: "",
     time: "",
   });
@@ -152,15 +153,13 @@ const CreateReservation = () => {
     try {
       const response = await axios.post(
         "http://localhost:5000/api/ITPM/reservations/create-reservation",
-        { ...formData, tableNumber: selectedTables.join(", ") }
+        { ...formData, tableNumber: selectedTables.join(", ") } // ✅ Include specialRequests automatically
       );
 
-      const reservationId = response.data.reservationId; // Extract reservationId from response
-      // console.log("Backend Reservation ID:", reservationId); // ✅ Check this line
+      const reservationId = response.data.reservationId;
 
-      // ✅ Redirect to another page with reservationId using state
       navigate(`/user/restaurent-details/${restaurantId}`, {
-        state: { reservationId }, // ✅ Pass only reservationId (restaurantId is in the URL)
+        state: { reservationId },
       });
     } catch (error) {
       console.error("Error creating reservation:", error);
@@ -353,6 +352,28 @@ const CreateReservation = () => {
               </option>
             ))}
           </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">
+            Special Requests (Optional)
+          </label>
+          <textarea
+            name="specialRequests"
+            value={formData.specialRequests}
+            onChange={(e) => {
+              if (e.target.value.length <= 200) {
+                // ✅ Prevent input over 200 chars
+                setFormData({ ...formData, specialRequests: e.target.value });
+              }
+            }}
+            className="p-2 border border-gray-300 rounded w-full"
+            placeholder="Any special requests (e.g., birthday setup, window seat)..."
+            maxLength="200" // ✅ Prevent input over 200 chars (double safety)
+          />
+          <p className="text-gray-500 text-sm mt-1">
+            {200 - formData.specialRequests.length} characters remaining
+          </p>
         </div>
 
         <button
