@@ -13,11 +13,12 @@ const AddOrderForm = () => {
   const [items, setItems] = useState([]);
   const [isOnlinePayment, setIsOnlinePayment] = useState(false);
   const [reservationDetails, setReservationDetails] = useState(null);
+  const [foodItems, setFoodItems] = useState([]);
 
   const { restaurantId, restaurantName, cart, orderType, reservationId } =
     location.state || {
       restaurantId: "",
-      restaurantName: "Unknown Restaurant",
+      restaurantName: "",
       cart: [],
       orderType: "",
       reservationId: "",
@@ -105,6 +106,39 @@ const AddOrderForm = () => {
     fetchReservationDetails();
   }, [reservationId]); // Ensure it runs when reservationId changes
 
+  useEffect(() => {
+    const fetchFoodItems = async () => {
+      try {
+        if (!restaurantId) {
+          console.warn("⚠️ No restaurantId provided. Skipping API call.");
+          return;
+        }
+
+        const response = await axios.get(
+          `http://localhost:5000/api/ITPM/foodItems/restaurant/foods/${restaurantId}`
+        );
+
+        console.log("✅ API Response:", response.data); // Debugging log
+
+        // ✅ Extract the "foods" array from the response
+        if (response.data?.foods && Array.isArray(response.data.foods)) {
+          setFoodItems(response.data.foods);
+        } else {
+          console.error("❌ API returned an invalid format:", response.data);
+          setFoodItems([]); // Ensure it's always an array
+        }
+      } catch (error) {
+        console.error(
+          "❌ Error fetching food items:",
+          error.response?.data || error.message
+        );
+        setFoodItems([]); // Handle errors by setting an empty array
+      }
+    };
+
+    fetchFoodItems();
+  }, [restaurantId]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -164,21 +198,27 @@ const AddOrderForm = () => {
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          placeholder="Customer Name"
-          value={customerName}
-          readOnly // ✅ Prevents user from editing
-          className="p-2 border rounded w-full bg-gray-100 cursor-not-allowed"
-        />
+        <div>
+          <label className="block text-sm font-medium">Customer Name</label>
+          <input
+            type="text"
+            name="customerName"
+            value={customerName}
+            readOnly // 🔒 Prevents user from editing
+            className="p-2 border border-gray-300 rounded w-full bg-gray-100 cursor-not-allowed pointer-events-none"
+          />
+        </div>
 
-        <input
-          type="email"
-          placeholder="Customer Email"
-          value={customerEmail}
-          readOnly // ✅ Prevents user from editing
-          className="p-2 border rounded w-full bg-gray-100 cursor-not-allowed"
-        />
+        <div>
+          <label className="block text-sm font-medium">Customer Name</label>
+          <input
+            type="text"
+            name="customerName"
+            value={customerEmail}
+            readOnly // 🔒 Prevents user from editing
+            className="p-2 border border-gray-300 rounded w-full bg-gray-100 cursor-not-allowed pointer-events-none"
+          />
+        </div>
 
         <p className="text-gray-600">
           <strong>Order Type:</strong>{" "}
@@ -219,11 +259,49 @@ const AddOrderForm = () => {
         ) : null}
 
         <h3 className="text-lg font-semibold mt-4">Order Items</h3>
-        {items.map((item, index) => (
-          <p key={index}>
-            {item.name} - {item.quantity} x ${item.price.toFixed(2)}
-          </p>
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+          {items.map((item, index) => {
+            // ✅ Ensure foodItems is an array before using .find()
+            const foodItem = Array.isArray(foodItems)
+              ? foodItems.find(
+                  (food) =>
+                    food.name.trim().toLowerCase() ===
+                    item.name.trim().toLowerCase()
+                )
+              : null;
+
+            return (
+              <div
+                key={index}
+                className="bg-white p-4 border border-gray-300 rounded-lg shadow-md"
+              >
+                {/* ✅ Display Food Image if Available */}
+                {foodItem?.image ? (
+                  <img
+                    src={foodItem.image}
+                    alt={item.name}
+                    className="w-full h-40 object-cover rounded-lg mb-2"
+                  />
+                ) : (
+                  <div className="w-full h-40 bg-gray-200 flex items-center justify-center rounded-lg">
+                    <span className="text-gray-500">No Image Available</span>
+                  </div>
+                )}
+
+                <h4 className="text-lg font-semibold">{item.name}</h4>
+                <p className="text-gray-700">Quantity: {item.quantity}</p>
+                <p className="text-gray-700">Price: ${item.price.toFixed(2)}</p>
+                <p className="text-green-600 font-bold">
+                  Total: ${(item.quantity * item.price).toFixed(2)}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* ✅ Display Total Amount */}
+        <h3 className="text-lg font-semibold mt-4">Total Amount</h3>
+        <p className="text-xl font-bold text-green-600">${total}</p>
 
         <div className="flex items-center justify-between">
           <span className="font-semibold">Payment Method:</span>
