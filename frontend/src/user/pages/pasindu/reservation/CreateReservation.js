@@ -129,7 +129,6 @@ const CreateReservation = () => {
     }
   }, [user, state]);
 
-
   if (!user) {
     return <div>Loading or not logged in...</div>;
   }
@@ -292,19 +291,19 @@ const CreateReservation = () => {
             type="text"
             name="customerName"
             value={formData.customerName}
-             readOnly // 🔒 Make the field read-only
-            className="p-2 border border-gray-300 rounded w-full"
+            readOnly // 🔒 Prevents user from editing
+            className="p-2 border border-gray-300 rounded w-full bg-gray-100 cursor-not-allowed pointer-events-none"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Customer Email</label>
+          <label className="block text-sm font-medium">Customer Name</label>
           <input
-            type="email"
-            name="customerEmail"
+            type="text"
+            name="customerName"
             value={formData.customerEmail}
-            readOnly // 🔒 Make the field read-only
-            className="p-2 border border-gray-300 rounded w-full"
+            readOnly // 🔒 Prevents user from editing
+            className="p-2 border border-gray-300 rounded w-full bg-gray-100 cursor-not-allowed pointer-events-none"
           />
         </div>
 

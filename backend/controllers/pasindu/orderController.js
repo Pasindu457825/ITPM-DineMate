@@ -1,5 +1,5 @@
-// controllers/orderController.js
-const Order = require("../../models/pasindu/orderModel"); // Assuming you have the correct path
+const Order = require("../../models/pasindu/orderModel");
+const FoodItem = require("../../models/pamaa/foodItemModel"); // ✅ Update with the correct path
 
 // Add new order
 const createOrder = async (req, res) => {
@@ -30,6 +30,22 @@ const createOrder = async (req, res) => {
 
     const orderId = `ORD-${Date.now()}`;
 
+    const enrichedItems = await Promise.all(
+      items.map(async (item) => {
+        const foodItem = await FoodItem.findOne({
+          name: item.name,
+          restaurantId: restaurantId,
+        });
+
+        return {
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+          image: foodItem?.image || "", // ✅ Store image URL if available, otherwise empty string
+        };
+      })
+    );
+
     const newOrder = new Order({
       restaurantId,
       orderId,
@@ -39,7 +55,7 @@ const createOrder = async (req, res) => {
       paymentType,
       orderStatus,
       total,
-      items,
+      items: enrichedItems,
       reservationStatus,
     });
 
