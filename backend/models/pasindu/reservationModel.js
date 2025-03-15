@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const reservationSchema = new mongoose.Schema({
   reservationId: {
@@ -37,7 +37,11 @@ const reservationSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  specialRequests: {
+    type: String, // ✅ New optional field
+    default: "No",
+    maxlength: 200,
+  },
 });
 
-
-module.exports = mongoose.model('Reservation', reservationSchema);
+module.exports = mongoose.model("Reservation", reservationSchema);

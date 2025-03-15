@@ -12,6 +12,7 @@ const addReservation = async (req, res) => {
     NoofPerson,
     date,
     time,
+    specialRequests,
   } = req.body;
 
   if (
@@ -40,6 +41,7 @@ const addReservation = async (req, res) => {
       NoofPerson,
       date,
       time,
+      specialRequests: specialRequests?.trim() ? specialRequests : "No",
     });
 
     await newReservation.save();
