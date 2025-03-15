@@ -18,7 +18,7 @@ import RestaurentDetails from './user/pages/pasindu/restaurent/RestaurentDetails
 import LoginPage from './user/pages/tharusha/LoginPage';
 import UserSignupPage from './user/pages/tharusha/UserSignupPage';
 import ManagerSignupPage from './manager/pages/tharusha/ManagerSignupPage';
-
+import MyProfilePage from "./user/pages/tharusha/MyProfilePage";
 
 import AddFood from "./manager/pages/pamaa/foodmenu/AddFood";
 import UpdateFood from "./manager/pages/pamaa/foodmenu/UpdateFood";
@@ -50,6 +50,7 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup/user" element={<UserSignupPage />} />
         <Route path="/signup/manager" element={<ManagerSignupPage />} />
+        <Route path="/me" element={<MyProfilePage />} />
 
         
 
