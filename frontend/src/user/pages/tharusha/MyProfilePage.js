@@ -48,6 +48,9 @@ const MyProfilePage = () => {
       <p>
         <strong>Email:</strong> {user.email}
       </p>
+      <p>
+        <strong>phoneNumber:</strong> {user.phone_no}
+      </p>
     </div>
   );
 };
