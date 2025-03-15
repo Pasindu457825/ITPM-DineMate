@@ -29,7 +29,7 @@ const LoginPage = () => {
       <form onSubmit={handleSubmit}>
         <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
         <input type="password" name="pwd" placeholder="Password" onChange={handleChange} required />
-        <button type="submit">Login</button>
+        <button type="submit">Login submit</button>
       </form>
     </div>
   );
