@@ -18,7 +18,7 @@ const AddOrderForm = () => {
   const { restaurantId, restaurantName, cart, orderType, reservationId } =
     location.state || {
       restaurantId: "",
-      restaurantName: "Unknown Restaurant",
+      restaurantName: "",
       cart: [],
       orderType: "",
       reservationId: "",

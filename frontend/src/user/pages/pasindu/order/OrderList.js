@@ -26,7 +26,7 @@ const OrderDetails = () => {
         setUser(res.data);
       } catch (error) {
         console.error(
-          "Error fetching profile:",
+          "❌ Error fetching profile:",
           error.response?.data || error.message
         );
         setError("Failed to fetch user data");
@@ -40,19 +40,15 @@ const OrderDetails = () => {
     if (user && user.email) {
       const fetchOrders = async () => {
         try {
-          console.log("📢 Fetching orders for:", user.email); // Debugging
-
           const response = await axios.get(
             `http://localhost:5000/api/ITPM/orders/my-orders/${user.email}`
           );
-
-          console.log("✅ Orders Response Data:", response.data); // Debugging
 
           if (Array.isArray(response.data)) {
             setOrders(response.data);
           } else {
             console.error("❌ Invalid data format received:", response.data);
-            setOrders([]); // Ensure orders is always an array
+            setOrders([]);
           }
         } catch (error) {
           console.error(
@@ -87,7 +83,8 @@ const OrderDetails = () => {
             >
               <h3 className="text-lg font-semibold">Order ID: {order._id}</h3>
               <p>
-                <strong>Restaurant:</strong> {order.restaurantName || "N/A"}
+                <strong>Restaurant:</strong> {order.restaurantName || "N/A"}{" "}
+                {/* ✅ Use restaurantName */}
               </p>
               <p>
                 <strong>Status:</strong>{" "}
@@ -103,7 +100,7 @@ const OrderDetails = () => {
               </p>
               <p>
                 <strong>Payment Method:</strong>{" "}
-                {order.paymentType.paymentMethod}
+                {order.paymentType?.paymentMethod || "N/A"}
               </p>
               <p>
                 <strong>Total:</strong> ${order.total.toFixed(2)}

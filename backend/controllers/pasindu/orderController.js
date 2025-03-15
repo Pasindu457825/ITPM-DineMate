@@ -1,6 +1,7 @@
 const Order = require("../../models/pasindu/orderModel");
 const FoodItem = require("../../models/pamaa/foodItemModel");
-const User = require("../../models/tharusha/userModel"); // ✅ Update with the correct path
+const User = require("../../models/tharusha/userModel");
+const Restaurant = require("../../models/pamaa/restaurantModel"); // ✅ Update with the correct path
 
 // Add new order
 const createOrder = async (req, res) => {
@@ -93,15 +94,31 @@ const getOrdersByCustomerEmail = async (req, res) => {
   try {
     const { email } = req.params;
 
+    // Fetch orders from the database
     const orders = await Order.find({
-      customerEmail: new RegExp(`^${email}$`, "i"), // Case-insensitive search
+      customerEmail: new RegExp(`^${email}$`, "i"),
     });
 
     if (!orders.length) {
       return res.status(404).json({ message: "No orders found" });
     }
 
-    res.status(200).json(orders);
+    // ✅ Fetch restaurant names manually
+    const restaurantId = orders.map((orders) => orders.restaurantId);
+    const restaurants = await Restaurant.find({ _id: { $in: restaurantId } });
+
+    // ✅ Attach restaurant names to orders
+    const ordersWithRestaurantNames = orders.map((order) => {
+      const restaurant = restaurants.find(
+        (r) => r._id.toString() === order.restaurantId
+      );
+      return {
+        ...order._doc,
+        restaurantName: restaurant ? restaurant.name : "Unknown Restaurant", // Add restaurantName manually
+      };
+    });
+
+    res.status(200).json(ordersWithRestaurantNames);
   } catch (error) {
     console.error("❌ Error fetching orders:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
