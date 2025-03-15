@@ -5,6 +5,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 const AddOrderForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [user, setUser] = useState(null); // ✅ Define user state
+  const [customerName, setCustomerName] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
+  const [orderStatus, setOrderStatus] = useState("Processing");
+  const [total, setTotal] = useState(0);
+  const [items, setItems] = useState([]);
+  const [isOnlinePayment, setIsOnlinePayment] = useState(false);
+  const [reservationDetails, setReservationDetails] = useState(null);
 
   const { restaurantId, restaurantName, cart, orderType, reservationId } =
     location.state || {
@@ -15,13 +23,39 @@ const AddOrderForm = () => {
       reservationId: "",
     };
 
-  const [customerName, setCustomerName] = useState("");
-  const [customerEmail, setCustomerEmail] = useState("");
-  const [orderStatus, setOrderStatus] = useState("Processing");
-  const [total, setTotal] = useState(0);
-  const [items, setItems] = useState([]);
-  const [isOnlinePayment, setIsOnlinePayment] = useState(false);
-  const [reservationDetails, setReservationDetails] = useState(null);
+  // ✅ Fetch profile from API
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.log("No token found. User might not be logged in.");
+          return;
+        }
+
+        const res = await axios.get("http://localhost:5000/api/ITPM/users/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setUser(res.data);
+      } catch (error) {
+        console.error(
+          "Error fetching profile:",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  // ✅ Update customer details after user data is fetched
+  useEffect(() => {
+    if (user) {
+      setCustomerName(`${user.fname} ${user.lname}`.trim());
+      setCustomerEmail(user.email);
+    }
+  }, [user]);
 
   useEffect(() => {
     setItems(
@@ -38,6 +72,8 @@ const AddOrderForm = () => {
     );
     setTotal(totalAmount.toFixed(2));
   }, [cart]);
+
+  // Update formData when user is fetched
 
   // Fetch reservation details if reservationId is provided
   useEffect(() => {
@@ -77,9 +113,9 @@ const AddOrderForm = () => {
       customerName,
       customerEmail,
       orderType,
-      paymentType: isOnlinePayment 
-        ? {paymentMethod: "Online Payment", paymentStatus: "Pending"} // Online payments have "Pending" status
-        : {paymentMethod: "Cash Payment", paymentStatus: "No"}, // Cash payments are directly marked
+      paymentType: isOnlinePayment
+        ? { paymentMethod: "Online Payment", paymentStatus: "Pending" } // Online payments have "Pending" status
+        : { paymentMethod: "Cash Payment", paymentStatus: "No" }, // Cash payments are directly marked
       orderStatus,
       total: parseFloat(total),
       items,
@@ -132,17 +168,16 @@ const AddOrderForm = () => {
           type="text"
           placeholder="Customer Name"
           value={customerName}
-          onChange={(e) => setCustomerName(e.target.value)}
-          required
-          className="p-2 border rounded w-full"
+          readOnly // ✅ Prevents user from editing
+          className="p-2 border rounded w-full bg-gray-100 cursor-not-allowed"
         />
+
         <input
           type="email"
           placeholder="Customer Email"
           value={customerEmail}
-          onChange={(e) => setCustomerEmail(e.target.value)}
-          required
-          className="p-2 border rounded w-full"
+          readOnly // ✅ Prevents user from editing
+          className="p-2 border rounded w-full bg-gray-100 cursor-not-allowed"
         />
 
         <p className="text-gray-600">
