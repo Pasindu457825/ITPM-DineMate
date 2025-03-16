@@ -104,23 +104,11 @@ const getOrdersByCustomerEmail = async (req, res) => {
       return res.status(404).json({ message: "No orders found" });
     }
 
-    // ✅ Convert restaurantId to ObjectId correctly
-    const restaurantIds = orders
-      .map((order) => {
-        try {
-          return mongoose.Types.ObjectId.isValid(order.restaurantId)
-            ? new mongoose.Types.ObjectId(order.restaurantId)
-            : null;
-        } catch (error) {
-          return null;
-        }
-      })
-      .filter((id) => id !== null);
-
     // ✅ Fetch restaurant names
+    const restaurantIds = orders.map((order) => order.restaurantId);
     const restaurants = await Restaurant.find({ _id: { $in: restaurantIds } });
 
-    // ✅ Convert reservationId to string for lookup
+    // ✅ Fetch reservation details if `reservationId` exists
     const reservationIds = orders
       .map((order) => order.reservationStatus?.reservationId)
       .filter((id) => id && id !== "No");
@@ -135,7 +123,7 @@ const getOrdersByCustomerEmail = async (req, res) => {
         (r) => r._id.toString() === order.restaurantId.toString()
       );
       const reservation = reservations.find(
-        (res) => res.reservationId === order.reservationStatus.reservationId
+        (res) => res.reservationId === order.reservationStatus?.reservationId
       );
 
       return {

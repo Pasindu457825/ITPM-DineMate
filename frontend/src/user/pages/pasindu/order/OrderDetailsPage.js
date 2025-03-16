@@ -15,7 +15,7 @@ const OrderDetailsPage = () => {
       <h2 className="text-2xl font-bold mb-4">Order Details</h2>
 
       <div className="border p-4 rounded bg-white shadow-md">
-        <h3 className="text-lg font-semibold">Order ID: {order._id}</h3>
+        <h3 className="text-lg font-semibold">Order ID: {order.orderId}</h3>
         <p>
           <strong>Restaurant:</strong> {order.restaurantName || "N/A"}
         </p>
@@ -39,7 +39,7 @@ const OrderDetailsPage = () => {
           <strong>Status:</strong> {order.orderStatus}
         </p>
         <p>
-          <strong>Total Amount:</strong> ${order.total.toFixed(2)}
+          <strong>Total Amount:</strong> Rs.{order.total.toFixed(2)}
         </p>
 
         {/* ✅ Show Order Items with Images */}
@@ -64,9 +64,9 @@ const OrderDetailsPage = () => {
               )}
               <h4 className="text-lg font-semibold">{item.name}</h4>
               <p>Quantity: {item.quantity}</p>
-              <p>Price: ${item.price.toFixed(2)}</p>
+              <p>Price: Rs.{item.price.toFixed(2)}</p>
               <p className="font-bold text-green-600">
-                Total: ${(item.quantity * item.price).toFixed(2)}
+                Total: Rs.{(item.quantity * item.price).toFixed(2)}
               </p>
             </div>
           ))}
@@ -79,9 +79,6 @@ const OrderDetailsPage = () => {
             <p>
               <strong>Reservation ID:</strong>{" "}
               {order.reservationDetails.reservationId}
-            </p>
-            <p>
-              <strong>Status:</strong> {order.reservationDetails.status}
             </p>
             <p>
               <strong>Date:</strong> {order.reservationDetails.date}
