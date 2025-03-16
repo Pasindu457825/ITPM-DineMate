@@ -201,7 +201,7 @@ const RestaurantDetails = () => {
               <h3 className="text-lg font-semibold">{food.name}</h3>
               <p className="text-gray-700">{food.description}</p>
               <p className="text-green-600 font-bold">
-                ${food.price.toFixed(2)}
+                Rs.{food.price.toFixed(2)}
               </p>
 
               {food.image && (
