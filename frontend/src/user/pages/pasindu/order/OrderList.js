@@ -107,7 +107,9 @@ const OrderDetails = () => {
               </p>
 
               <button
-                onClick={() => navigate(`/order/${order._id}`)}
+                onClick={() =>
+                  navigate(`/order/${order._id}`, { state: { order } })
+                }
                 className="bg-blue-500 text-white p-2 rounded mt-2 w-full"
               >
                 View Details
