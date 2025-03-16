@@ -1,7 +1,8 @@
 const Order = require("../../models/pasindu/orderModel");
 const FoodItem = require("../../models/pamaa/foodItemModel");
 const User = require("../../models/tharusha/userModel");
-const Restaurant = require("../../models/pamaa/restaurantModel"); // ✅ Update with the correct path
+const Restaurant = require("../../models/pamaa/restaurantModel");
+const Reservation = require("../../models/pasindu/reservationModel"); // ✅ Update with the correct path
 
 // Add new order
 const createOrder = async (req, res) => {
@@ -94,7 +95,7 @@ const getOrdersByCustomerEmail = async (req, res) => {
   try {
     const { email } = req.params;
 
-    // Fetch orders from the database
+    // ✅ Fetch orders from the database
     const orders = await Order.find({
       customerEmail: new RegExp(`^${email}$`, "i"),
     });
@@ -103,24 +104,50 @@ const getOrdersByCustomerEmail = async (req, res) => {
       return res.status(404).json({ message: "No orders found" });
     }
 
-    // ✅ Fetch restaurant names manually
-    const restaurantId = orders.map((orders) => orders.restaurantId);
-    const restaurants = await Restaurant.find({ _id: { $in: restaurantId } });
+    // ✅ Convert restaurantId to ObjectId correctly
+    const restaurantIds = orders
+      .map((order) => {
+        try {
+          return mongoose.Types.ObjectId.isValid(order.restaurantId)
+            ? new mongoose.Types.ObjectId(order.restaurantId)
+            : null;
+        } catch (error) {
+          return null;
+        }
+      })
+      .filter((id) => id !== null);
 
-    // ✅ Attach restaurant names to orders
-    const ordersWithRestaurantNames = orders.map((order) => {
+    // ✅ Fetch restaurant names
+    const restaurants = await Restaurant.find({ _id: { $in: restaurantIds } });
+
+    // ✅ Convert reservationId to string for lookup
+    const reservationIds = orders
+      .map((order) => order.reservationStatus?.reservationId)
+      .filter((id) => id && id !== "No");
+
+    const reservations = await Reservation.find({
+      reservationId: { $in: reservationIds },
+    });
+
+    // ✅ Attach restaurant names and reservation details to orders
+    const ordersWithDetails = orders.map((order) => {
       const restaurant = restaurants.find(
-        (r) => r._id.toString() === order.restaurantId
+        (r) => r._id.toString() === order.restaurantId.toString()
       );
+      const reservation = reservations.find(
+        (res) => res.reservationId === order.reservationStatus.reservationId
+      );
+
       return {
         ...order._doc,
-        restaurantName: restaurant ? restaurant.name : "Unknown Restaurant", // Add restaurantName manually
+        restaurantName: restaurant ? restaurant.name : "Unknown Restaurant",
+        reservationDetails: reservation || null, // Attach full reservation details
       };
     });
 
-    res.status(200).json(ordersWithRestaurantNames);
+    res.status(200).json(ordersWithDetails);
   } catch (error) {
-    console.error("❌ Error fetching orders:", error.message);
+    console.error("❌ Server Error:", error.message);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
