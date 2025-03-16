@@ -125,14 +125,24 @@ const AddFoodForm = () => {
           className="p-2 border border-gray-300 rounded w-full"
           required
         />
-        <input
-          type="text"
-          placeholder="Category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          required
-          className="p-2 border border-gray-300 rounded w-full"
-        />
+ <select
+  value={category}
+  onChange={(e) => setCategory(e.target.value)}
+  required
+  className="p-2 border border-gray-300 rounded w-full"
+>
+  <option value="" disabled>Select a Category</option> 
+  <option value="salad">Salad</option>
+  <option value="rolls">Rolls</option>
+  <option value="desserts">Desserts</option>
+  <option value="sandwich">Sandwich</option>
+  <option value="cake">Cake</option>
+  <option value="pure veg">Pure Veg</option>
+  <option value="pasta">Pasta</option>
+  <option value="noodles">Noodles</option>
+</select>
+
+
 
         {/* Availability Checkbox */}
         <div className="flex items-center">
