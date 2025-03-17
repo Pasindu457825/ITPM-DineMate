@@ -60,7 +60,7 @@ const UpdateFoodForm = () => {
         food
       );
       console.log("Food item updated successfully");
-      navigate("/display-food"); // Redirect after updating
+      navigate("/restaurant/foods/${restaurantId}"); // Redirect after updating
     } catch (err) {
       console.error("Error updating food item:", err);
       setError("Failed to update food item. Please try again.");
@@ -128,7 +128,7 @@ const UpdateFoodForm = () => {
       </form>
 
       <button
-        onClick={() => navigate("/display-food")}
+        onClick={() => navigate("/restaurant/foods/${restaurantId}")}
         className="mt-4 bg-green-500 text-white p-2 rounded w-full"
       >
         View Food Items List
