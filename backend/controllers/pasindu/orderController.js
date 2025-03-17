@@ -1,5 +1,8 @@
-// controllers/orderController.js
-const Order = require("../../models/pasindu/orderModel"); // Assuming you have the correct path
+const Order = require("../../models/pasindu/orderModel");
+const FoodItem = require("../../models/pamaa/foodItemModel");
+const User = require("../../models/tharusha/userModel");
+const Restaurant = require("../../models/pamaa/restaurantModel");
+const Reservation = require("../../models/pasindu/reservationModel"); // ✅ Update with the correct path
 
 // Add new order
 const createOrder = async (req, res) => {
@@ -30,6 +33,22 @@ const createOrder = async (req, res) => {
 
     const orderId = `ORD-${Date.now()}`;
 
+    const enrichedItems = await Promise.all(
+      items.map(async (item) => {
+        const foodItem = await FoodItem.findOne({
+          name: item.name,
+          restaurantId: restaurantId,
+        });
+
+        return {
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+          image: foodItem?.image || "", // ✅ Store image URL if available, otherwise empty string
+        };
+      })
+    );
+
     const newOrder = new Order({
       restaurantId,
       orderId,
@@ -39,7 +58,7 @@ const createOrder = async (req, res) => {
       paymentType,
       orderStatus,
       total,
-      items,
+      items: enrichedItems,
       reservationStatus,
     });
 
@@ -68,6 +87,56 @@ const getOrderById = async (req, res) => {
   } catch (error) {
     console.error("Error fetching order:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ✅ Get all orders of the logged-in user
+const getOrdersByCustomerEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    // ✅ Fetch orders from the database
+    const orders = await Order.find({
+      customerEmail: new RegExp(`^${email}$`, "i"),
+    });
+
+    if (!orders.length) {
+      return res.status(404).json({ message: "No orders found" });
+    }
+
+    // ✅ Fetch restaurant names
+    const restaurantIds = orders.map((order) => order.restaurantId);
+    const restaurants = await Restaurant.find({ _id: { $in: restaurantIds } });
+
+    // ✅ Fetch reservation details if `reservationId` exists
+    const reservationIds = orders
+      .map((order) => order.reservationStatus?.reservationId)
+      .filter((id) => id && id !== "No");
+
+    const reservations = await Reservation.find({
+      reservationId: { $in: reservationIds },
+    });
+
+    // ✅ Attach restaurant names and reservation details to orders
+    const ordersWithDetails = orders.map((order) => {
+      const restaurant = restaurants.find(
+        (r) => r._id.toString() === order.restaurantId.toString()
+      );
+      const reservation = reservations.find(
+        (res) => res.reservationId === order.reservationStatus?.reservationId
+      );
+
+      return {
+        ...order._doc,
+        restaurantName: restaurant ? restaurant.name : "Unknown Restaurant",
+        reservationDetails: reservation || null, // Attach full reservation details
+      };
+    });
+
+    res.status(200).json(ordersWithDetails);
+  } catch (error) {
+    console.error("❌ Server Error:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -150,6 +219,7 @@ module.exports = {
   createOrder,
   getOrderById,
   getAllOrders,
+  getOrdersByCustomerEmail,
   updateOrder,
   deleteOrder,
 };

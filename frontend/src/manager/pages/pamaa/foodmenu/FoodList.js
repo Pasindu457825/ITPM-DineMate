@@ -70,7 +70,7 @@ const FoodList = () => {
                 </h2>
                 <p className="text-gray-600">{food.description}</p>
                 <p className="text-lg font-medium text-green-600">
-                  <strong>Price:</strong> ${food.price}
+                  <strong>Price:</strong> Rs.{food.price}
                 </p>
                 <p className="text-gray-700">
                   <strong>Category:</strong> {food.category}

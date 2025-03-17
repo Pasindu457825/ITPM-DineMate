@@ -64,7 +64,7 @@ const CartSidebar = ({ cartOpen, setCartOpen, cart, setCart, orderType, reservat
               <div className="ml-3 flex-1">
                 <h3 className="text-md font-semibold">{item.name}</h3>
                 <p className="text-gray-700">
-                  ${(parseFloat(item.price) || 0).toFixed(2)}
+                  Rs.{(parseFloat(item.price) || 0).toFixed(2)}
                 </p>
 
                 {/* Quantity Selector */}
@@ -97,7 +97,7 @@ const CartSidebar = ({ cartOpen, setCartOpen, cart, setCart, orderType, reservat
 
           <div className="text-lg font-semibold text-right mt-4">
             Total:{" "}
-            <span className="text-green-600">${totalPrice.toFixed(2)}</span>
+            <span className="text-green-600">Rs.{totalPrice.toFixed(2)}</span>
           </div>
 
           {/* Checkout Button - Pass restaurantId, restaurantName & cart items */}

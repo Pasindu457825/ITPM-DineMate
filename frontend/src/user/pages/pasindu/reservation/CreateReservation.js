@@ -6,7 +6,7 @@ const CreateReservation = () => {
   const { restaurantId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-
+  const [user, setUser] = useState(null);
   const { state } = location || {};
 
   const [restaurant, setRestaurant] = useState(null);
@@ -19,9 +19,10 @@ const CreateReservation = () => {
     restaurantId: state?.restaurantId || restaurantId,
     shopName: state?.name || "",
     tableNumber: "",
-    customerName: "",
-    customerEmail: "",
+    customerName: state?.fname || "", // Prefill first name
+    customerEmail: state?.email || "", // Prefill email
     NoofPerson: "",
+    specialRequests: "",
     date: "",
     time: "",
   });
@@ -89,6 +90,50 @@ const CreateReservation = () => {
     fetchAvailableTables();
   }, [formData.date, formData.time, restaurantId]);
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token"); // Get token from localStorage
+        if (!token) {
+          console.log("No token found. User might not be logged in.");
+          return;
+        }
+
+        // Send token in Authorization header
+        const res = await axios.get("http://localhost:5000/api/ITPM/users/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUser(res.data);
+      } catch (error) {
+        console.error(
+          "Error fetching profile:",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  // Update formData when user is fetched
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        customerName: `${state?.fname || user.fname} ${
+          state?.lname || user.lname
+        }`.trim(),
+        customerEmail: state?.email || user.email,
+      }));
+    }
+  }, [user, state]);
+
+  if (!user) {
+    return <div>Loading or not logged in...</div>;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (selectedTables.length === 0) {
@@ -108,15 +153,13 @@ const CreateReservation = () => {
     try {
       const response = await axios.post(
         "http://localhost:5000/api/ITPM/reservations/create-reservation",
-        { ...formData, tableNumber: selectedTables.join(", ") }
+        { ...formData, tableNumber: selectedTables.join(", ") } // ✅ Include specialRequests automatically
       );
 
-      const reservationId = response.data.reservationId; // Extract reservationId from response
-      // console.log("Backend Reservation ID:", reservationId); // ✅ Check this line
+      const reservationId = response.data.reservationId;
 
-      // ✅ Redirect to another page with reservationId using state
       navigate(`/user/restaurent-details/${restaurantId}`, {
-        state: { reservationId }, // ✅ Pass only reservationId (restaurantId is in the URL)
+        state: { reservationId },
       });
     } catch (error) {
       console.error("Error creating reservation:", error);
@@ -247,21 +290,19 @@ const CreateReservation = () => {
             type="text"
             name="customerName"
             value={formData.customerName}
-            onChange={handleChange}
-            required
-            className="p-2 border border-gray-300 rounded w-full"
+            readOnly // 🔒 Prevents user from editing
+            className="p-2 border border-gray-300 rounded w-full bg-gray-100 cursor-not-allowed pointer-events-none"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Customer Email</label>
+          <label className="block text-sm font-medium">Customer Name</label>
           <input
-            type="email"
-            name="customerEmail"
+            type="text"
+            name="customerName"
             value={formData.customerEmail}
-            onChange={handleChange}
-            required
-            className="p-2 border border-gray-300 rounded w-full"
+            readOnly // 🔒 Prevents user from editing
+            className="p-2 border border-gray-300 rounded w-full bg-gray-100 cursor-not-allowed pointer-events-none"
           />
         </div>
 
@@ -311,6 +352,28 @@ const CreateReservation = () => {
               </option>
             ))}
           </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">
+            Special Requests (Optional)
+          </label>
+          <textarea
+            name="specialRequests"
+            value={formData.specialRequests}
+            onChange={(e) => {
+              if (e.target.value.length <= 200) {
+                // ✅ Prevent input over 200 chars
+                setFormData({ ...formData, specialRequests: e.target.value });
+              }
+            }}
+            className="p-2 border border-gray-300 rounded w-full"
+            placeholder="Any special requests (e.g., birthday setup, window seat)..."
+            maxLength="200" // ✅ Prevent input over 200 chars (double safety)
+          />
+          <p className="text-gray-500 text-sm mt-1">
+            {200 - formData.specialRequests.length} characters remaining
+          </p>
         </div>
 
         <button
