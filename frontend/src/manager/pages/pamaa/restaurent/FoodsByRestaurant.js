@@ -59,7 +59,7 @@ const FoodsByRestaurant = () => {
             >
               <h3 className="text-lg font-semibold">{food.name}</h3>
               <p className="text-gray-700">{food.description}</p>
-              <p className="text-green-600 font-bold">${food.price.toFixed(2)}</p>
+              <p className="text-green-600 font-bold">Rs.{food.price.toFixed(2)}</p>
               <p className="text-sm text-gray-500">Category: {food.category}</p>
               {food.image && (
                 <img src={food.image} alt={food.name} className="w-40 h-40 object-cover rounded mt-2" />
@@ -71,6 +71,7 @@ const FoodsByRestaurant = () => {
               )}
             </li>
           ))}
+          
         </ul>
       )}
     </div>

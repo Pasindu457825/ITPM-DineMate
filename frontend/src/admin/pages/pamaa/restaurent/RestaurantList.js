@@ -24,7 +24,9 @@ const RestaurantsList = () => {
 
   // Function to handle restaurant deletion
   const handleDelete = async (id) => {
-    await deleteRestaurant(id, setRestaurants, restaurants); // Call delete function
+    if (window.confirm("Are you sure you want to delete this restaurant?")) {
+      await deleteRestaurant(id, setRestaurants, restaurants); // Call delete function
+    }
   };
 
   // Function to navigate to the update page (passing restaurant ID to pre-fill form)
@@ -37,7 +39,7 @@ const RestaurantsList = () => {
       <h1 className="text-3xl font-bold text-gray-800 mb-6">
         Restaurants List
       </h1>
-     
+
       {restaurants.length === 0 ? (
         <p className="text-gray-500">No restaurants found.</p>
       ) : (
@@ -58,15 +60,20 @@ const RestaurantsList = () => {
                 <p className="text-gray-700">
                   <strong>Phone Number:</strong> {restaurant.phoneNumber}
                 </p>
-                <p className="text-gray-700">
-                  <strong>Number of Tables:</strong> {restaurant.numberOfTables}
-                </p>
-                <p className="text-gray-700">
-                  <strong>Seats Per Table:</strong> {restaurant.seatsPerTable}
-                </p>
+                {/* Display each table configuration */}
+                {restaurant.tables && restaurant.tables.length > 0 && (
+                  <div className="text-gray-700">
+                    <strong>Table Configurations:</strong>
+                    {restaurant.tables.map((table, index) => (
+                      <p key={index}>
+                        Table {index + 1}: {table.quantity} tables with {table.seats} seats each
+                      </p>
+                    ))}
+                  </div>
+                )}
                 <div className="flex space-x-4 mt-4">
                   <button
-                    onClick={() => navigate(`/add-food/${restaurant?._id}`)} // Adjust the route as necessary
+                    onClick={() => navigate(`/add-food/${restaurant._id}`)}
                     className="bg-green-500 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 mb-4"
                   >
                     Add Food Item
@@ -81,7 +88,7 @@ const RestaurantsList = () => {
                     onClick={() => handleDelete(restaurant._id)}
                     className="bg-red-600 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
                   >
-                    Delete button
+                    Delete
                   </button>
                 </div>
               </div>

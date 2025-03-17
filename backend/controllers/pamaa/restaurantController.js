@@ -3,20 +3,20 @@ const Restaurant = require("../../models/pamaa/restaurantModel");
 
 const addRestaurant = async (req, res) => {
   try {
-    const { name, description, location, phoneNumber, numberOfTables, seatsPerTable, image } = req.body;
+    const { name, description, location, phoneNumber, tables, image } = req.body;
 
-    if (!name || !description || !location || !phoneNumber || !numberOfTables || !seatsPerTable || !image) {
+    // Check if all necessary fields are provided
+    if (!name || !description || !location || !phoneNumber || !tables || tables.length === 0 || !image) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // ✅ Allow adding multiple restaurants without `restaurantId`
+    // Create a new restaurant with multiple table configurations
     const newRestaurant = new Restaurant({
       name,
       description,
       location,
       phoneNumber,
-      numberOfTables,
-      seatsPerTable,
+      tables, // Updated to accept an array of table objects
       image,
     });
 
@@ -39,7 +39,7 @@ const getAllRestaurants = async (req, res) => {
   }
 };
 
-// Get restaurant
+// Get a single restaurant by ID
 const getRestaurantById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -54,15 +54,15 @@ const getRestaurantById = async (req, res) => {
   }
 };
 
-// Update restaurant (including image)
+// Update restaurant (including its tables)
 const updateRestaurant = async (req, res) => {
   const { id } = req.params;
-  const { name, description, location, phoneNumber, numberOfTables, seatsPerTable, image } = req.body;
+  const { name, description, location, phoneNumber, tables, image } = req.body;
 
   try {
     const updatedRestaurant = await Restaurant.findByIdAndUpdate(
       id,
-      { name, description, location, phoneNumber, numberOfTables, seatsPerTable, image },
+      { name, description, location, phoneNumber, tables, image },
       { new: true }
     );
 
