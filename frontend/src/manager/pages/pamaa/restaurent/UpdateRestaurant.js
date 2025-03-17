@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { storage } from "../../../../firebaseConfig"; // Ensure correct path
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const UpdateRestaurant = () => {
-  const { id } = useParams(); // Retrieve the restaurant ID from the URL parameters
+  const { id } = useParams();
   const navigate = useNavigate();
-
-  // State for storing restaurant data and form status
   const [restaurant, setRestaurant] = useState({
     name: "",
     description: "",
     location: "",
     phoneNumber: "",
     tables: [{ seats: "", quantity: "" }],
+    image: "",
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
-  // Fetch restaurant data when the component mounts or the ID changes
   useEffect(() => {
     const fetchRestaurant = async () => {
       try {
@@ -36,7 +38,6 @@ const UpdateRestaurant = () => {
     fetchRestaurant();
   }, [id]);
 
-  // Handle form input changes
   const handleChange = (e, index) => {
     if (["seats", "quantity"].includes(e.target.name)) {
       const newTables = [...restaurant.tables];
@@ -47,34 +48,51 @@ const UpdateRestaurant = () => {
     }
   };
 
-  // Add new table configuration
-  const addTable = () => {
-    setRestaurant({
-      ...restaurant,
-      tables: [...restaurant.tables, { seats: "", quantity: "" }]
-    });
+  const handleFileChange = (e) => {
+    if (e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
   };
 
-  // Remove table configuration
-  const removeTable = (index) => {
-    const newTables = [...restaurant.tables];
-    newTables.splice(index, 1);
-    setRestaurant({ ...restaurant, tables: newTables });
-  };
-
-  // Handle form submission for updates
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
+    if (imageFile) {
+      const fileName = `restaurantImages/${Date.now()}_${imageFile.name}`;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, imageFile);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress);
+        },
+        (error) => {
+          console.error("Error uploading image:", error);
+          alert("Image upload failed!");
+          setLoading(false);
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          updateRestaurantData(downloadURL);
+        }
+      );
+    } else {
+      updateRestaurantData(restaurant.image);
+    }
+  };
+
+  const updateRestaurantData = async (imageUrl) => {
     try {
       const response = await axios.put(
         `http://localhost:5000/api/ITPM/restaurants/update-restaurant/${id}`,
-        restaurant
+        { ...restaurant, image: imageUrl }
       );
       alert("Restaurant updated successfully!");
-      navigate("/display-restaurant"); // Redirect to the restaurant list after update
+      navigate("/display-restaurant");
     } catch (err) {
       console.error("Error updating restaurant:", err);
       setError("Failed to update restaurant. Please try again.");
@@ -84,17 +102,13 @@ const UpdateRestaurant = () => {
   };
 
   if (loading) {
-    return <p>Loading restaurant details...</p>; // Display loading state while data is being fetched
+    return <p>Loading restaurant details...</p>;
   }
 
   return (
     <div className="p-4 bg-white rounded shadow-md">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-        Update Restaurant
-      </h2>
-
+      <h2 className="text-2xl font-semibold text-gray-800 mb-4">Update Restaurant</h2>
       {error && <div className="text-red-500 mb-2">{error}</div>}
-
       <form onSubmit={handleSubmit} className="space-y-4">
         {["name", "description", "location", "phoneNumber"].map((field, index) => (
           <div key={index}>
@@ -111,13 +125,10 @@ const UpdateRestaurant = () => {
             />
           </div>
         ))}
-
         {restaurant.tables.map((table, index) => (
           <div key={index} className="flex items-center space-x-2">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700">
-                Seats per Table
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Seats per Table</label>
               <input
                 type="number"
                 name="seats"
@@ -129,9 +140,7 @@ const UpdateRestaurant = () => {
               />
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700">
-                Number of Tables
-              </label>
+              <label className="block text-sm font-medium text-gray-700">Number of Tables</label>
               <input
                 type="number"
                 name="quantity"
@@ -155,14 +164,16 @@ const UpdateRestaurant = () => {
             )}
           </div>
         ))}
-        <button
-          type="button"
-          onClick={addTable}
-          className="mt-2 bg-green-500 text-white p-2 rounded flex items-center justify-center"
-        >
-          Add Table
-        </button>
-
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Upload New Image</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="p-2 border border-gray-300 rounded w-full"
+          />
+          {uploadProgress > 0 && <p>Upload Progress: {uploadProgress}%</p>}
+        </div>
         <button
           type="submit"
           className="bg-blue-500 text-white p-2 rounded w-full mt-4"
