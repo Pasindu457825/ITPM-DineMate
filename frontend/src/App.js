@@ -6,7 +6,8 @@ import HomePage from './user/pages/pasindu/HomePage';
 import AddOrderForm from './user/pages/pasindu/order/CreateOrder'; //  // Import the AddItemForm component
 import OrdersList  from './user/pages/pasindu/order/OrderList';
 import UpdateOrderForm from './user/pages/pasindu/order/UpdateOrder';
-import ViewMyOrderPage from './user/pages/pasindu/order/OrderList';
+import ViewMyOrdersPage from './user/pages/pasindu/order/OrderList';
+import OrderDetailsPage  from './user/pages/pasindu//order/OrderDetailsPage'; 
 import CartPage  from './user/pages/pasindu//order/CartPage'; 
 //Pasindu Reservation
 import AddReservationForm from './user/pages/pasindu/reservation/CreateReservation';//  // Import the AddItemForm component
@@ -41,8 +42,10 @@ const App = () => {
         <Route path="/add-order-details" element={<AddOrderForm />} />
         <Route path="/display-orders" element={<OrdersList />} />
         <Route path="/update-order/:id" element={<UpdateOrderForm />} />
-        <Route path="/my-orders/:email" element={<ViewMyOrderPage />} />
+        <Route path="/my-orders/:email" element={<ViewMyOrdersPage />} />
+        <Route path="/order/:id" element={<OrderDetailsPage  />} />
         <Route path="/cart" element={<CartPage />} />
+
         {/* Pasindu Reservation*/}
         <Route path="/add-reservation/:restaurantId" element={<AddReservationForm />} />
         <Route path="/display-reservations" element={<ReservationsList  />} />
@@ -64,6 +67,7 @@ const App = () => {
         <Route path="/update-food/:id" element={<UpdateFood />} />
         <Route path="/display-food" element={<FoodList />} />
         <Route path="/restaurant/foods/:restaurantId" element={<FoodsByRestaurant  />} />
+
 
         <Route path="/Manager-dashboard" element={<ManagerDashboard />} />
 
