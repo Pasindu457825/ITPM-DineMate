@@ -10,8 +10,7 @@ const CreateRestaurant = () => {
     description: "",
     location: "",
     phoneNumber: "",
-    numberOfTables: "",
-    seatsPerTable: "",
+    tables: [{ seats: "", quantity: "" }],
     image: "",
   });
 
@@ -19,9 +18,30 @@ const CreateRestaurant = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const navigate = useNavigate();
 
-  // Handle form input changes
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  // Handle form input changes for text inputs and table entries
+  const handleChange = (e, index) => {
+    if (["seats", "quantity"].includes(e.target.name)) {
+      const newTables = [...formData.tables];
+      newTables[index][e.target.name] = e.target.value;
+      setFormData({ ...formData, tables: newTables });
+    } else {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
+  };
+
+  // Add new table configuration
+  const addTable = () => {
+    setFormData({
+      ...formData,
+      tables: [...formData.tables, { seats: "", quantity: "" }],
+    });
+  };
+
+  // Remove table configuration
+  const removeTable = (index) => {
+    const newTables = [...formData.tables];
+    newTables.splice(index, 1);
+    setFormData({ ...formData, tables: newTables });
   };
 
   // Handle image selection
@@ -41,7 +61,6 @@ const CreateRestaurant = () => {
     }
 
     try {
-      // ✅ Generate a unique filename to prevent overwriting
       const fileName = `restaurantImages/${Date.now()}_${imageFile.name}`;
       const storageRef = ref(storage, fileName);
       const uploadTask = uploadBytesResumable(storageRef, imageFile);
@@ -49,7 +68,8 @@ const CreateRestaurant = () => {
       uploadTask.on(
         "state_changed",
         (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           setUploadProgress(progress);
         },
         (error) => {
@@ -57,11 +77,9 @@ const CreateRestaurant = () => {
           alert("Image upload failed!");
         },
         async () => {
-          // ✅ Get image URL after upload
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
           console.log("Image uploaded successfully! URL:", downloadURL);
 
-          // ✅ Save restaurant data with image URL to backend
           try {
             const response = await axios.post(
               "http://localhost:5000/api/ITPM/restaurants/create-restaurant",
@@ -71,7 +89,10 @@ const CreateRestaurant = () => {
             alert("Restaurant added successfully!");
             navigate("/"); // Redirect after success
           } catch (error) {
-            console.error("Error creating restaurant:", error.response || error.message);
+            console.error(
+              "Error creating restaurant:",
+              error.response || error.message
+            );
             alert("Failed to create restaurant!");
           }
         }
@@ -87,26 +108,92 @@ const CreateRestaurant = () => {
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">
         Create Restaurant
       </h2>
-
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Restaurant Details */}
-        {["name", "description", "location", "phoneNumber", "numberOfTables", "seatsPerTable"].map((field, index) => (
-          <div key={index}>
-            <label className="block text-sm font-medium text-gray-700">
-              {field.charAt(0).toUpperCase() + field.slice(1)}
-            </label>
-            <input
-              type={field.includes("Number") ? "number" : "text"}
-              name={field}
-              value={formData[field]}
-              onChange={handleChange}
-              required
-              className="p-2 border border-gray-300 rounded w-full"
-            />
+        {["name", "description", "location", "phoneNumber"].map(
+          (field, index) => (
+            <div key={index}>
+              <label className="block text-sm font-medium text-gray-700">
+                {field.charAt(0).toUpperCase() + field.slice(1)}
+              </label>
+              <input
+                type="text"
+                name={field}
+                value={formData[field]}
+                onChange={handleChange}
+                required
+                className="p-2 border border-gray-300 rounded w-full"
+              />
+            </div>
+          )
+        )}
+
+        {formData.tables.map((table, index) => (
+          <div key={index} className="flex items-center space-x-2">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700">
+                Seats per Table
+              </label>
+              <input
+                type="number"
+                name="seats"
+                placeholder="Seats per Table"
+                value={table.seats}
+                onChange={(e) => handleChange(e, index)}
+                required
+                className="p-2 border border-gray-300 rounded w-full"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700">
+                Number of Tables
+              </label>
+              <input
+                type="number"
+                name="quantity"
+                placeholder="Number of Tables"
+                value={table.quantity}
+                onChange={(e) => handleChange(e, index)}
+                required
+                className="p-2 border border-gray-300 rounded w-full"
+              />
+            </div>
+            {index > 0 && (
+            <button 
+            type="button" 
+            onClick={() => removeTable(index)} 
+            style={{ width: '20%' }}
+            className="bg-red-500 text-white py-2 rounded-full text-xs"
+            title="Remove this table type"
+        >
+            Remove
+        </button>
+        
+           
+           
+            )}
           </div>
         ))}
+        <button
+          type="button"
+          onClick={addTable}
+          className="mt-2 bg-green-500 text-white p-2 rounded flex items-center justify-center"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 6v12m6-6H6"
+            />
+          </svg>
+        </button>
 
-        {/* Image Upload */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Upload Image
@@ -121,14 +208,17 @@ const CreateRestaurant = () => {
           {uploadProgress > 0 && <p>Upload Progress: {uploadProgress}%</p>}
         </div>
 
-        {/* Submit Button */}
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full mt-4">
+        <button
+          type="submit"
+          className="bg-blue-500 text-white p-2 rounded w-full mt-4"
+        >
           Create Restaurant
         </button>
       </form>
-
-      {/* Back to Restaurant List Button */}
-      <button onClick={() => navigate("/display-restaurant")} className="mt-4 bg-gray-500 text-white px-4 py-2 rounded w-full">
+      <button
+        onClick={() => navigate("/display-restaurant")}
+        className="mt-4 bg-gray-500 text-white px-4 py-2 rounded w-full"
+      >
         Back to Restaurant List
       </button>
     </div>
