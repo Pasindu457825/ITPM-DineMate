@@ -149,8 +149,10 @@ const AddFoodForm = () => {
         <div className="flex items-center">
           <input
             type="checkbox"
-            checked={availability}
-            onChange={(e) => setAvailability(e.target.checked)} // ✅ Fix function call
+            checked={availability === "Available"} // ✅ Ensure correct state
+            onChange={(e) =>
+              setAvailability(e.target.checked ? "Available" : "Unavailable")
+            } // ✅ Convert to string
             className="mt-2"
           />
           <label className="ml-2 text-gray-700">Available</label>
