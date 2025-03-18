@@ -154,9 +154,10 @@ const RestaurantDetails = () => {
                   },
                 })
               }
-              className="mt-6 w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition"
+              className="mt-6 w-full bg-amber-700 text-white py-2 rounded-lg hover:bg-amber-900 transition 
+             text-lg font-semibold tracking-wide shadow-md hover:shadow-lg"
             >
-              Make a Reservation 📅
+              Book Table 📅
             </button>
 
             {reservationId && (
@@ -177,13 +178,18 @@ const RestaurantDetails = () => {
               </button>
             </div>
 
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Food Menu</h2>
+            <h2
+              className="text-5xl font-bold text-gray-800 mt-4 mb-4"
+              style={{ fontFamily: "'Dancing Script', cursive" }}
+            >
+              Our Food Menu
+            </h2>
 
             {/* Order Type Selection and Search Bar in one row */}
             <div className="mt-4 flex flex-col md:flex-row items-center justify-between gap-6 mr-8 ml-8">
               {/* Order Type Selection */}
               <div className="flex items-center gap-4 w-full md:w-1/3">
-                <label className="text-lg font-semibold whitespace-nowrap">
+                <label className="text-xl font-bold whitespace-nowrap">
                   Order Type:
                 </label>
 
@@ -251,7 +257,7 @@ const RestaurantDetails = () => {
                         className="m-0 rounded-none w-full h-40 transition-transform transform group-hover:scale-105"
                       >
                         <img
-                          src={food.image || "/fallback-image.png"}
+                          src={food.image}
                           alt={food.name}
                           className="h-full w-full object-cover rounded-bl-[20%]"
                         />
@@ -263,7 +269,7 @@ const RestaurantDetails = () => {
                           {food.name}
                         </Typography>
                         <Typography
-                          variant="small"
+                          variant="h6"
                           color="white"
                           className="mt-3 font-normal"
                         >
