@@ -1,11 +1,15 @@
-import { useState, useEffect } from "react";
+
+import React, { useEffect, useState } from "react";
+
 import axios from "axios";
 
 const ManagerPayments = () => {
   const [payments, setPayments] = useState([]);
 
   useEffect(() => {
-    fetchPayments();
+    axios.get("http://localhost:5000/api/ITPM/payments")
+      .then((res) => setPayments(res.data))
+      .catch((err) => console.error("Error fetching payments", err));
   }, []);
 
   const fetchPayments = async () => {
@@ -40,6 +44,7 @@ const ManagerPayments = () => {
             </li>
           ))}
       </ul>
+
     </div>
   );
 };
