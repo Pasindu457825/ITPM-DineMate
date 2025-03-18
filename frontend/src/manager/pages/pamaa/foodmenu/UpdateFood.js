@@ -149,15 +149,23 @@ const UpdateFoodForm = () => {
           required
           className="p-2 border border-gray-300 rounded w-full"
         />
-        <input
-          type="text"
+        <select
           name="category"
-          placeholder="Category"
           value={food.category}
           onChange={handleChange}
           required
           className="p-2 border border-gray-300 rounded w-full"
-        />
+        >
+          <option value="" disabled>Select a Category</option>
+          <option value="salad">Salad</option>
+          <option value="rolls">Rolls</option>
+          <option value="desserts">Desserts</option>
+          <option value="sandwich">Sandwich</option>
+          <option value="cake">Cake</option>
+          <option value="pure veg">Pure Veg</option>
+          <option value="pasta">Pasta</option>
+          <option value="noodles">Noodles</option>
+        </select>
 
         <label className="block text-sm font-medium text-gray-700">
           Current Food Image
