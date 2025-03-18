@@ -212,31 +212,54 @@ const RestaurantDetails = () => {
                 />
               )}
 
-              <div className="flex items-center mt-3">
-                <button
-                  onClick={() => handleQuantityChange(food._id, -1)}
-                  className="bg-gray-300 text-black px-3 py-1 rounded-l hover:bg-gray-400"
-                  disabled={(quantities[food._id] || 1) === 1}
-                >
-                  -
-                </button>
-                <span className="px-4 py-1 border">
-                  {quantities[food._id] || 1}
-                </span>
-                <button
-                  onClick={() => handleQuantityChange(food._id, 1)}
-                  className="bg-gray-300 text-black px-3 py-1 rounded-r hover:bg-gray-400"
-                >
-                  +
-                </button>
-              </div>
-
-              <button
-                onClick={() => handleAddToCart(food)}
-                className="mt-3 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+              {/* Show Availability */}
+              <p
+                className={`text-sm font-semibold mt-2 ${
+                  food.available === "Available"
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
               >
-                Add to Cart
-              </button>
+                {food.available === "Available" ? "Available" : "Unavailable"}
+              </p>
+
+              {/* Disable quantity buttons & Add to Cart if Unavailable */}
+              {food.available === "Available" ? (
+                <>
+                  <div className="flex items-center mt-3">
+                    <button
+                      onClick={() => handleQuantityChange(food._id, -1)}
+                      className="bg-gray-300 text-black px-3 py-1 rounded-l hover:bg-gray-400"
+                      disabled={(quantities[food._id] || 1) === 1}
+                    >
+                      -
+                    </button>
+                    <span className="px-4 py-1 border">
+                      {quantities[food._id] || 1}
+                    </span>
+                    <button
+                      onClick={() => handleQuantityChange(food._id, 1)}
+                      className="bg-gray-300 text-black px-3 py-1 rounded-r hover:bg-gray-400"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={() => handleAddToCart(food)}
+                    className="mt-3 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+                  >
+                    Add to Cart
+                  </button>
+                </>
+              ) : (
+                <button
+                  className="mt-3 bg-gray-400 text-white px-4 py-2 rounded"
+                  onClick={() => alert("This item is currently unavailable.")}
+                >
+                  Unavailable
+                </button>
+              )}
             </li>
           ))}
       </ul>
@@ -247,7 +270,7 @@ const RestaurantDetails = () => {
         cart={cart}
         setCart={setCart}
         orderType={orderType}
-        reservationId={reservationId} 
+        reservationId={reservationId}
       />
     </div>
   );
