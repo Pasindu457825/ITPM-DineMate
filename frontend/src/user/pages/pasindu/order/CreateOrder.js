@@ -64,6 +64,7 @@ const AddOrderForm = () => {
         name: item.name,
         quantity: item.quantity,
         price: item.price,
+        portionSize: item.portionSize || "Medium", // ✅ Ensure portion size is included
       }))
     );
 
@@ -290,9 +291,15 @@ const AddOrderForm = () => {
 
                 <h4 className="text-lg font-semibold">{item.name}</h4>
                 <p className="text-gray-700">Quantity: {item.quantity}</p>
-                <p className="text-gray-700">Price: ${item.price.toFixed(2)}</p>
+                <p className="text-gray-700">
+                  Portion Size:{" "}
+                  <span className="font-semibold">{item.portionSize}</span>
+                </p>
+                <p className="text-gray-700">
+                  Price: Rs.{item.price.toFixed(2)}
+                </p>
                 <p className="text-green-600 font-bold">
-                  Total: ${(item.quantity * item.price).toFixed(2)}
+                  Total: Rs.{(item.quantity * item.price).toFixed(2)}
                 </p>
               </div>
             );
