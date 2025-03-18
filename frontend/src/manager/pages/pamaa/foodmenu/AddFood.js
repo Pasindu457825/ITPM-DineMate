@@ -13,7 +13,7 @@ const AddFoodForm = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
-  const [availability, setAvailability] = useState(true); // ✅ Fix variable name
+  const [availability, setAvailability] = useState("Available"); // ✅ Ensure it's a string
   const [imageFile, setImageFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -65,11 +65,11 @@ const AddFoodForm = () => {
           const foodData = {
             name,
             description,
-            price: itemPrice,
+            price: parseFloat(price) || 0,
             category,
-            availability,
+            availability, // ✅ Now always a string
             restaurantId,
-            image: downloadURL, // ✅ Store image URL in MongoDB
+            image: downloadURL,
           };
 
           try {
@@ -77,7 +77,7 @@ const AddFoodForm = () => {
               "http://localhost:5000/api/ITPM/foodItems/create-food-item",
               foodData
             );
-            console.log("✅ Food item added:", response.data);
+
             alert("Food item added successfully!");
             // navigate(`/restaurant/${restaurantId}/foods`);
           } catch (error) {
