@@ -5,9 +5,24 @@ const Restaurant = require("../../models/pamaa/restaurantModel");
 // Add new food item with image URL
 const addFoodItem = async (req, res) => {
   try {
-    const { restaurantId, name, description, price, category, available, image } = req.body;
+    const {
+      restaurantId,
+      name,
+      description,
+      price,
+      category,
+      availability,
+      image,
+    } = req.body;
 
-    if (!restaurantId || !name || !description || !price || !category || !image) {
+    if (
+      !restaurantId ||
+      !name ||
+      !description ||
+      !price ||
+      !category ||
+      !image
+    ) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -28,15 +43,19 @@ const addFoodItem = async (req, res) => {
       description,
       price: itemPrice,
       category,
-      available,
+      availability: availability || "Available", 
       image,
     });
 
     await newFoodItem.save();
-    res.status(201).json({ message: "Food item added successfully", foodItem: newFoodItem });
+    res
+      .status(201)
+      .json({ message: "Food item added successfully", foodItem: newFoodItem });
   } catch (error) {
     console.error("Error in addFoodItem:", error);
-    res.status(500).json({ message: "Internal Server Error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
   }
 };
 
@@ -46,7 +65,10 @@ const getAllFoodItems = async (req, res) => {
     const foodItems = await FoodItem.find();
     res.json(foodItems);
   } catch (error) {
-    res.status(500).json({ message: "Server error while retrieving food items", error: error.message });
+    res.status(500).json({
+      message: "Server error while retrieving food items",
+      error: error.message,
+    });
   }
 };
 
@@ -60,14 +82,17 @@ const getFoodItemById = async (req, res) => {
     }
     res.json(foodItem);
   } catch (error) {
-    res.status(500).json({ message: "Server error while retrieving food item", error: error.message });
+    res.status(500).json({
+      message: "Server error while retrieving food item",
+      error: error.message,
+    });
   }
 };
 
 // Update food item including image URL
 const updateFoodItem = async (req, res) => {
   const { id } = req.params;
-  const { name, description, price, category, available, image } = req.body;
+  const { name, description, price, category, availability, image } = req.body;
 
   try {
     if (price && (isNaN(price) || price < 0)) {
@@ -76,7 +101,7 @@ const updateFoodItem = async (req, res) => {
 
     const updatedFoodItem = await FoodItem.findByIdAndUpdate(
       id,
-      { name, description, price, category, available, image },
+      { name, description, price, category, availability, image },
       { new: true }
     );
 
@@ -86,7 +111,10 @@ const updateFoodItem = async (req, res) => {
 
     res.status(200).json(updatedFoodItem);
   } catch (error) {
-    res.status(500).json({ message: "Server error while updating food item", error: error.message });
+    res.status(500).json({
+      message: "Server error while updating food item",
+      error: error.message,
+    });
   }
 };
 
@@ -102,7 +130,10 @@ const deleteFoodItem = async (req, res) => {
 
     res.status(200).json({ message: "Food item deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error while deleting food item", error: error.message });
+    res.status(500).json({
+      message: "Server error while deleting food item",
+      error: error.message,
+    });
   }
 };
 
@@ -128,7 +159,10 @@ const getFoodsByRestaurant = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching food items:", error);
-    res.status(500).json({ message: "Server error while retrieving food items", error: error.message });
+    res.status(500).json({
+      message: "Server error while retrieving food items",
+      error: error.message,
+    });
   }
 };
 
@@ -142,12 +176,20 @@ const toggleFoodItemAvailability = async (req, res) => {
       return res.status(404).json({ message: "Food item not found" });
     }
 
-    foodItem.available = !foodItem.available;
+    // Toggle availability string
+    foodItem.availability =
+      foodItem.availability === "Available" ? "Unavailable" : "Available";
     await foodItem.save();
 
-    res.status(200).json({ message: "Food item availability toggled successfully", foodItem });
+    res.status(200).json({
+      message: `Food item availability updated to ${foodItem.availability}`,
+      foodItem,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Server error while toggling food item availability", error: error.message });
+    res.status(500).json({
+      message: "Server error while toggling food item availability",
+      error: error.message,
+    });
   }
 };
 
