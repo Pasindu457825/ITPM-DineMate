@@ -1,7 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const CartSidebar = ({ cartOpen, setCartOpen, cart, setCart, orderType, reservationId }) => {
+const CartSidebar = ({
+  cartOpen,
+  setCartOpen,
+  cart,
+  setCart,
+  orderType,
+  reservationId,
+}) => {
   const navigate = useNavigate();
 
   // Assuming all items in the cart are from the same restaurant
@@ -36,12 +43,14 @@ const CartSidebar = ({ cartOpen, setCartOpen, cart, setCart, orderType, reservat
         cartOpen ? "translate-x-0" : "translate-x-full"
       } transition-transform duration-300 ease-in-out`}
     >
-      <button
-        onClick={() => setCartOpen(false)}
-        className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
-      >
-        ✖ Close
-      </button>
+      {cartOpen && (
+        <button
+          onClick={() => setCartOpen(false)}
+          className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+        >
+          ✖ Close
+        </button>
+      )}
 
       <h2 className="text-xl font-bold text-gray-800 text-center mt-6">
         Your Cart 🛒
@@ -111,7 +120,13 @@ const CartSidebar = ({ cartOpen, setCartOpen, cart, setCart, orderType, reservat
               }
 
               navigate("/add-order-details", {
-                state: { restaurantId, restaurantName, cart, orderType, reservationId }, // ✅ Include orderType
+                state: {
+                  restaurantId,
+                  restaurantName,
+                  cart,
+                  orderType,
+                  reservationId,
+                }, // ✅ Include orderType
               });
             }}
             className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg mt-4 hover:bg-blue-600 transition"
