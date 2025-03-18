@@ -114,7 +114,7 @@ const RestaurantDetails = () => {
       <div className="bg-gray-200 p-4">
         <div className="flex flex-col md:flex-row gap-8">
           {/* Left Side: Restaurant Details */}
-          <div className="md:w-1/5 bg-gray-200 shadow-2xl rounded-lg p-6">
+          <div className="md:w-1/5 bg-gray-200 shadow-2xl rounded-lg p-6 inline-flex flex-col items-start min-h-0">
             <h1 className="text-4xl font-bold text-gray-800 mb-4">
               {restaurant.name}
             </h1>
@@ -123,14 +123,23 @@ const RestaurantDetails = () => {
               alt={restaurant.name}
               className="w-full h-64 object-cover rounded-lg shadow-md"
             />
-            <div className="mt-4 space-y-3">
-              <p className="text-lg text-gray-700">{restaurant.description}</p>
-              <p className="text-lg text-gray-700">
-                <strong>Location:</strong> {restaurant.location}
-              </p>
-              <p className="text-lg text-gray-700">
-                <strong>Phone:</strong> {restaurant.phoneNumber}
-              </p>
+            {/* Content Section */}
+            <div className="mt-4 space-y-2">
+              {restaurant.description && (
+                <p className="text-lg text-gray-700">
+                  {restaurant.description}
+                </p>
+              )}
+              {restaurant.location && (
+                <p className="text-lg text-gray-700">
+                  <strong>Location:</strong> {restaurant.location}
+                </p>
+              )}
+              {restaurant.phoneNumber && (
+                <p className="text-lg text-gray-700">
+                  <strong>Phone:</strong> {restaurant.phoneNumber}
+                </p>
+              )}
             </div>
 
             {/* Make a Reservation Button */}
@@ -152,14 +161,13 @@ const RestaurantDetails = () => {
 
             {reservationId && (
               <p className="text-lg font-semibold text-green-500 mt-2">
-                ✅ Your reservation has been created successfully! (ID:{" "}
-                {reservationId})
+                ✅ Your reservation ID: {reservationId}
               </p>
             )}
           </div>
 
           {/* Right Side: Food Menu */}
-          <div className="md:w-2/3 relative">
+          <div className="md:w-5/6 relative ">
             <div className="absolute top-0 right-0">
               <button
                 onClick={() => setCartOpen(true)}
@@ -171,42 +179,63 @@ const RestaurantDetails = () => {
 
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Food Menu</h2>
 
-            {/* Order Type Selection */}
-            <div className="mt-4">
-              <label className="block text-lg font-semibold mb-2">
-                Order Type:
-              </label>
-              <select
-                value={orderType}
-                onChange={(e) => setOrderType(e.target.value)}
-                className="w-full p-2 border rounded"
-              >
-                <option value="">Select Order Type</option>
-                <option value="Dine-in">Dine-in</option>
-                <option value="Takeaway">Takeaway</option>
-              </select>
+            {/* Order Type Selection and Search Bar in one row */}
+            <div className="mt-4 flex flex-col md:flex-row items-center justify-between gap-6 mr-8 ml-8">
+              {/* Order Type Selection */}
+              <div className="flex items-center gap-4 w-full md:w-1/3">
+                <label className="text-lg font-semibold whitespace-nowrap">
+                  Order Type:
+                </label>
+
+                {/* Toggle Button for Order Type */}
+                <div className="relative w-40">
+                  <div className="flex items-center bg-gray-400 rounded-full p-1 cursor-pointer">
+                    <div
+                      className={`w-1/2 text-center py-2 rounded-full transition ${
+                        orderType === "Dine-in"
+                          ? "bg-amber-700 text-white"
+                          : "text-gray-800"
+                      }`}
+                      onClick={() => setOrderType("Dine-in")}
+                    >
+                      Dine-in
+                    </div>
+                    <div
+                      className={`w-1/2 text-center py-2 rounded-full transition ${
+                        orderType === "Takeaway"
+                          ? "bg-amber-700 text-white"
+                          : "text-gray-800"
+                      }`}
+                      onClick={() => setOrderType("Takeaway")}
+                    >
+                      Takeaway
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Search Bar */}
+              {/* Search Bar with Clear Button */}
+              <div className="relative w-full md:w-1/3 mr-6">
+                <input
+                  type="text"
+                  placeholder="Search food..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full p-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 transition pr-10"
+                />
+                {searchQuery && (
+                  <span
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-red-500 text-xl"
+                  >
+                    ✖
+                  </span>
+                )}
+              </div>
             </div>
 
-            {/* Search Bar */}
-            <div className="flex mt-4 gap-2">
-              <input
-                type="text"
-                placeholder="Search food..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full p-2 border rounded"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-
-            <ul className="bg-gray-200 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-6 p-4">
+            <ul className="bg-gray-200 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-6 pl-6">
               {foods
                 .filter((food) =>
                   food.name.toLowerCase().includes(searchQuery.toLowerCase())

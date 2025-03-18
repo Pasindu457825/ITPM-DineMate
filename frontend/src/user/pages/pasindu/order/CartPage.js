@@ -41,75 +41,80 @@ const CartSidebar = ({
     <div
       className={`fixed top-0 right-0 h-full w-80 bg-white shadow-lg transform ${
         cartOpen ? "translate-x-0" : "translate-x-full"
-      } transition-transform duration-300 ease-in-out`}
+      } transition-transform duration-300 ease-in-out flex flex-col`}
     >
-      {cartOpen && (
+      {/* Top Section: Close Button */}
+      <div className="flex justify-between items-center p-4 border-b shadow-sm">
+        <h2 className="text-xl font-bold text-gray-800">Your Cart 🛒</h2>
         <button
           onClick={() => setCartOpen(false)}
-          className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
         >
           ✖ Close
         </button>
-      )}
+      </div>
 
-      <h2 className="text-xl font-bold text-gray-800 text-center mt-6">
-        Your Cart 🛒
-      </h2>
-
-      {cart.length === 0 ? (
-        <p className="text-gray-500 text-center mt-4">Your cart is empty.</p>
-      ) : (
-        <div className="p-4">
-          {cart.map((item) => (
-            <div
-              key={item._id}
-              className="border-b pb-3 mb-3 flex items-center"
-            >
-              <img
-                src={item.image || "https://via.placeholder.com/100"}
-                alt={item.name}
-                className="w-16 h-16 object-cover rounded"
-              />
-              <div className="ml-3 flex-1">
-                <h3 className="text-md font-semibold">{item.name}</h3>
-                <p className="text-gray-700">
-                  Rs.{(parseFloat(item.price) || 0).toFixed(2)}
-                </p>
-
-                {/* Quantity Selector */}
-                <div className="flex items-center mt-2">
-                  <button
-                    onClick={() => handleQuantityChange(item._id, -1)}
-                    className="bg-gray-300 text-black px-3 py-1 rounded-l hover:bg-gray-400 transition"
-                    disabled={item.quantity === 1}
-                  >
-                    -
-                  </button>
-                  <span className="px-4 py-1 border">{item.quantity}</span>
-                  <button
-                    onClick={() => handleQuantityChange(item._id, 1)}
-                    className="bg-gray-300 text-black px-3 py-1 rounded-r hover:bg-gray-400 transition"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-
-              <button
-                onClick={() => handleRemoveItem(item._id)}
-                className="ml-3 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition"
+      {/* Cart Content */}
+      <div className="flex-1 p-4 overflow-y-auto">
+        {cart.length === 0 ? (
+          <p className="text-gray-500 text-center">Your cart is empty.</p>
+        ) : (
+          <>
+            {cart.map((item) => (
+              <div
+                key={item._id}
+                className="border-b pb-3 mb-3 flex items-center"
               >
-                ✖
-              </button>
+                <img
+                  src={item.image || "https://via.placeholder.com/100"}
+                  alt={item.name}
+                  className="w-16 h-16 object-cover rounded"
+                />
+                <div className="ml-3 flex-1">
+                  <h3 className="text-md font-semibold">{item.name}</h3>
+                  <p className="text-gray-700">
+                    Rs.{(parseFloat(item.price) || 0).toFixed(2)}
+                  </p>
+
+                  {/* Quantity Selector */}
+                  <div className="flex items-center mt-2">
+                    <button
+                      onClick={() => handleQuantityChange(item._id, -1)}
+                      className="bg-gray-300 text-black px-3 py-1 rounded-l hover:bg-gray-400 transition"
+                      disabled={item.quantity === 1}
+                    >
+                      -
+                    </button>
+                    <span className="px-4 py-1 border">{item.quantity}</span>
+                    <button
+                      onClick={() => handleQuantityChange(item._id, 1)}
+                      className="bg-gray-300 text-black px-3 py-1 rounded-r hover:bg-gray-400 transition"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => handleRemoveItem(item._id)}
+                  className="ml-3 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition"
+                >
+                  ✖
+                </button>
+              </div>
+            ))}
+
+            <div className="text-lg font-semibold text-right mt-4">
+              Total:{" "}
+              <span className="text-green-600">Rs.{totalPrice.toFixed(2)}</span>
             </div>
-          ))}
+          </>
+        )}
+      </div>
 
-          <div className="text-lg font-semibold text-right mt-4">
-            Total:{" "}
-            <span className="text-green-600">Rs.{totalPrice.toFixed(2)}</span>
-          </div>
-
-          {/* Checkout Button - Pass restaurantId, restaurantName & cart items */}
+      {/* Checkout Button */}
+      {cart.length > 0 && (
+        <div className="p-4 border-t shadow-sm">
           <button
             onClick={() => {
               if (!orderType) {
@@ -126,10 +131,10 @@ const CartSidebar = ({
                   cart,
                   orderType,
                   reservationId,
-                }, // ✅ Include orderType
+                },
               });
             }}
-            className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg mt-4 hover:bg-blue-600 transition"
+            className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
           >
             Proceed to Checkout
           </button>
