@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import deleteRestaurant from "../../../../manager/pages/pamaa/restaurent/DeleteRestaurant"; // Import the delete function for restaurants
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import deleteRestaurant from '../../../../manager/pages/pamaa/restaurent/DeleteRestaurant';
 
 const RestaurantsList = () => {
   const [restaurants, setRestaurants] = useState([]);
-  const navigate = useNavigate(); // Use navigate function for redirection
+  const [search, setSearch] = useState("");  // State to hold the search term
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -22,72 +23,93 @@ const RestaurantsList = () => {
     fetchRestaurants();
   }, []);
 
-  // Function to handle restaurant deletion
   const handleDelete = async (id) => {
-    await deleteRestaurant(id, setRestaurants, restaurants); // Call delete function
+    if (window.confirm("Are you sure you want to delete this restaurant?")) {
+      await deleteRestaurant(id, setRestaurants, restaurants);
+    }
   };
 
-  // Function to navigate to the update page (passing restaurant ID to pre-fill form)
   const handleUpdate = (id) => {
-    navigate(`/update-restaurant/${id}`); // Navigate to Update Restaurant page
+    navigate(`/update-restaurant/${id}`);
   };
+
+  // Function to filter restaurants based on the search term
+  const filteredRestaurants = restaurants.filter(restaurant => 
+    restaurant.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">
-        Restaurants List
-      </h1>
-     
-      {restaurants.length === 0 ? (
-        <p className="text-gray-500">No restaurants found.</p>
+    <div className="p-6 bg-gray-200 min-h-screen">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6 border-b border-amber-500 pb-3">Restaurants List</h1>
+      <input
+        type="text"
+        placeholder="Search by restaurant name..."
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        className="mb-6 p-3 border border-gray-300 rounded bg-white text-gray-800 w-full focus:border-amber-500 focus:outline-none"
+      />
+      {filteredRestaurants.length === 0 ? (
+        <p className="text-gray-600">No restaurants match your search criteria.</p>
       ) : (
-        <ul className="space-y-4">
-          {restaurants.map((restaurant) => (
-            <li
-              key={restaurant._id}
-              className="border p-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredRestaurants.map((restaurant) => (
+            <div 
+              key={restaurant._id} 
+              className="bg-white rounded-lg shadow overflow-hidden border-l-4 border-amber-500"
             >
-              <div className="flex flex-col space-y-2">
-                <h2 className="text-2xl font-semibold text-gray-800">
-                  {restaurant.name}
-                </h2>
-                <p className="text-gray-600">{restaurant.description}</p>
-                <p className="text-gray-700">
-                  <strong>Location:</strong> {restaurant.location}
-                </p>
-                <p className="text-gray-700">
-                  <strong>Phone Number:</strong> {restaurant.phoneNumber}
-                </p>
-                <p className="text-gray-700">
-                  <strong>Number of Tables:</strong> {restaurant.numberOfTables}
-                </p>
-                <p className="text-gray-700">
-                  <strong>Seats Per Table:</strong> {restaurant.seatsPerTable}
-                </p>
-                <div className="flex space-x-4 mt-4">
-                  <button
-                    onClick={() => navigate(`/add-food/${restaurant?._id}`)} // Adjust the route as necessary
-                    className="bg-green-500 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 mb-4"
+              <div className="relative">
+                <img 
+                  src={restaurant.image} 
+                  alt={restaurant.name} 
+                  className="w-full h-48 object-cover"
+                />
+              </div>
+              
+              <div className="p-4">
+                <h2 className="text-xl font-bold text-gray-800 mb-2">{restaurant.name}</h2>
+                 {/* <p className="text-gray-700">{restaurant.description}</p> */}
+                <p className="text-gray-600 mb-2">{restaurant.location}</p>
+                <p className="text-gray-600 mb-3">{restaurant.phoneNumber}</p>
+                {restaurant.tables && restaurant.tables.length > 0 && (
+                  <div className="text-gray-700 bg-gray-300 p-3 rounded-lg">
+                    <p className="text-gray-900 font-medium mb-2">Table Configurations:</p>
+                    {restaurant.tables.map((table, index) => (
+                      <p key={index} className="text-gray-700">
+                        Table {index + 1}: <span className="text-amber-600">{table.quantity}</span> tables with <span className="text-amber-600">{table.seats}</span> seats each
+                      </p>
+                    ))}
+                  </div>
+                )}
+                <div className="bg-gray-100 p-4 grid grid-cols-2 gap-2">
+                  <button 
+                    onClick={() => navigate(`/restaurant/foods/${restaurant._id}`)}
+                    className="flex justify-center items-center bg-gray-700 hover:bg-gray-600 text-white rounded py-2 transition-colors text-sm"
                   >
-                    Add Food Item
+                    <span>Food Menu</span>
                   </button>
-                  <button
+                  <button 
+                    onClick={() => navigate(`/add-food/${restaurant._id}`)}
+                    className="flex justify-center items-center bg-amber-600 hover:bg-amber-700 text-white rounded py-2 transition-colors text-sm"
+                  >
+                    <span>Add Food</span>
+                  </button>
+                  <button 
                     onClick={() => handleUpdate(restaurant._id)}
-                    className="bg-yellow-600 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    className="flex justify-center items-center bg-gray-500 hover:bg-gray-600 text-white rounded py-2 transition-colors text-sm"
                   >
-                    Update
+                    <span>Update</span>
                   </button>
-                  <button
+                  <button 
                     onClick={() => handleDelete(restaurant._id)}
-                    className="bg-red-600 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className="flex justify-center items-center bg-red-600 hover:bg-red-700 text-white rounded py-2 transition-colors text-sm"
                   >
-                    Delete
+                    <span>Delete</span>
                   </button>
                 </div>
               </div>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

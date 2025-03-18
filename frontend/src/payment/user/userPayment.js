@@ -1,8 +1,11 @@
+
 import React, { useEffect, useState } from "react";
+
 import axios from "axios";
 
 const UserPayments = () => {
   const [payments, setPayments] = useState([]);
+
   const userId = "USER_ID_FROM_AUTH"; // Replace with actual user ID
 
   useEffect(() => {
@@ -21,8 +24,7 @@ const UserPayments = () => {
           <p>Status: {payment.status}</p>
         </div>
       ))}
-    </div>
-  );
+  
 };
 
 export default UserPayments;

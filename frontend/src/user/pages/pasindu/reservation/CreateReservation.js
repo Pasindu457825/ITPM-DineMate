@@ -6,58 +6,138 @@ const CreateReservation = () => {
   const { restaurantId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-
+  const [user, setUser] = useState(null);
   const { state } = location || {};
 
   const [restaurant, setRestaurant] = useState(null);
   const tableImage = "/img/table.png"; // Replace with your table image URL
 
   const [selectedTables, setSelectedTables] = useState([]); // Define selectedTables state
-
+  const [availableTables, setAvailableTables] = useState([]);
+  const [reservedTables, setReservedTables] = useState([]);
   const [formData, setFormData] = useState({
     restaurantId: state?.restaurantId || restaurantId,
     shopName: state?.name || "",
     tableNumber: "",
-    customerName: "",
-    customerEmail: "",
+    customerName: state?.fname || "", // Prefill first name
+    customerEmail: state?.email || "", // Prefill email
     NoofPerson: "",
+    specialRequests: "",
     date: "",
     time: "",
   });
 
+  // Time slots for selection
+  const timeSlots = [
+    "08:00 - 10:00 AM",
+    "10:00 - 12:00 PM",
+    "12:00 - 02:00 PM",
+    "02:00 - 04:00 PM",
+    "04:00 - 06:00 PM",
+    "06:00 - 08:00 PM",
+    "08:00 - 10:00 PM",
+  ];
+
   // Fetch restaurant details if not provided
   useEffect(() => {
-    if (!state?.name) {
-      const fetchRestaurant = async () => {
-        try {
-          const response = await axios.get(
-            `http://localhost:5000/api/ITPM/restaurants/get-restaurant/${restaurantId}`
-          );
-          setRestaurant(response.data);
-          setFormData((prev) => ({
-            ...prev,
-            shopName: response.data.name,
-          }));
-        } catch (error) {
-          console.error("Error fetching restaurant:", error);
-        }
-      };
+    const fetchRestaurant = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/ITPM/restaurants/get-restaurant/${restaurantId}`
+        );
+        setRestaurant(response.data);
+        setFormData((prev) => ({
+          ...prev,
+          shopName: response.data.name,
+        }));
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching restaurant:", error);
+      }
+    };
 
-      fetchRestaurant();
-    } else {
-      setRestaurant(state);
-    }
-  }, [restaurantId, state]);
+    fetchRestaurant();
+  }, [restaurantId]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Fetch available tables when date & time are selected
+  // Fetch available tables when date & time are selected
+  useEffect(() => {
+    const fetchAvailableTables = async () => {
+      if (formData.date && formData.time) {
+        try {
+          const response = await axios.get(
+            `http://localhost:5000/api/ITPM/reservations/available-tables`,
+            {
+              params: {
+                restaurantId,
+                date: formData.date,
+                time: formData.time,
+              },
+            }
+          );
+          setAvailableTables(response.data.availableTables || []);
+          setReservedTables(response.data.reservedTables || []); // ✅ Store reserved tables
+        } catch (error) {
+          console.error("Error fetching available tables:", error);
+        }
+      }
+    };
+
+    fetchAvailableTables();
+  }, [formData.date, formData.time, restaurantId]);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token"); // Get token from localStorage
+        if (!token) {
+          console.log("No token found. User might not be logged in.");
+          return;
+        }
+
+        // Send token in Authorization header
+        const res = await axios.get("http://localhost:5000/api/ITPM/users/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUser(res.data);
+      } catch (error) {
+        console.error(
+          "Error fetching profile:",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  // Update formData when user is fetched
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        customerName: `${state?.fname || user.fname} ${
+          state?.lname || user.lname
+        }`.trim(),
+        customerEmail: state?.email || user.email,
+      }));
+    }
+  }, [user, state]);
+
+  if (!user) {
+    return <div>Loading or not logged in...</div>;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (selectedTables.length === 0) {
-      alert("Please select at least one table before submitting.");
+      alert("Please select at least one table.");
       return;
     }
 
@@ -71,41 +151,47 @@ const CreateReservation = () => {
     }
 
     try {
-      await axios.post(
+      const response = await axios.post(
         "http://localhost:5000/api/ITPM/reservations/create-reservation",
-        { ...formData, tableNumber: selectedTables.join(", ") } // Ensure tables are stored as a string
+        { ...formData, tableNumber: selectedTables.join(", ") } // ✅ Include specialRequests automatically
       );
-      navigate(`/user/restaurent-details/${restaurantId}`);
+
+      const reservationId = response.data.reservationId;
+
+      navigate(`/user/restaurent-details/${restaurantId}`, {
+        state: { reservationId },
+      });
     } catch (error) {
       console.error("Error creating reservation:", error);
     }
   };
 
   const handleGoBack = () => {
-    navigate(`/display-reservations/${restaurantId}`);
+    navigate(`/user/restaurent-details/${restaurantId}`);
   };
 
-  {
-    /* Handle Table Selection */
-  }
+  const totalCapacity =
+    selectedTables.length * (restaurant?.seatsPerTable || 0);
+
   const handleTableSelect = (tableNumber) => {
+    if (reservedTables.includes(tableNumber)) return; // ✅ Prevent selection of reserved tables
+
     setSelectedTables((prevTables) => {
       const updatedTables = prevTables.includes(tableNumber)
-        ? prevTables.filter((t) => t !== tableNumber) // Remove if already selected
-        : [...prevTables, tableNumber]; // Add new selection
+        ? prevTables.filter((t) => t !== tableNumber)
+        : [...prevTables, tableNumber];
 
-      // Update formData after setting selectedTables
       setFormData((prev) => ({
         ...prev,
-        tableNumber: updatedTables.join(", "), // Store tables as a comma-separated string
+        tableNumber: updatedTables.join(", "),
       }));
 
       return updatedTables;
     });
   };
 
-  const totalCapacity =
-    selectedTables.length * (restaurant?.seatsPerTable || 0);
+  // const totalCapacity =
+  //   selectedTables.length * (restaurant?.seatsPerTable || 0);
 
   if (!restaurant)
     return (
@@ -150,28 +236,46 @@ const CreateReservation = () => {
 
       <div className="grid grid-cols-4 gap-4 p-4 bg-gray-50 rounded">
         {[...Array(restaurant.numberOfTables)].map((_, index) => {
-          const tableNumber = String(index + 1).padStart(3, "0"); // Format as "001", "002", etc.
+          const tableNumber = String(index + 1).padStart(3, "0");
+
+          const isReserved = reservedTables.includes(tableNumber);
+          const isSelected = selectedTables.includes(tableNumber);
 
           return (
             <div
               key={index}
-              className={`text-center cursor-pointer p-2 rounded ${
-                selectedTables.includes(tableNumber)
-                  ? "bg-blue-300"
-                  : "bg-white"
+              className={`relative text-center p-2 rounded transition ${
+                isSelected
+                  ? "bg-green-500 text-white" // ✅ Selected tables turn solid green
+                  : isReserved
+                  ? "bg-red-500 text-white" // 🔴 Reserved tables stay red
+                  : "bg-green-500 hover:bg-green-700" // ✅ Available tables turn light green on hover
+              } ${
+                isReserved
+                  ? "cursor-not-allowed pointer-events-none hover:bg-red-600" // 🔴 Reserved tables turn darker on hover
+                  : "cursor-pointer"
               }`}
-              onClick={() => handleTableSelect(tableNumber)}
+              onClick={() => !isReserved && handleTableSelect(tableNumber)} // ✅ Prevent click on reserved tables
             >
               <img
                 src={tableImage}
                 alt={`Table ${tableNumber}`}
-                className={`mx-auto w-12 h-12 ${
-                  selectedTables.includes(tableNumber)
-                    ? "border-4 border-blue-600"
-                    : ""
-                }`}
+                className="mx-auto w-12 h-12"
               />
-              <p className="text-sm text-gray-700">Table {tableNumber}</p>
+              <p
+                className={`text-sm ${
+                  isSelected || isReserved ? "text-white" : "text-gray-700"
+                }`}
+              >
+                Table {tableNumber}
+              </p>
+
+              {/* ✅ Show Checkmark When Selected */}
+              {isSelected && (
+                <span className="absolute top-1 right-1 bg-white text-green-500 rounded-full p-1">
+                  ✅
+                </span>
+              )}
             </div>
           );
         })}
@@ -186,21 +290,19 @@ const CreateReservation = () => {
             type="text"
             name="customerName"
             value={formData.customerName}
-            onChange={handleChange}
-            required
-            className="p-2 border border-gray-300 rounded w-full"
+            readOnly // 🔒 Prevents user from editing
+            className="p-2 border border-gray-300 rounded w-full bg-gray-100 cursor-not-allowed pointer-events-none"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Customer Email</label>
+          <label className="block text-sm font-medium">Customer Name</label>
           <input
-            type="email"
-            name="customerEmail"
+            type="text"
+            name="customerName"
             value={formData.customerEmail}
-            onChange={handleChange}
-            required
-            className="p-2 border border-gray-300 rounded w-full"
+            readOnly // 🔒 Prevents user from editing
+            className="p-2 border border-gray-300 rounded w-full bg-gray-100 cursor-not-allowed pointer-events-none"
           />
         </div>
 
@@ -236,14 +338,42 @@ const CreateReservation = () => {
 
         <div>
           <label className="block text-sm font-medium">Reservation Time</label>
-          <input
-            type="time"
+          <select
             name="time"
             value={formData.time}
             onChange={handleChange}
             required
             className="p-2 border border-gray-300 rounded w-full"
+          >
+            <option value="">Select Time Slot</option>
+            {timeSlots.map((slot, index) => (
+              <option key={index} value={slot}>
+                {slot}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">
+            Special Requests (Optional)
+          </label>
+          <textarea
+            name="specialRequests"
+            value={formData.specialRequests}
+            onChange={(e) => {
+              if (e.target.value.length <= 200) {
+                // ✅ Prevent input over 200 chars
+                setFormData({ ...formData, specialRequests: e.target.value });
+              }
+            }}
+            className="p-2 border border-gray-300 rounded w-full"
+            placeholder="Any special requests (e.g., birthday setup, window seat)..."
+            maxLength="200" // ✅ Prevent input over 200 chars (double safety)
           />
+          <p className="text-gray-500 text-sm mt-1">
+            {200 - formData.specialRequests.length} characters remaining
+          </p>
         </div>
 
         <button
@@ -258,7 +388,7 @@ const CreateReservation = () => {
         onClick={handleGoBack}
         className="mt-4 bg-gray-500 text-white px-4 py-2 rounded w-full hover:bg-gray-600"
       >
-        Back to Reservation List
+        Back to Restaurant
       </button>
     </div>
   );
