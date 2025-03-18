@@ -164,6 +164,10 @@ const UpdateRestaurant = () => {
             )}
           </div>
         ))}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">Current Image:</label>
+          <img src={restaurant.image} alt="Restaurant" className="w-full h-64 object-cover rounded-lg"/>
+        </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">Upload New Image</label>
           <input
@@ -172,7 +176,13 @@ const UpdateRestaurant = () => {
             onChange={handleFileChange}
             className="p-2 border border-gray-300 rounded w-full"
           />
-          {uploadProgress > 0 && <p>Upload Progress: {uploadProgress}%</p>}
+          {uploadProgress > 0 && (
+            <div className="relative pt-1">
+              <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-pink-200">
+                <div style={{ width: `${uploadProgress}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-pink-500"></div>
+              </div>
+            </div>
+          )}
         </div>
         <button
           type="submit"
