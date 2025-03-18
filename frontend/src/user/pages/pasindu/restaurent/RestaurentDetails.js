@@ -2,6 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import CartSidebar from "../order/CartPage";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Typography,
+  Button,
+} from "@material-tailwind/react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 
 const RestaurantDetails = () => {
   const { id: restaurantId } = useParams();
@@ -100,179 +110,169 @@ const RestaurantDetails = () => {
     return <p className="text-center text-gray-500">Loading...</p>;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-white shadow-lg rounded-lg">
-      <button
-        onClick={() => setCartOpen(true)}
-        className="fixed top-5 right-5 bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition"
-      >
-        View Cart 🛒
-      </button>
-
-      <h1 className="text-4xl font-bold text-gray-800 text-center mb-4">
-        {restaurant.name}
-      </h1>
-      <img
-        src={restaurant.image || "https://via.placeholder.com/600"}
-        alt={restaurant.name}
-        className="w-full h-64 object-cover rounded-lg shadow-md"
-      />
-
-      <div className="mt-6 space-y-4">
-        <p className="text-lg text-gray-700">
-          <strong>Description:</strong> {restaurant.description}
-        </p>
-        <p className="text-lg text-gray-700">
-          <strong>Location:</strong> {restaurant.location}
-        </p>
-        <p className="text-lg text-gray-700">
-          <strong>Phone:</strong> {restaurant.phoneNumber}
-        </p>
-      </div>
-
-      <h2 className="text-2xl font-bold text-gray-800 mt-8">Food Menu</h2>
-
-      {/* Order Type Selection */}
-      <div className="mt-4">
-        <label className="block text-lg font-semibold mb-2">Order Type:</label>
-        <select
-          value={orderType}
-          onChange={(e) => setOrderType(e.target.value)}
-          className="w-full p-2 border rounded"
-        >
-          <option value="">Select Order Type</option>
-          <option value="Dine-in">Dine-in</option>
-          <option value="Takeaway">Takeaway</option>
-        </select>
-      </div>
-
-      {/* Search Bar */}
-      <div className="flex mt-4 gap-2">
-        <input
-          type="text"
-          placeholder="Search food..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-        {searchQuery && (
+    <>
+      <div className="bg-gray-200">
+        <div className="p-6 max-w-4xl mx-auto bg-white shadow-lg rounded-lg">
           <button
-            onClick={() => setSearchQuery("")}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+            onClick={() => setCartOpen(true)}
+            className="fixed top-5 right-5 bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition"
           >
-            Clear
+            View Cart 🛒
           </button>
-        )}
-      </div>
 
-      {/* Make a Reservation Button */}
-      <button
-        onClick={() =>
-          navigate(`/add-reservation/${restaurantId}`, {
-            state: {
-              restaurantId,
-              name: restaurant.name,
-              numberOfTables: restaurant.numberOfTables,
-              seatsPerTable: restaurant.seatsPerTable,
-            },
-          })
-        }
-        className="mt-6 w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition"
-      >
-        Make a Reservation 📅
-      </button>
+          <h1 className="text-4xl font-bold text-gray-800 text-center mb-4">
+            {restaurant.name}
+          </h1>
+          <img
+            src={restaurant.image || "https://via.placeholder.com/600"}
+            alt={restaurant.name}
+            className="w-full h-64 object-cover rounded-lg shadow-md"
+          />
 
-      {reservationId && (
-        <p className="text-lg font-semibold text-green-500">
-          ✅ Your reservation has been created successfully! (ID:{" "}
-          {reservationId})
-        </p>
-      )}
+          <div className="mt-6 space-y-4">
+            <p className="text-lg text-gray-700">
+              <strong>Description:</strong> {restaurant.description}
+            </p>
+            <p className="text-lg text-gray-700">
+              <strong>Location:</strong> {restaurant.location}
+            </p>
+            <p className="text-lg text-gray-700">
+              <strong>Phone:</strong> {restaurant.phoneNumber}
+            </p>
+          </div>
 
-      <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        {foods
-          .filter((food) =>
-            food.name.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-          .map((food) => (
-            <li
-              key={food._id}
-              className="border p-4 rounded shadow-lg flex flex-col items-center"
+          <CartSidebar
+            cartOpen={cartOpen}
+            setCartOpen={setCartOpen}
+            cart={cart}
+            setCart={setCart}
+            orderType={orderType}
+            reservationId={reservationId}
+          />
+        </div>
+
+        <div className="w-full max-w-7xl mx-auto ">
+          <h2 className="text-2xl font-bold text-gray-800 mt-8">Food Menu</h2>
+
+          {/* Order Type Selection */}
+          <div className="mt-4">
+            <label className="block text-lg font-semibold mb-2">
+              Order Type:
+            </label>
+            <select
+              value={orderType}
+              onChange={(e) => setOrderType(e.target.value)}
+              className="w-full p-2 border rounded"
             >
-              <h3 className="text-lg font-semibold">{food.name}</h3>
-              <p className="text-gray-700">{food.description}</p>
-              <p className="text-green-600 font-bold">
-                Rs.{food.price.toFixed(2)}
-              </p>
+              <option value="">Select Order Type</option>
+              <option value="Dine-in">Dine-in</option>
+              <option value="Takeaway">Takeaway</option>
+            </select>
+          </div>
 
-              {food.image && (
-                <img
-                  src={food.image}
-                  alt={food.name}
-                  className="w-40 h-40 object-cover rounded mt-2"
-                />
-              )}
-
-              {/* Show Availability */}
-              <p
-                className={`text-sm font-semibold mt-2 ${
-                  food.availability === "Available"
-                    ? "text-green-500"
-                    : "text-red-500"
-                }`}
+          {/* Search Bar */}
+          <div className="flex mt-4 gap-2">
+            <input
+              type="text"
+              placeholder="Search food..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full p-2 border rounded"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
               >
-                {food.availability === "Available" ? "Available" : "Unavailable"}
-              </p>
+                Clear
+              </button>
+            )}
+          </div>
 
-              {/* Disable quantity buttons & Add to Cart if Unavailable */}
-              {food.availability === "Available" ? (
-                <>
-                  <div className="flex items-center mt-3">
-                    <button
-                      onClick={() => handleQuantityChange(food._id, -1)}
-                      className="bg-gray-300 text-black px-3 py-1 rounded-l hover:bg-gray-400"
-                      disabled={(quantities[food._id] || 1) === 1}
+          {/* Make a Reservation Button */}
+          <button
+            onClick={() =>
+              navigate(`/add-reservation/${restaurantId}`, {
+                state: {
+                  restaurantId,
+                  name: restaurant.name,
+                  numberOfTables: restaurant.numberOfTables,
+                  seatsPerTable: restaurant.seatsPerTable,
+                },
+              })
+            }
+            className="mt-6 w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition"
+          >
+            Make a Reservation 📅
+          </button>
+
+          {reservationId && (
+            <p className="text-lg font-semibold text-green-500">
+              ✅ Your reservation has been created successfully! (ID:{" "}
+              {reservationId})
+            </p>
+          )}
+
+          <ul className="bg-gray-200 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-6">
+            {foods
+              .filter((food) =>
+                food.name.toLowerCase().includes(searchQuery.toLowerCase())
+              )
+              .map((food) => (
+                <li key={food._id} className="w-full max-w-[24rem]">
+                  <Card className="max-w-[24rem] overflow-hidden shadow-lg  bg-blue-gray-900 transition-transform transform hover:scale-105 flex flex-col">
+                    {/* Food Image Section */}
+                    <CardHeader
+                      floated={false}
+                      shadow={false}
+                      color="transparent"
+                      className="m-0 rounded-none w-full h-40"
                     >
-                      -
-                    </button>
-                    <span className="px-4 py-1 border">
-                      {quantities[food._id] || 1}
-                    </span>
-                    <button
-                      onClick={() => handleQuantityChange(food._id, 1)}
-                      className="bg-gray-300 text-black px-3 py-1 rounded-r hover:bg-gray-400"
-                    >
-                      +
-                    </button>
-                  </div>
+                      <img
+                        src={food.image || "/fallback-image.png"}
+                        alt={food.name}
+                        className="h-full w-full object-cover rounded-bl-[20%]"
+                      />
+                    </CardHeader>
 
-                  <button
-                    onClick={() => handleAddToCart(food)}
-                    className="mt-3 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-                  >
-                    Add to Cart
-                  </button>
-                </>
-              ) : (
-                <button
-                  className="mt-3 bg-gray-400 text-white px-4 py-2 rounded"
-                  onClick={() => alert("This item is currently unavailable.")}
-                >
-                  Unavailable
-                </button>
-              )}
-            </li>
-          ))}
-      </ul>
+                    {/* Food Details Section */}
+                    <CardBody>
+                      <Typography variant="h4" color="white">
+                        {food.name}
+                      </Typography>
+                      <Typography
+                        variant="small"
+                        color="white"
+                        className="mt-3 font-normal"
+                      >
+                        {food.description}
+                      </Typography>
+                    </CardBody>
 
-      <CartSidebar
-        cartOpen={cartOpen}
-        setCartOpen={setCartOpen}
-        cart={cart}
-        setCart={setCart}
-        orderType={orderType}
-        reservationId={reservationId}
-      />
-    </div>
+                    {/* Footer with avatars and price */}
+                    <CardFooter className="flex items-center justify-between">
+                      <Typography color="white" className="font-medium">
+                        ${food.price.toFixed(2)}
+                      </Typography>
+                      <Button
+                        onClick={() => handleAddToCart(food)}
+                        ripple={false}
+                        fullWidth={false}
+                        className="bg-amber-700 text-white shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100 rounded-full w-12 h-12 flex items-center justify-center"
+                      >
+                        <FontAwesomeIcon
+                          icon={faShoppingCart}
+                          className="w-5 h-5 text-white"
+                        />
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </li>
+              ))}
+          </ul>
+        </div>
+      </div>
+    </>
   );
 };
 
