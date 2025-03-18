@@ -9,6 +9,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "firebase": "^11.4.0",
+    "framer-motion": "^12.5.0",
     "lucide-react": "^0.482.0",
     "mongoose": "^8.10.0",
     "prop-types": "^15.8.1",

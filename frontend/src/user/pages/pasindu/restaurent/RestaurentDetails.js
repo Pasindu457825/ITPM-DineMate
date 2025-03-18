@@ -12,6 +12,7 @@ import {
 } from "@material-tailwind/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
+import { motion, AnimatePresence } from "framer-motion";
 
 const RestaurantDetails = () => {
   const { id: restaurantId } = useParams();
@@ -25,6 +26,8 @@ const RestaurantDetails = () => {
   const navigate = useNavigate(); // Initialize navigate function
 
   const location = useLocation(); // ✅ Add useLocation()
+  const [categorizedFoods, setCategorizedFoods] = useState({});
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   // Retrieve reservationId from state
   const { reservationId } = location.state || {};
@@ -45,7 +48,20 @@ const RestaurantDetails = () => {
         );
 
         setRestaurant(restaurantResponse.data);
-        setFoods(foodsResponse.data.foods || []);
+
+        const foods = foodsResponse.data.foods || [];
+        setFoods(foods);
+
+        // Categorize foods
+        const categorized = {};
+        foods.forEach((food) => {
+          if (!categorized[food.category]) {
+            categorized[food.category] = [];
+          }
+          categorized[food.category].push(food);
+        });
+
+        setCategorizedFoods(categorized);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -161,14 +177,14 @@ const RestaurantDetails = () => {
             </button>
 
             {reservationId && (
-              <p className="text-lg font-semibold text-green-500 mt-2">
+              <p className="text-lg font-semibold text-amber-700 mt-2">
                 ✅ Your reservation ID: {reservationId}
               </p>
             )}
           </div>
 
           {/* Right Side: Food Menu */}
-          <div className="md:w-5/6 relative ">
+          <div className="md:w-5/6 relative min-h-screen">
             <div className="absolute top-0 right-0">
               <button
                 onClick={() => setCartOpen(true)}
@@ -177,14 +193,12 @@ const RestaurantDetails = () => {
                 View Cart 🛒
               </button>
             </div>
-
             <h2
               className="text-5xl font-bold text-gray-800 mt-4 mb-4"
               style={{ fontFamily: "'Dancing Script', cursive" }}
             >
               Our Food Menu
             </h2>
-
             {/* Order Type Selection and Search Bar in one row */}
             <div className="mt-4 flex flex-col md:flex-row items-center justify-between gap-6 mr-8 ml-8">
               {/* Order Type Selection */}
@@ -240,64 +254,108 @@ const RestaurantDetails = () => {
                 )}
               </div>
             </div>
+            <div className="flex items-center justify-center gap-1 mt-6 font-sans">
+              <button
+                onClick={() => setSelectedCategory("All")}
+                className={`w-20 py-1 text-lg rounded-full transition duration-200 font-medium ${
+                  selectedCategory === "All"
+                    ? "bg-blue-gray-900 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                All
+              </button>
 
-            <ul className="bg-gray-200 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-6 pl-6">
-              {foods
-                .filter((food) =>
-                  food.name.toLowerCase().includes(searchQuery.toLowerCase())
-                )
-                .map((food) => (
-                  <li key={food._id} className="w-full max-w-[24rem]">
-                    <Card className="max-w-[20rem] overflow-hidden shadow-lg bg-blue-gray-900 flex flex-col group">
-                      {/* Food Image Section */}
-                      <CardHeader
-                        floated={false}
-                        shadow={false}
-                        color="transparent"
-                        className="m-0 rounded-none w-full h-40 transition-transform transform group-hover:scale-105"
-                      >
-                        <img
-                          src={food.image}
-                          alt={food.name}
-                          className="h-full w-full object-cover rounded-bl-[20%]"
-                        />
-                      </CardHeader>
-
-                      {/* Food Details Section */}
-                      <CardBody>
-                        <Typography variant="h4" color="white">
-                          {food.name}
-                        </Typography>
-                        <Typography
-                          variant="h6"
-                          color="white"
-                          className="mt-3 font-normal"
+              {Object.keys(categorizedFoods || {}).map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`w-24 py-1 text-lg rounded-full transition duration-200 font-medium ${
+                    selectedCategory === category
+                      ? "bg-blue-gray-900 text-white"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  {category.charAt(0).toUpperCase() + category.slice(1)}
+                </button>
+              ))}
+            </div>
+            <AnimatePresence mode="wait">
+              <motion.ul
+                key={selectedCategory}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="bg-gray-200 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-6 pl-6"
+              >
+                {foods
+                  .filter(
+                    (food) =>
+                      (selectedCategory === "All" ||
+                        food.category === selectedCategory) &&
+                      food.name
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase())
+                  )
+                  .map((food) => (
+                    <motion.li
+                      key={food._id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      className="w-full max-w-[24rem]"
+                    >
+                      <Card className="max-w-[20rem] overflow-hidden shadow-lg bg-blue-gray-900 flex flex-col group">
+                        <CardHeader
+                          floated={false}
+                          shadow={false}
+                          color="transparent"
+                          className="m-0 rounded-none w-full h-40 transition-transform transform group-hover:scale-105"
                         >
-                          {food.description}
-                        </Typography>
-                      </CardBody>
-
-                      {/* Footer with price & add to cart */}
-                      <CardFooter className="flex items-center justify-between">
-                        <Typography color="white" className="font-medium">
-                          ${food.price.toFixed(2)}
-                        </Typography>
-                        <Button
-                          onClick={() => handleAddToCart(food)}
-                          ripple={false}
-                          fullWidth={false}
-                          className="bg-amber-700 text-white shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100 rounded-full w-12 h-12 flex items-center justify-center"
-                        >
-                          <FontAwesomeIcon
-                            icon={faShoppingCart}
-                            className="w-5 h-5 text-white"
+                          <img
+                            src={food.image}
+                            alt={food.name}
+                            className="h-full w-full object-cover rounded-bl-[20%]"
                           />
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  </li>
-                ))}
-            </ul>
+                        </CardHeader>
+
+                        <CardBody>
+                          <Typography variant="h4" color="white">
+                            {food.name}
+                          </Typography>
+                          <Typography
+                            variant="h6"
+                            color="white"
+                            className="mt-3 font-normal"
+                          >
+                            {food.description}
+                          </Typography>
+                        </CardBody>
+
+                        <CardFooter className="flex items-center justify-between">
+                          <Typography color="white" className="font-medium">
+                            ${food.price.toFixed(2)}
+                          </Typography>
+                          <Button
+                            onClick={() => handleAddToCart(food)}
+                            ripple={false}
+                            fullWidth={false}
+                            className="bg-amber-700 text-white shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100 rounded-full w-12 h-12 flex items-center justify-center"
+                          >
+                            <FontAwesomeIcon
+                              icon={faShoppingCart}
+                              className="w-5 h-5 text-white"
+                            />
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    </motion.li>
+                  ))}
+              </motion.ul>
+            </AnimatePresence>
+            ``
           </div>
         </div>
 
