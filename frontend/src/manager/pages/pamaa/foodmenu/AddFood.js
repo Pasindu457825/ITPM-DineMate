@@ -6,14 +6,14 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const AddFoodForm = () => {
   const navigate = useNavigate();
-  const { restaurantId } = useParams(); 
+  const { restaurantId } = useParams();
 
   // State variables for food item details
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
-  const [available, setAvailable] = useState(true);
+  const [availability, setAvailability] = useState("Available"); // ✅ Ensure it's a string
   const [imageFile, setImageFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -44,7 +44,8 @@ const AddFoodForm = () => {
       uploadTask.on(
         "state_changed",
         (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           setUploadProgress(progress);
         },
         (error) => {
@@ -64,11 +65,11 @@ const AddFoodForm = () => {
           const foodData = {
             name,
             description,
-            price: itemPrice,
+            price: parseFloat(price) || 0,
             category,
-            available,
+            availability, // ✅ Now always a string
             restaurantId,
-            image: downloadURL, // ✅ Store image URL in MongoDB
+            image: downloadURL,
           };
 
           try {
@@ -76,7 +77,7 @@ const AddFoodForm = () => {
               "http://localhost:5000/api/ITPM/foodItems/create-food-item",
               foodData
             );
-            console.log("✅ Food item added:", response.data);
+
             alert("Food item added successfully!");
             // navigate(`/restaurant/${restaurantId}/foods`);
           } catch (error) {
@@ -125,31 +126,33 @@ const AddFoodForm = () => {
           className="p-2 border border-gray-300 rounded w-full"
           required
         />
- <select
-  value={category}
-  onChange={(e) => setCategory(e.target.value)}
-  required
-  className="p-2 border border-gray-300 rounded w-full"
->
-  <option value="" disabled>Select a Category</option> 
-  <option value="salad">Salad</option>
-  <option value="rolls">Rolls</option>
-  <option value="desserts">Desserts</option>
-  <option value="sandwich">Sandwich</option>
-  <option value="cake">Cake</option>
-  <option value="pure veg">Pure Veg</option>
-  <option value="pasta">Pasta</option>
-  <option value="noodles">Noodles</option>
-</select>
-
-
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          required
+          className="p-2 border border-gray-300 rounded w-full"
+        >
+          <option value="" disabled>
+            Select a Category
+          </option>
+          <option value="salad">Salad</option>
+          <option value="rolls">Rolls</option>
+          <option value="desserts">Desserts</option>
+          <option value="sandwich">Sandwich</option>
+          <option value="cake">Cake</option>
+          <option value="pure veg">Pure Veg</option>
+          <option value="pasta">Pasta</option>
+          <option value="noodles">Noodles</option>
+        </select>
 
         {/* Availability Checkbox */}
         <div className="flex items-center">
           <input
             type="checkbox"
-            checked={available}
-            onChange={(e) => setAvailable(e.target.checked)}
+            checked={availability === "Available"} // ✅ Ensure correct state
+            onChange={(e) =>
+              setAvailability(e.target.checked ? "Available" : "Unavailable")
+            } // ✅ Convert to string
             className="mt-2"
           />
           <label className="ml-2 text-gray-700">Available</label>
@@ -175,7 +178,9 @@ const AddFoodForm = () => {
           type="submit"
           disabled={loading}
           className={`p-2 rounded w-full mt-4 ${
-            loading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-500 text-white"
+            loading
+              ? "bg-gray-500 cursor-not-allowed"
+              : "bg-blue-500 text-white"
           }`}
         >
           {loading ? "Uploading..." : "Add Food Item"}
