@@ -72,7 +72,7 @@ const UpdateRestaurant = () => {
         },
         (error) => {
           console.error("Error uploading image:", error);
-          alert("Image upload failed!");
+          setError("Image upload failed!");
           setLoading(false);
         },
         async () => {
@@ -99,6 +99,16 @@ const UpdateRestaurant = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const removeTable = (index) => {
+    const updatedTables = restaurant.tables.filter((_, idx) => idx !== index);
+    setRestaurant({ ...restaurant, tables: updatedTables });
+  };
+
+  const addTable = () => {
+    const newTables = [...restaurant.tables, { seats: "", quantity: "" }];
+    setRestaurant({ ...restaurant, tables: newTables });
   };
 
   if (loading) {
@@ -164,6 +174,30 @@ const UpdateRestaurant = () => {
             )}
           </div>
         ))}
+        <button
+          type="button"
+          onClick={addTable}
+          className="mt-2 bg-green-500 text-white p-2 rounded flex items-center justify-center"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 6v12m6-6H6"
+            />
+          </svg>
+        </button>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">Current Image:</label>
+          <img src={restaurant.image} alt="Restaurant" className="w-full h-64 object-cover rounded-lg"/>
+        </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">Upload New Image</label>
           <input
@@ -172,7 +206,13 @@ const UpdateRestaurant = () => {
             onChange={handleFileChange}
             className="p-2 border border-gray-300 rounded w-full"
           />
-          {uploadProgress > 0 && <p>Upload Progress: {uploadProgress}%</p>}
+          {uploadProgress > 0 && (
+            <div className="relative pt-1">
+              <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-pink-200">
+                <div style={{ width: `${uploadProgress}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-pink-500"></div>
+              </div>
+            </div>
+          )}
         </div>
         <button
           type="submit"
