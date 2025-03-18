@@ -167,8 +167,6 @@ const CreateRestaurant = () => {
         >
             Remove
         </button>
-        
-           
            
             )}
           </div>
