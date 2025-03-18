@@ -13,7 +13,7 @@ const AddFoodForm = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
-  const [availability, setAvailability] = useState("Available"); // ✅ Ensure it's a string
+  const [availability, setAvailability] = useState("Available"); //  Ensure it's a string
   const [imageFile, setImageFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -36,7 +36,7 @@ const AddFoodForm = () => {
     setLoading(true);
 
     try {
-      // ✅ Generate a unique filename
+      //  Generate a unique filename
       const fileName = `foodImages/${Date.now()}_${imageFile.name}`;
       const storageRef = ref(storage, fileName);
       const uploadTask = uploadBytesResumable(storageRef, imageFile);
@@ -54,11 +54,11 @@ const AddFoodForm = () => {
           setLoading(false);
         },
         async () => {
-          // ✅ Get image URL after upload
+          //  Get image URL after upload
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
           console.log("Image uploaded successfully! URL:", downloadURL);
 
-          // ✅ Ensure price is a number
+          //  Ensure price is a number
           const itemPrice = parseFloat(price) || 0;
 
           // Food item data with image URL
@@ -67,7 +67,7 @@ const AddFoodForm = () => {
             description,
             price: parseFloat(price) || 0,
             category,
-            availability, // ✅ Now always a string
+            availability, //  Now always a string
             restaurantId,
             image: downloadURL,
           };
@@ -143,16 +143,17 @@ const AddFoodForm = () => {
           <option value="pure veg">Pure Veg</option>
           <option value="pasta">Pasta</option>
           <option value="noodles">Noodles</option>
+          <option value="noodles">Beverages</option>
         </select>
 
         {/* Availability Checkbox */}
         <div className="flex items-center">
           <input
             type="checkbox"
-            checked={availability === "Available"} // ✅ Ensure correct state
+            checked={availability === "Available"} //  Ensure correct state
             onChange={(e) =>
               setAvailability(e.target.checked ? "Available" : "Unavailable")
-            } // ✅ Convert to string
+            } //  Convert to string
             className="mt-2"
           />
           <label className="ml-2 text-gray-700">Available</label>
