@@ -27,12 +27,13 @@ const foodItemSchema = new mongoose.Schema({
     required: true,
   },
   available: {
-    type: Boolean,
-    default: true,
+    type: String,
+    enum: ["Available", "Unavailable"], // ✅ Restricts values
+    default: "Available",
   },
-  image: { 
-    type: String, 
-    required: true 
+  image: {
+    type: String,
+    required: true,
   },
 });
 
