@@ -26,8 +26,10 @@ const CartSidebar = ({
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  const handleRemoveItem = (foodId) => {
-    const updatedCart = cart.filter((item) => item._id !== foodId);
+  const handleRemoveItem = (foodId, portionSize) => {
+    const updatedCart = cart.filter(
+      (item) => !(item._id === foodId && item.portionSize === portionSize)
+    );
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
@@ -48,9 +50,9 @@ const CartSidebar = ({
         <h2 className="text-xl font-bold text-gray-800">Your Cart 🛒</h2>
         <button
           onClick={() => setCartOpen(false)}
-          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+          className="bg-red-500 text-white w-8 h-8 flex items-center justify-center text-sm font-semibold rounded-full shadow-md hover:bg-red-600 transition"
         >
-          ✖ Close
+          ✖
         </button>
       </div>
 
@@ -75,6 +77,9 @@ const CartSidebar = ({
                   <p className="text-gray-700">
                     Rs.{(parseFloat(item.price) || 0).toFixed(2)}
                   </p>
+                  <p className="text-sm text-gray-600 font-medium">
+                    🍽️ Portion Size: {item.portionSize || "Medium"}
+                  </p>
 
                   {/* Quantity Selector */}
                   <div className="flex items-center mt-2">
@@ -96,7 +101,7 @@ const CartSidebar = ({
                 </div>
 
                 <button
-                  onClick={() => handleRemoveItem(item._id)}
+                  onClick={() => handleRemoveItem(item._id, item.portionSize)}
                   className="ml-3 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition"
                 >
                   ✖
@@ -128,7 +133,10 @@ const CartSidebar = ({
                 state: {
                   restaurantId,
                   restaurantName,
-                  cart,
+                  cart: cart.map((item) => ({
+                    ...item,
+                    portionSize: item.portionSize || "Medium", // Ensure portion size is passed
+                  })),
                   orderType,
                   reservationId,
                 },

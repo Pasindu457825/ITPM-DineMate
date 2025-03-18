@@ -26,6 +26,7 @@ const RestaurantDetails = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [orderType, setOrderType] = useState(""); // Track order type
   const navigate = useNavigate(); // Initialize navigate function
+  const [selectedPortionSizes, setSelectedPortionSizes] = useState({});
 
   const location = useLocation(); // ✅ Add useLocation()
   const [categorizedFoods, setCategorizedFoods] = useState({});
@@ -91,6 +92,10 @@ const RestaurantDetails = () => {
     }
 
     const quantity = quantities[food._id] || 1;
+    const portionSize = selectedPortionSizes[food._id] || "Medium"; // Default to Medium
+    const basePrice = parseFloat(food.price) || 0;
+    const finalPrice = portionSize === "Large" ? basePrice * 1.5 : basePrice; // Increase price by 50% for Large
+
     let storedCart = JSON.parse(localStorage.getItem("cart")) || [];
 
     if (storedCart.length > 0 && storedCart[0].restaurantId !== restaurantId) {
@@ -109,7 +114,7 @@ const RestaurantDetails = () => {
     }
 
     const existingItemIndex = storedCart.findIndex(
-      (item) => item._id === food._id
+      (item) => item._id === food._id && item.portionSize === portionSize
     );
     let updatedCart;
 
@@ -122,13 +127,20 @@ const RestaurantDetails = () => {
     } else {
       updatedCart = [
         ...storedCart,
-        { ...food, quantity, restaurantId, orderType },
+        {
+          ...food,
+          quantity,
+          portionSize,
+          price: finalPrice,
+          restaurantId,
+          orderType,
+        },
       ];
     }
 
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
-    toast.success(`✅ Added "${food.name}" to the cart!`);
+    toast.success(`✅ Added "${food.name}" (${portionSize}) to the cart!`);
   };
 
   if (!restaurant)
@@ -194,13 +206,21 @@ const RestaurantDetails = () => {
 
           {/* Right Side: Food Menu */}
           <div className="md:w-5/6 relative min-h-screen">
-            <div className="absolute top-0 right-0">
-              <button
-                onClick={() => setCartOpen(true)}
-                className="bg-blue-500 text-white px-4 py-2 rounded shadow-md hover:bg-blue-600 transition"
-              >
-                View Cart 🛒
-              </button>
+            <div className="fixed top-4 right-4 z-50">
+              {!cartOpen && ( // ✅ Hide when cart is open
+                <div className="fixed top-4 right-4 z-50">
+                  <button
+                    onClick={() => setCartOpen(true)}
+                    className="bg-amber-700 text-black w-12 h-12 flex items-center justify-center text-sm font-semibold rounded-full shadow-lg hover:bg-amber-900 transition border border-white"
+                  >
+                    <FontAwesomeIcon
+                      icon={faShoppingCart}
+                      className="text-black w-5 h-5"
+                    />{" "}
+                    {/* ✅ Black Icon */}
+                  </button>
+                </div>
+              )}
             </div>
             <h2
               className="text-5xl font-bold text-gray-800 mt-4 mb-4"
@@ -331,7 +351,11 @@ const RestaurantDetails = () => {
                         </CardHeader>
 
                         <CardBody>
-                          <Typography variant="h4" color="white">
+                          <Typography
+                            variant="h4"
+                            color="white"
+                            className="mt-3 font-bold"
+                          >
                             {food.name}
                           </Typography>
                           <Typography
@@ -341,12 +365,61 @@ const RestaurantDetails = () => {
                           >
                             {food.description}
                           </Typography>
+
+                          {/* Portion Size Selector */}
+                          <div className="mt-4">
+                            <label className="text-white text-sm font-semibold">
+                              Portion Size:
+                            </label>
+                            <div className="flex gap-2 mt-1">
+                              {/* Medium Button */}
+                              <button
+                                onClick={() =>
+                                  setSelectedPortionSizes((prev) => ({
+                                    ...prev,
+                                    [food._id]: "Medium",
+                                  }))
+                                }
+                                className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-medium transition border-2 ${
+                                  selectedPortionSizes[food._id] === "Medium" ||
+                                  !selectedPortionSizes[food._id]
+                                    ? "bg-amber-700 text-white border-amber-700"
+                                    : "bg-gray-300 text-gray-800 border-gray-400 hover:bg-gray-400"
+                                }`}
+                              >
+                                M
+                              </button>
+
+                              {/* Large Button */}
+                              <button
+                                onClick={() =>
+                                  setSelectedPortionSizes((prev) => ({
+                                    ...prev,
+                                    [food._id]: "Large",
+                                  }))
+                                }
+                                className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-medium transition border-2 ${
+                                  selectedPortionSizes[food._id] === "Large"
+                                    ? "bg-amber-700 text-white border-amber-700"
+                                    : "bg-gray-300 text-gray-800 border-gray-400 hover:bg-gray-400"
+                                }`}
+                              >
+                                L
+                              </button>
+                            </div>
+                          </div>
                         </CardBody>
 
                         <CardFooter className="flex items-center justify-between">
                           <Typography color="white" className="font-medium">
-                            Rs. {food.price.toFixed(2)}
+                            Rs.{" "}
+                            {(
+                              (selectedPortionSizes[food._id] === "Large"
+                                ? food.price * 1.5
+                                : food.price) || 0
+                            ).toFixed(2)}
                           </Typography>
+
                           {food.availability !== "Available" ? (
                             <span className="text-red-400 font-semibold p-3">
                               ❌ Unavailable
