@@ -55,20 +55,25 @@ const RestaurantsList = () => {
                     ))}
                   </div>
                 )}
-                <div className="flex space-x-4 mt-4">
-                  <button onClick={() => navigate(`/add-food/${restaurant._id}`)} className="bg-green-500 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 mb-4">
-                    Add Food Item
-                  </button>
-                  <button onClick={() => navigate(`/restaurant/foods/${restaurant._id}`)} className="bg-blue-500 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    View Food Items List
-                  </button>
-                  <button onClick={() => handleUpdate(restaurant._id)} className="bg-yellow-600 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                    Update
-                  </button>
-                  <button onClick={() => handleDelete(restaurant._id)} className="bg-red-600 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
-                    Delete
-                  </button>
-                </div>
+               <div className="flex space-x-4 mt-4">
+               <button onClick={() => navigate(`/restaurant/foods/${restaurant._id}`)} 
+          className="px-6 py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white bg-blue-500 hover:bg-blue-700">
+    View Food Items List
+  </button>
+  <button onClick={() => navigate(`/add-food/${restaurant._id}`)} 
+          className="px-6 py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 text-white bg-green-500 hover:bg-green-700">
+    Add Food Item
+  </button>
+  <button onClick={() => handleUpdate(restaurant._id)} 
+          className="px-6 py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-white bg-yellow-600 hover:bg-yellow-700">
+    Update
+  </button>
+  <button onClick={() => handleDelete(restaurant._id)} 
+          className="px-6 py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 text-white bg-red-600 hover:bg-red-700">
+    Delete
+  </button>
+</div>
+
               </div>
             </li>
           ))}
