@@ -51,21 +51,19 @@ const FoodsByRestaurant = () => {
 
   const toggleAvailability = async (foodId, currentAvailability) => {
     try {
+      console.log(
+        `Toggling availability for foodId: ${foodId}, Current: ${currentAvailability}`
+      ); // Debugging
+
       const response = await axios.patch(
         `http://localhost:5000/api/ITPM/foodItems/toggle-availability/${foodId}`
       );
 
       if (response.status === 200) {
-        setFoods(
-          foods.map((food) =>
+        setFoods((prevFoods) =>
+          prevFoods.map((food) =>
             food._id === foodId
-              ? {
-                  ...food,
-                  available:
-                    food.available === "Available"
-                      ? "Unavailable"
-                      : "Available",
-                }
+              ? { ...food, available: response.data.foodItem.available } // ✅ Ensure correct state update
               : food
           )
         );
@@ -107,15 +105,19 @@ const FoodsByRestaurant = () => {
                 Rs.{food.price.toFixed(2)}
               </p>
               <p className="text-sm text-gray-500">Category: {food.category}</p>
-              {food.available ? (
-                <span className="text-green-500 font-semibold mt-2">
-                  Available
-                </span>
-              ) : (
-                <span className="text-red-500 font-semibold mt-2">
-                  Not Available
-                </span>
-              )}
+              <p className="text-sm text-gray-500">
+                Availability:{" "}
+                {food.available === "Available" ? (
+                  <span className="text-green-500 font-semibold mt-2">
+                    Available
+                  </span>
+                ) : (
+                  <span className="text-red-500 font-semibold mt-2">
+                    Unavailable
+                  </span>
+                )}
+              </p>
+
               <button
                 onClick={() => handleUpdate(food._id)}
                 className="mt-2 bg-blue-500 text-white py-1 px-3 rounded"
@@ -128,11 +130,14 @@ const FoodsByRestaurant = () => {
               >
                 Delete
               </button>
+
               <button
                 onClick={() => toggleAvailability(food._id, food.available)}
                 className="mt-2 bg-yellow-500 text-black py-1 px-3 rounded"
               >
-                {food.available ? "Make Unavailable" : "Make Available"}
+                {food.available === "Available"
+                  ? "Make Unavailable"
+                  : "Make Available"}
               </button>
             </li>
           ))}
