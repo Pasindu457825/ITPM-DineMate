@@ -72,7 +72,7 @@ const UpdateRestaurant = () => {
         },
         (error) => {
           console.error("Error uploading image:", error);
-          alert("Image upload failed!");
+          setError("Image upload failed!");
           setLoading(false);
         },
         async () => {
@@ -99,6 +99,16 @@ const UpdateRestaurant = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const removeTable = (index) => {
+    const updatedTables = restaurant.tables.filter((_, idx) => idx !== index);
+    setRestaurant({ ...restaurant, tables: updatedTables });
+  };
+
+  const addTable = () => {
+    const newTables = [...restaurant.tables, { seats: "", quantity: "" }];
+    setRestaurant({ ...restaurant, tables: newTables });
   };
 
   if (loading) {
@@ -164,6 +174,26 @@ const UpdateRestaurant = () => {
             )}
           </div>
         ))}
+        <button
+          type="button"
+          onClick={addTable}
+          className="mt-2 bg-green-500 text-white p-2 rounded flex items-center justify-center"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 6v12m6-6H6"
+            />
+          </svg>
+        </button>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">Current Image:</label>
           <img src={restaurant.image} alt="Restaurant" className="w-full h-64 object-cover rounded-lg"/>
