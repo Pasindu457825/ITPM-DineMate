@@ -6,14 +6,14 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const AddFoodForm = () => {
   const navigate = useNavigate();
-  const { restaurantId } = useParams(); 
+  const { restaurantId } = useParams();
 
   // State variables for food item details
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
-  const [available, setAvailable] = useState(true);
+  const [availability, setAvailability] = useState(true); // ✅ Fix variable name
   const [imageFile, setImageFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -44,7 +44,8 @@ const AddFoodForm = () => {
       uploadTask.on(
         "state_changed",
         (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           setUploadProgress(progress);
         },
         (error) => {
@@ -125,31 +126,31 @@ const AddFoodForm = () => {
           className="p-2 border border-gray-300 rounded w-full"
           required
         />
- <select
-  value={category}
-  onChange={(e) => setCategory(e.target.value)}
-  required
-  className="p-2 border border-gray-300 rounded w-full"
->
-  <option value="" disabled>Select a Category</option> 
-  <option value="salad">Salad</option>
-  <option value="rolls">Rolls</option>
-  <option value="desserts">Desserts</option>
-  <option value="sandwich">Sandwich</option>
-  <option value="cake">Cake</option>
-  <option value="pure veg">Pure Veg</option>
-  <option value="pasta">Pasta</option>
-  <option value="noodles">Noodles</option>
-</select>
-
-
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          required
+          className="p-2 border border-gray-300 rounded w-full"
+        >
+          <option value="" disabled>
+            Select a Category
+          </option>
+          <option value="salad">Salad</option>
+          <option value="rolls">Rolls</option>
+          <option value="desserts">Desserts</option>
+          <option value="sandwich">Sandwich</option>
+          <option value="cake">Cake</option>
+          <option value="pure veg">Pure Veg</option>
+          <option value="pasta">Pasta</option>
+          <option value="noodles">Noodles</option>
+        </select>
 
         {/* Availability Checkbox */}
         <div className="flex items-center">
           <input
             type="checkbox"
             checked={availability}
-            onChange={(e) => setAvailable(e.target.checked)}
+            onChange={(e) => setAvailability(e.target.checked)} // ✅ Fix function call
             className="mt-2"
           />
           <label className="ml-2 text-gray-700">Available</label>
@@ -175,7 +176,9 @@ const AddFoodForm = () => {
           type="submit"
           disabled={loading}
           className={`p-2 rounded w-full mt-4 ${
-            loading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-500 text-white"
+            loading
+              ? "bg-gray-500 cursor-not-allowed"
+              : "bg-blue-500 text-white"
           }`}
         >
           {loading ? "Uploading..." : "Add Food Item"}
