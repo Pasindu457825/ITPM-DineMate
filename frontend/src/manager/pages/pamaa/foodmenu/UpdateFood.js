@@ -12,7 +12,7 @@ const UpdateFoodForm = () => {
     description: "",
     price: "",
     category: "",
-    available: true,
+    availability: true,
   });
 
   const [loading, setLoading] = useState(true);

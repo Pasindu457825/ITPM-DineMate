@@ -66,7 +66,7 @@ const AddFoodForm = () => {
             description,
             price: itemPrice,
             category,
-            available,
+            availability,
             restaurantId,
             image: downloadURL, // ✅ Store image URL in MongoDB
           };
@@ -148,7 +148,7 @@ const AddFoodForm = () => {
         <div className="flex items-center">
           <input
             type="checkbox"
-            checked={available}
+            checked={availability}
             onChange={(e) => setAvailable(e.target.checked)}
             className="mt-2"
           />

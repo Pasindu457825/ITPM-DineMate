@@ -215,16 +215,16 @@ const RestaurantDetails = () => {
               {/* Show Availability */}
               <p
                 className={`text-sm font-semibold mt-2 ${
-                  food.available === "Available"
+                  food.availability === "Available"
                     ? "text-green-500"
                     : "text-red-500"
                 }`}
               >
-                {food.available === "Available" ? "Available" : "Unavailable"}
+                {food.availability === "Available" ? "Available" : "Unavailable"}
               </p>
 
               {/* Disable quantity buttons & Add to Cart if Unavailable */}
-              {food.available === "Available" ? (
+              {food.availability === "Available" ? (
                 <>
                   <div className="flex items-center mt-3">
                     <button

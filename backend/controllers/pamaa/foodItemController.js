@@ -11,7 +11,7 @@ const addFoodItem = async (req, res) => {
       description,
       price,
       category,
-      available,
+      availability,
       image,
     } = req.body;
 
@@ -43,7 +43,7 @@ const addFoodItem = async (req, res) => {
       description,
       price: itemPrice,
       category,
-      available,
+      availability: availability || "Available", 
       image,
     });
 
@@ -92,7 +92,7 @@ const getFoodItemById = async (req, res) => {
 // Update food item including image URL
 const updateFoodItem = async (req, res) => {
   const { id } = req.params;
-  const { name, description, price, category, available, image } = req.body;
+  const { name, description, price, category, availability, image } = req.body;
 
   try {
     if (price && (isNaN(price) || price < 0)) {
@@ -101,7 +101,7 @@ const updateFoodItem = async (req, res) => {
 
     const updatedFoodItem = await FoodItem.findByIdAndUpdate(
       id,
-      { name, description, price, category, available, image },
+      { name, description, price, category, availability, image },
       { new: true }
     );
 
@@ -177,12 +177,12 @@ const toggleFoodItemAvailability = async (req, res) => {
     }
 
     // Toggle availability string
-    foodItem.available =
-      foodItem.available === "Available" ? "Unavailable" : "Available";
+    foodItem.availability =
+      foodItem.availability === "Available" ? "Unavailable" : "Available";
     await foodItem.save();
 
     res.status(200).json({
-      message: `Food item availability updated to ${foodItem.available}`,
+      message: `Food item availability updated to ${foodItem.availability}`,
       foodItem,
     });
   } catch (error) {

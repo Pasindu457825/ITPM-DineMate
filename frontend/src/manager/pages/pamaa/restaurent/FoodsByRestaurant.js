@@ -63,7 +63,7 @@ const FoodsByRestaurant = () => {
         setFoods((prevFoods) =>
           prevFoods.map((food) =>
             food._id === foodId
-              ? { ...food, available: response.data.foodItem.available } // ✅ Ensure correct state update
+              ? { ...food, availability: response.data.foodItem.availability } // ✅ Ensure correct state update
               : food
           )
         );
@@ -107,7 +107,7 @@ const FoodsByRestaurant = () => {
               <p className="text-sm text-gray-500">Category: {food.category}</p>
               <p className="text-sm text-gray-500">
                 Availability:{" "}
-                {food.available === "Available" ? (
+                {food.availability === "Available" ? (
                   <span className="text-green-500 font-semibold mt-2">
                     Available
                   </span>
@@ -132,10 +132,10 @@ const FoodsByRestaurant = () => {
               </button>
 
               <button
-                onClick={() => toggleAvailability(food._id, food.available)}
+                onClick={() => toggleAvailability(food._id, food.availability)}
                 className="mt-2 bg-yellow-500 text-black py-1 px-3 rounded"
               >
-                {food.available === "Available"
+                {food.availability === "Available"
                   ? "Make Unavailable"
                   : "Make Available"}
               </button>

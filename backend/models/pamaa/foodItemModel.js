@@ -26,9 +26,9 @@ const foodItemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  available: {
+  availability: { // ✅ Correct field
     type: String,
-    enum: ["Available", "Unavailable"], // ✅ Restricts values
+    enum: ["Available", "Unavailable"],
     default: "Available",
   },
   image: {
