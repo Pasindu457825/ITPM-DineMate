@@ -7,12 +7,15 @@ const FoodsByRestaurant = () => {
   const { restaurantId } = useParams();
   const navigate = useNavigate();
   const [foods, setFoods] = useState([]);
+  const [filteredFoods, setFilteredFoods] = useState([]); // State to hold filtered foods
   const [restaurantName, setRestaurantName] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [search, setSearch] = useState(""); // State for search text
+  const [filter, setFilter] = useState(""); // State for category filter
 
   useEffect(() => {
-    // ✅ Validate restaurantId
+    // Fetching and setting food data
     if (!restaurantId || restaurantId === ":restaurantId") {
       console.error("Error: Invalid restaurantId received!");
       setError("Invalid restaurant ID.");
@@ -27,6 +30,7 @@ const FoodsByRestaurant = () => {
         if (response.data && Array.isArray(response.data.foods)) {
           setRestaurantName(response.data.restaurantName || "Restaurant");
           setFoods(response.data.foods);
+          setFilteredFoods(response.data.foods); // Initialize filtered foods
         } else {
           throw new Error("Invalid API response structure.");
         }
@@ -41,6 +45,14 @@ const FoodsByRestaurant = () => {
     fetchFoods();
   }, [restaurantId]);
 
+  useEffect(() => {
+    // Filtering logic
+    let result = foods.filter(food =>
+      food.name.toLowerCase().includes(search.toLowerCase()) && (filter ? food.category === filter : true)
+    );
+    setFilteredFoods(result);
+  }, [search, filter, foods]);
+
   const handleDelete = (foodId) => {
     deleteFood(foodId, setFoods, foods);
   };
@@ -52,8 +64,8 @@ const FoodsByRestaurant = () => {
   const toggleAvailability = async (foodId, currentAvailability) => {
     try {
       console.log(
-        `Toggling availability for foodId: ${foodId}, Current: ${currentAvailability}`
-      ); // Debugging
+        `Toggling availability for foodId: ${foodId}, Current: ${currentAvailability}` // Debugging
+      ); 
 
       const response = await axios.patch(
         `http://localhost:5000/api/ITPM/foodItems/toggle-availability/${foodId}`
@@ -63,7 +75,7 @@ const FoodsByRestaurant = () => {
         setFoods((prevFoods) =>
           prevFoods.map((food) =>
             food._id === foodId
-              ? { ...food, availability: response.data.foodItem.availability } // ✅ Ensure correct state update
+              ? { ...food, availability: response.data.foodItem.availability } // Ensure correct state update
               : food
           )
         );
@@ -83,11 +95,38 @@ const FoodsByRestaurant = () => {
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">{restaurantName} - Food Menu</h2>
-      {foods.length === 0 ? (
-        <p className="text-center">No food items found for this restaurant.</p>
+
+      {/* Search and filter inputs */}
+      <div className="mb-4 flex gap-4">
+        <input
+          type="text"
+          placeholder="Search by food name..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="border border-gray-300 p-2 rounded"
+        />
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="border border-gray-300 p-2 rounded"
+        >
+          <option value="">All Categories</option>
+          <option value="salad">Salad</option>
+          <option value="rolls">Rolls</option>
+          <option value="desserts">Desserts</option>
+          <option value="sandwich">Sandwich</option>
+          <option value="cake">Cake</option>
+          <option value="pure veg">Pure Veg</option>
+          <option value="pasta">Pasta</option>
+          <option value="noodles">Noodles</option>
+        </select>
+      </div>
+
+      {filteredFoods.length === 0 ? (
+        <p className="text-center">No matching food items found.</p>
       ) : (
         <ul className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {foods.map((food) => (
+          {filteredFoods.map((food) => (
             <li
               key={food._id}
               className="border p-4 rounded shadow-lg flex flex-col items-center"
