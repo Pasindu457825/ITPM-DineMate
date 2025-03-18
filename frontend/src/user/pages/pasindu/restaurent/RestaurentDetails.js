@@ -13,6 +13,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const RestaurantDetails = () => {
   const { id: restaurantId } = useParams();
@@ -79,7 +81,12 @@ const RestaurantDetails = () => {
 
   const handleAddToCart = (food) => {
     if (!orderType) {
-      alert("Please select an order type before adding items.");
+      toast.warn("⚠️ Please select an order type first!");
+      return;
+    }
+
+    if (food.availability !== "Available") {
+      toast.error("❌ This item is currently unavailable.");
       return;
     }
 
@@ -95,6 +102,7 @@ const RestaurantDetails = () => {
         storedCart = [];
         setCart([]);
         localStorage.setItem("cart", JSON.stringify([]));
+        toast.info("Cart cleared, adding new items.");
       } else {
         return;
       }
@@ -120,6 +128,7 @@ const RestaurantDetails = () => {
 
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
+    toast.success(`✅ Added "${food.name}" to the cart!`);
   };
 
   if (!restaurant)
@@ -336,19 +345,25 @@ const RestaurantDetails = () => {
 
                         <CardFooter className="flex items-center justify-between">
                           <Typography color="white" className="font-medium">
-                            ${food.price.toFixed(2)}
+                            Rs. {food.price.toFixed(2)}
                           </Typography>
-                          <Button
-                            onClick={() => handleAddToCart(food)}
-                            ripple={false}
-                            fullWidth={false}
-                            className="bg-amber-700 text-white shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100 rounded-full w-12 h-12 flex items-center justify-center"
-                          >
-                            <FontAwesomeIcon
-                              icon={faShoppingCart}
-                              className="w-5 h-5 text-white"
-                            />
-                          </Button>
+                          {food.availability !== "Available" ? (
+                            <span className="text-red-400 font-semibold p-3">
+                              ❌ Unavailable
+                            </span>
+                          ) : (
+                            <Button
+                              onClick={() => handleAddToCart(food)}
+                              ripple={false}
+                              fullWidth={false}
+                              className="bg-amber-700 text-white shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100 rounded-full w-12 h-12 flex items-center justify-center"
+                            >
+                              <FontAwesomeIcon
+                                icon={faShoppingCart}
+                                className="w-5 h-5 text-white"
+                              />
+                            </Button>
+                          )}
                         </CardFooter>
                       </Card>
                     </motion.li>
@@ -366,6 +381,16 @@ const RestaurantDetails = () => {
           setCart={setCart}
           orderType={orderType}
           reservationId={reservationId}
+        />
+        {/* ✅ Toast notifications container */}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          draggable
+          pauseOnHover
         />
       </div>
     </>
