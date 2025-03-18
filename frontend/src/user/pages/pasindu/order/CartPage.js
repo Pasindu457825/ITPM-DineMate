@@ -41,59 +41,65 @@ const CartSidebar = ({
 
   return (
     <div
-      className={`fixed top-0 right-0 h-full w-80 bg-white shadow-lg transform ${
+      className={`fixed top-0 right-0 h-full w-[350px] bg-white shadow-2xl transform ${
         cartOpen ? "translate-x-0" : "translate-x-full"
-      } transition-transform duration-300 ease-in-out flex flex-col`}
+      } transition-transform duration-300 ease-in-out flex flex-col rounded-l-2xl`}
     >
       {/* Top Section: Close Button */}
-      <div className="flex justify-between items-center p-4 border-b shadow-sm">
-        <h2 className="text-xl font-bold text-gray-800">Your Cart 🛒</h2>
+      <div className="flex justify-between items-center p-5 border-b shadow-md bg-gray-100 rounded-t-2xl">
+        <h2 className="text-2xl pl-6 font-bold text-gray-800">Your Cart 🛒</h2>
         <button
           onClick={() => setCartOpen(false)}
-          className="bg-red-500 text-white w-8 h-8 flex items-center justify-center text-sm font-semibold rounded-full shadow-md hover:bg-red-600 transition"
+          className="bg-red-500 text-white w-10 h-10 flex items-center justify-center text-lg font-semibold rounded-full shadow-lg hover:bg-red-600 transition"
         >
           ✖
         </button>
       </div>
 
       {/* Cart Content */}
-      <div className="flex-1 p-4 overflow-y-auto">
+      <div className="flex-1 p-6 overflow-y-auto">
         {cart.length === 0 ? (
-          <p className="text-gray-500 text-center">Your cart is empty.</p>
+          <p className="text-gray-500 text-center text-lg">
+            Your cart is empty.
+          </p>
         ) : (
           <>
             {cart.map((item) => (
               <div
                 key={item._id}
-                className="border-b pb-3 mb-3 flex items-center"
+                className="border-b pb-4 mb-4 flex items-center gap-4 "
               >
                 <img
-                  src={item.image || "https://via.placeholder.com/100"}
+                  src={item.image || "https://via.placeholder.com/150"}
                   alt={item.name}
-                  className="w-16 h-16 object-cover rounded"
+                  className="w-20 h-20 object-cover rounded-lg border"
                 />
-                <div className="ml-3 flex-1">
-                  <h3 className="text-md font-semibold">{item.name}</h3>
-                  <p className="text-gray-700">
-                    Rs.{(parseFloat(item.price) || 0).toFixed(2)}
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {item.name}
+                  </h3>
+                  <p className="text-gray-700 text-md">
+                    Rs. {(parseFloat(item.price) || 0).toFixed(2)}
                   </p>
-                  <p className="text-sm text-gray-600 font-medium">
-                    🍽️ Portion Size: {item.portionSize || "Medium"}
+                  <p className="text-sm text-gray-500 font-medium">
+                    🍽️ Portion: {item.portionSize || "Medium"}
                   </p>
 
                   {/* Quantity Selector */}
-                  <div className="flex items-center mt-2">
+                  <div className="flex items-center mt-3 gap-2">
                     <button
                       onClick={() => handleQuantityChange(item._id, -1)}
-                      className="bg-gray-300 text-black px-3 py-1 rounded-l hover:bg-gray-400 transition"
+                      className="bg-gray-300 text-black px-3 py-1.5 rounded-lg shadow-sm hover:bg-gray-400 transition disabled:opacity-50"
                       disabled={item.quantity === 1}
                     >
-                      -
+                      −
                     </button>
-                    <span className="px-4 py-1 border">{item.quantity}</span>
+                    <span className="px-4 py-1.5 border text-lg">
+                      {item.quantity}
+                    </span>
                     <button
                       onClick={() => handleQuantityChange(item._id, 1)}
-                      className="bg-gray-300 text-black px-3 py-1 rounded-r hover:bg-gray-400 transition"
+                      className="bg-gray-300 text-black px-3 py-1.5 rounded-lg shadow-sm hover:bg-gray-400 transition"
                     >
                       +
                     </button>
@@ -102,16 +108,18 @@ const CartSidebar = ({
 
                 <button
                   onClick={() => handleRemoveItem(item._id, item.portionSize)}
-                  className="ml-3 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition"
+                  className="ml-2 bg-red-500 text-white w-9 h-9 flex items-center justify-center text-md font-semibold rounded-full shadow-lg hover:bg-red-600 transition"
                 >
                   ✖
                 </button>
               </div>
             ))}
 
-            <div className="text-lg font-semibold text-right mt-4">
+            <div className="text-xl font-semibold text-right mt-6">
               Total:{" "}
-              <span className="text-green-600">Rs.{totalPrice.toFixed(2)}</span>
+              <span className="text-green-600 font-bold">
+                Rs. {totalPrice.toFixed(2)}
+              </span>
             </div>
           </>
         )}
@@ -119,7 +127,7 @@ const CartSidebar = ({
 
       {/* Checkout Button */}
       {cart.length > 0 && (
-        <div className="p-4 border-t shadow-sm">
+        <div className="p-6 border-t shadow-md bg-gray-100 rounded-b-2xl">
           <button
             onClick={() => {
               if (!orderType) {
@@ -135,14 +143,14 @@ const CartSidebar = ({
                   restaurantName,
                   cart: cart.map((item) => ({
                     ...item,
-                    portionSize: item.portionSize || "Medium", // Ensure portion size is passed
+                    portionSize: item.portionSize || "Medium",
                   })),
                   orderType,
                   reservationId,
                 },
               });
             }}
-            className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+            className="w-full bg-amber-700 text-white text-lg px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-amber-900 transition"
           >
             Proceed to Checkout
           </button>

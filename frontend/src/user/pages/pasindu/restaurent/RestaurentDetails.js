@@ -151,30 +151,38 @@ const RestaurantDetails = () => {
       <div className="bg-gray-200 p-4">
         <div className="flex flex-col md:flex-row gap-8">
           {/* Left Side: Restaurant Details */}
-          <div className="md:w-1/5 bg-gray-200 shadow-2xl rounded-lg p-6 inline-flex flex-col items-start min-h-0">
+          <div className="md:w-1/5 bg-white shadow-2xl rounded-2xl p-6 flex flex-col items-start self-start">
+            {/* Restaurant Name */}
             <h1 className="text-4xl font-bold text-gray-800 mb-4">
               {restaurant.name}
             </h1>
+
+            {/* Restaurant Image */}
             <img
               src={restaurant.image || "https://via.placeholder.com/600"}
               alt={restaurant.name}
-              className="w-full h-64 object-cover rounded-lg shadow-md"
+              className="w-full h-64 object-cover rounded-xl shadow-lg"
             />
+
             {/* Content Section */}
-            <div className="mt-4 space-y-2">
+            <div className="mt-6 w-full space-y-4">
               {restaurant.description && (
-                <p className="text-lg text-gray-700">
+                <p className="text-gray-700 text-md leading-relaxed">
                   {restaurant.description}
                 </p>
               )}
               {restaurant.location && (
-                <p className="text-lg text-gray-700">
-                  <strong>Location:</strong> {restaurant.location}
+                <p className="text-lg text-gray-700 font-medium flex items-start">
+                  <span className="text-pink-600 text-xl mr-2">📍</span>
+                  <strong>Location:</strong>{" "}
+                  <span className="ml-1 flex-1">{restaurant.location}</span>
                 </p>
               )}
               {restaurant.phoneNumber && (
-                <p className="text-lg text-gray-700">
-                  <strong>Phone:</strong> {restaurant.phoneNumber}
+                <p className="text-lg text-gray-700 font-medium flex items-start">
+                  <span className="text-pink-600 text-xl mr-2">☎️</span>
+                  <strong>Phone:</strong>{" "}
+                  <span className="ml-1 flex-1">{restaurant.phoneNumber}</span>
                 </p>
               )}
             </div>
@@ -191,15 +199,15 @@ const RestaurantDetails = () => {
                   },
                 })
               }
-              className="mt-6 w-full bg-amber-700 text-white py-2 rounded-lg hover:bg-amber-900 transition 
-             text-lg font-semibold tracking-wide shadow-md hover:shadow-lg"
+              className="mt-6 w-full bg-amber-700 text-white py-3 rounded-xl text-lg font-semibold shadow-md hover:bg-amber-800 transition hover:shadow-lg"
             >
-              Book Table 📅
+              📅 Book Table
             </button>
 
+            {/* Reservation ID Display */}
             {reservationId && (
-              <p className="text-lg font-semibold text-amber-700 mt-2">
-                ✅ Your reservation ID: {reservationId}
+              <p className="text-lg font-semibold text-amber-700 mt-4 bg-amber-100 py-2 px-4 rounded-lg shadow-md">
+                ✅ Your Reservation ID: {reservationId}
               </p>
             )}
           </div>
