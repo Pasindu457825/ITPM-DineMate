@@ -20,7 +20,7 @@ const ManagerSignupPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/ITPM/users/register/manager", {
+      await axios.post("http://localhost:5000/api/ITPM/users/signup/manager", {
         ...formData,
         role: "restaurant_manager",
       });
