@@ -165,6 +165,7 @@ const UpdateFoodForm = () => {
           <option value="pure veg">Pure Veg</option>
           <option value="pasta">Pasta</option>
           <option value="noodles">Noodles</option>
+          <option value="noodles">Beverages</option>
         </select>
 
         <label className="block text-sm font-medium text-gray-700">

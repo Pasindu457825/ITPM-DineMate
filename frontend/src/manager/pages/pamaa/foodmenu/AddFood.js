@@ -143,6 +143,7 @@ const AddFoodForm = () => {
           <option value="pure veg">Pure Veg</option>
           <option value="pasta">Pasta</option>
           <option value="noodles">Noodles</option>
+          <option value="noodles">Beverages</option>
         </select>
 
         {/* Availability Checkbox */}
