@@ -19,13 +19,13 @@ const ManagerDashboard = () => {
            Restaurants
           </Typography>
           <Typography color="white" className="font-normal mb-4 opacity-70">
-            Total Restaurants
+            View Restaurants
           </Typography>
           <Button 
             variant="outlined" 
             color="amber" 
             className="w-full text-white border-white hover:bg-amber-700"
-            onClick={() => navigate('/restaurants')}
+            onClick={() => navigate('/display-restaurant')}
           >
             View Restaurants
           </Button>

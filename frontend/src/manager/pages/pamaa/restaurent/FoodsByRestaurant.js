@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import deleteFood from "../foodmenu/DeleteFood"; // Ensure this is the correct import path
+import ManagerHeader from "../../../components/ManagerHeader";
 
 const FoodsByRestaurant = () => {
   const { restaurantId } = useParams();
@@ -93,6 +94,8 @@ const FoodsByRestaurant = () => {
   if (error) return <p className="text-red-600 text-center">{error}</p>;
 
   return (
+    <div>
+      <ManagerHeader />
     <div className="p-6 bg-gray-200 min-h-screen">
       <h2 className="text-3xl font-bold mb-6 text-black-900 border-b border-amber-500 pb-3">{restaurantName} - Food Menu</h2>
       <div className="flex items-center space-x-4">
@@ -230,6 +233,7 @@ const FoodsByRestaurant = () => {
           ))}
         </ul>
       )}
+    </div>
     </div>
   );
 };
