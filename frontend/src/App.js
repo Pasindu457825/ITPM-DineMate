@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -46,16 +46,28 @@ import ManagerDashboard from "./manager/components/ManagerDashboard";
 const AppContent = () => {
   const location = useLocation();
   const { loading, setLoading } = useLoading(); // ✅ Use loading context
+  const [forceLoading, setForceLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    const timeout = setTimeout(() => setLoading(false), 800); // Simulate load time
-    return () => clearTimeout(timeout);
+    setForceLoading(true);
+
+    // Ensure loading stays for at least 1 second
+    const minLoadTime = setTimeout(() => setForceLoading(false), 1000);
+
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 1200); // Delay actual loading finish
+
+    return () => {
+      clearTimeout(timeout);
+      clearTimeout(minLoadTime);
+    };
   }, [location.pathname]);
 
   return (
     <>
-      {loading && <LoadingScreen />}{" "}
+      {(loading || forceLoading) && <LoadingScreen />}{" "}
       {/* ✅ Show loading screen when navigating */}
       <Routes>
         {/* Pasindu Order */}
