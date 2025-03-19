@@ -33,7 +33,7 @@ const LoadingScreen = () => {
       {/* Loading Text with Animated Dots */}
       <p className="pt-5 mt-10 text-xl font-semibold text-white animate-pulse z-10">
         Your Ultimate Restaurant Companion
-        <span className="dot-animate">...</span>
+        <span className="dot-animate">....</span>
       </p>
     </div>
   );
