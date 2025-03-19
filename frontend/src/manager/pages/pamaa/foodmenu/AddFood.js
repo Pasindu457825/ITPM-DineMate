@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { storage } from "../../../../firebaseConfig"; // Ensure correct path
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import ManagerHeader from "../../../components/ManagerHeader";
+import ManagerFooter from "../../../components/ManagerFooter";
 
 const AddFoodForm = () => {
   const navigate = useNavigate();
@@ -176,6 +178,8 @@ const AddFoodForm = () => {
   };
 
   return (
+    <div>
+      <ManagerHeader/>
     <div className="p-6 bg-gray-200 min-h-screen flex items-center justify-center">
       <div className="w-full max-w-2xl bg-blue-gray-900 rounded-lg shadow-2xl overflow-hidden">
         <div className="bg-gradient-to-r from-blue-900 to-blue-800 p-5">
@@ -388,6 +392,8 @@ const AddFoodForm = () => {
           </div>
         </form>
       </div>
+    </div>
+    <ManagerFooter/>
     </div>
   );
 };
