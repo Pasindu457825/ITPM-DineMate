@@ -16,20 +16,34 @@ import UpdateReservationForm from './user/pages/pasindu/reservation/UpdateReserv
 //Pasindu Restuarent
 import RestaurentList from './user/pages/pasindu/restaurent/RestaurentList';
 import RestaurentDetails from './user/pages/pasindu/restaurent/RestaurentDetails';
-//Tharusha Authentication
+
 import LoginPage from './user/pages/tharusha/LoginPage';
 import UserSignupPage from './user/pages/tharusha/UserSignupPage';
 import ManagerSignupPage from './manager/pages/tharusha/ManagerSignupPage';
 import MyProfilePage from "./user/pages/tharusha/MyProfilePage";
-//Pamalka FoodItem
+
 import AddFood from "./manager/pages/pamaa/foodmenu/AddFood";
 import UpdateFood from "./manager/pages/pamaa/foodmenu/UpdateFood";
-//Pamalka Restaurant
+import FoodList from "./manager/pages/pamaa/foodmenu/FoodList";
 import CreateRestaurant from "./manager/pages/pamaa/restaurent/CreateRestaurant";
 import RestaurantList from "./admin/pages/pamaa/restaurent/RestaurantList";
 import UpdateRestaurant from "./manager/pages/pamaa/restaurent/UpdateRestaurant";
 import FoodsByRestaurant from "./manager/pages/pamaa/restaurent/FoodsByRestaurant";
-import ManagerDashboard from "./manager/components/ManagerDashboard";
+
+// Payment Management
+import UserPayments from "./payments/user/UserPayments";
+import CreateUserPayment from "./payments/user/CreatePayment";
+import UpdateUserPayment from "./payments/user/UpdatePayment";
+import DeleteUserPayment from "./payments/user/DeletePayment";
+
+import ManagerPayments from "./payments/manager/ManagerPayments";
+import ApproveManagerPayment from "./payments/manager/ApprovePayment";
+
+import AdminPayments from "./payments/admin/AdminPayments";
+import UpdateAdminPayment from "./payments/admin/UpdatePayment";
+import DeleteAdminPayment from "./payments/admin/DeletePayment";
+import AdminPaymentDetails from "./payments/admin/PaymentDetails";
+         
 
 
 const App = () => {
@@ -49,30 +63,42 @@ const App = () => {
         <Route path="/add-reservation/:restaurantId" element={<AddReservationForm />} />
         <Route path="/display-reservations" element={<ReservationsList  />} />
         <Route path="/update-reservation/:id" element={<UpdateReservationForm />}/>
-
         {/* Pasindu Restaurent*/}
         <Route path="/user/display-restaurent" element={<RestaurentList  />} />
         <Route path="/user/restaurent-details/:id" element={<RestaurentDetails  />} />
 
-        {/* Tharusha Authentication*/}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup/user" element={<UserSignupPage />} />
         <Route path="/signup/manager" element={<ManagerSignupPage />} />
         <Route path="/me" element={<MyProfilePage />} />
 
-        {/* Pamalka Restaurent*/}
+        
+
+        {/* Add route */} {/* Add a route for the AddItemForm */}
+        <Route path="/add-food/:restaurantId" element={<AddFood />} />
+        <Route path="/update-food/:id" element={<UpdateFood />} />
+        <Route path="/display-food" element={<FoodList />} />
         <Route path="/add-restaurant" element={<CreateRestaurant />} />
         <Route path="/display-restaurant" element={<RestaurantList />} />
         <Route path="/update-restaurant/:id" element={<UpdateRestaurant />} />
-        
-         {/* Pamalka FoodItem*/}
-        <Route path="/add-food/:restaurantId" element={<AddFood />} />
-        <Route path="/update-food/:id" element={<UpdateFood />} />
         <Route path="/restaurant/foods/:restaurantId" element={<FoodsByRestaurant  />} />
 
+        {/* Payment Management - User */}
+        <Route path="/user/payments" element={<UserPayments />} />
+        <Route path="/user/payment/create" element={<CreateUserPayment />} />
+        <Route path="/user/payment/update/:id" element={<UpdateUserPayment />} />
+        <Route path="/user/payment/delete/:id" element={<DeleteUserPayment />} />
 
-        <Route path="/Manager-dashboard" element={<ManagerDashboard />} />
+        {/* Payment Management - Manager */}
+        <Route path="/manager/payments" element={<ManagerPayments />} />
+        <Route path="/manager/payment/approve/:id" element={<ApproveManagerPayment />} />
 
+        {/* Payment Management - Admin */}
+        <Route path="/admin/payments" element={<AdminPayments />} />
+        <Route path="/admin/payment/update/:id" element={<UpdateAdminPayment />} />
+        <Route path="/admin/payment/delete/:id" element={<DeleteAdminPayment />} />
+        <Route path="/admin/payment/details/:id" element={<AdminPaymentDetails />} />
+     
       </Routes>
     </Router>
   );
