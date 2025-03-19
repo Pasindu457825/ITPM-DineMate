@@ -9,9 +9,9 @@ const ManagerHeader = ({ username = "Manager" }) => {
   };
 
   return (
-    <header className="bg-gray-800 text-white shadow-lg">
-      <div className="container mx-auto px-5
-      ">
+    <header className="bg-gray-800 text-white shadow-lg ">
+<div className="container mx-auto px-4">
+
         <div className="flex justify-between items-center py-4">
           {/* Logo and Restaurant Name */}
           <div className="flex items-center space-x-2">

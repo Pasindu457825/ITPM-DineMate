@@ -21,7 +21,7 @@ const ManagersPage = () => {
   return (
     <div className="bg-gray-200 min-h-screen p-6">
       <ManagerHeader/>
-      
+      <br/>
       <h1 className="text-3xl font-bold text-blue-gray-900 mb-6">Welcome to the Managers Home Page</h1>
       
       {/* Quick Action Buttons */}
