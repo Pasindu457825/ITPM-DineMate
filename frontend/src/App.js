@@ -16,19 +16,20 @@ import UpdateReservationForm from './user/pages/pasindu/reservation/UpdateReserv
 //Pasindu Restuarent
 import RestaurentList from './user/pages/pasindu/restaurent/RestaurentList';
 import RestaurentDetails from './user/pages/pasindu/restaurent/RestaurentDetails';
-
+//Tharusha Authentication
 import LoginPage from './user/pages/tharusha/LoginPage';
 import UserSignupPage from './user/pages/tharusha/UserSignupPage';
 import ManagerSignupPage from './manager/pages/tharusha/ManagerSignupPage';
 import MyProfilePage from "./user/pages/tharusha/MyProfilePage";
-
+//Pamalka FoodItem
 import AddFood from "./manager/pages/pamaa/foodmenu/AddFood";
 import UpdateFood from "./manager/pages/pamaa/foodmenu/UpdateFood";
-import FoodList from "./manager/pages/pamaa/foodmenu/FoodList";
+//Pamalka Restaurant
 import CreateRestaurant from "./manager/pages/pamaa/restaurent/CreateRestaurant";
 import RestaurantList from "./admin/pages/pamaa/restaurent/RestaurantList";
 import UpdateRestaurant from "./manager/pages/pamaa/restaurent/UpdateRestaurant";
 import FoodsByRestaurant from "./manager/pages/pamaa/restaurent/FoodsByRestaurant";
+import ManagerDashboard from "./manager/components/ManagerDashboard";
 
 
 const App = () => {
@@ -48,25 +49,29 @@ const App = () => {
         <Route path="/add-reservation/:restaurantId" element={<AddReservationForm />} />
         <Route path="/display-reservations" element={<ReservationsList  />} />
         <Route path="/update-reservation/:id" element={<UpdateReservationForm />}/>
+
         {/* Pasindu Restaurent*/}
         <Route path="/user/display-restaurent" element={<RestaurentList  />} />
         <Route path="/user/restaurent-details/:id" element={<RestaurentDetails  />} />
 
+        {/* Tharusha Authentication*/}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup/user" element={<UserSignupPage />} />
         <Route path="/signup/manager" element={<ManagerSignupPage />} />
         <Route path="/me" element={<MyProfilePage />} />
 
-        
-
-        {/* Add route */} {/* Add a route for the AddItemForm */}
-        <Route path="/add-food/:restaurantId" element={<AddFood />} />
-        <Route path="/update-food/:id" element={<UpdateFood />} />
-        <Route path="/display-food" element={<FoodList />} />
+        {/* Pamalka Restaurent*/}
         <Route path="/add-restaurant" element={<CreateRestaurant />} />
         <Route path="/display-restaurant" element={<RestaurantList />} />
         <Route path="/update-restaurant/:id" element={<UpdateRestaurant />} />
+        
+         {/* Pamalka FoodItem*/}
+        <Route path="/add-food/:restaurantId" element={<AddFood />} />
+        <Route path="/update-food/:id" element={<UpdateFood />} />
         <Route path="/restaurant/foods/:restaurantId" element={<FoodsByRestaurant  />} />
+
+
+        <Route path="/Manager-dashboard" element={<ManagerDashboard />} />
 
       </Routes>
     </Router>

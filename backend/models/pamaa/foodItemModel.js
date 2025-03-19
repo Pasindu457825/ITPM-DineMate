@@ -26,13 +26,14 @@ const foodItemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  available: {
-    type: Boolean,
-    default: true,
+  availability: { // ✅ Correct field
+    type: String,
+    enum: ["Available", "Unavailable"],
+    default: "Available",
   },
-  image: { 
-    type: String, 
-    required: true 
+  image: {
+    type: String,
+    required: true,
   },
 });
 

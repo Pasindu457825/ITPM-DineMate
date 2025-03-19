@@ -50,6 +50,11 @@ const orderSchema = new mongoose.Schema(
           type: Number,
           required: true,
         },
+        portionSize: {
+          type: String,
+          required: true,
+          enum: ["Medium", "Large"], // Ensuring only valid portion sizes
+        },
         image: {
           type: String,
         },
