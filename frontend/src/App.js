@@ -41,7 +41,7 @@ import CreateRestaurant from "./manager/pages/pamaa/restaurent/CreateRestaurant"
 import RestaurantList from "./admin/pages/pamaa/restaurent/RestaurantList";
 import UpdateRestaurant from "./manager/pages/pamaa/restaurent/UpdateRestaurant";
 import FoodsByRestaurant from "./manager/pages/pamaa/restaurent/FoodsByRestaurant";
-import ManagerDashboard from "./manager/components/ManagerDashboard";
+import Managers from "./manager/pages/pamaa/ManagersPage"
 
 const AppContent = () => {
   const location = useLocation();
@@ -107,6 +107,7 @@ const AppContent = () => {
         <Route path="/add-restaurant" element={<CreateRestaurant />} />
         <Route path="/display-restaurant" element={<RestaurantList />} />
         <Route path="/update-restaurant/:id" element={<UpdateRestaurant />} />
+        <Route path="/Managers" element={<Managers />}/>
 
         {/* Pamalka FoodItem */}
         <Route path="/add-food/:restaurantId" element={<AddFood />} />
@@ -116,8 +117,7 @@ const AppContent = () => {
           element={<FoodsByRestaurant />}
         />
 
-        {/* Manager Dashboard */}
-        <Route path="/Manager-dashboard" element={<ManagerDashboard />} />
+
       </Routes>
     </>
   );
