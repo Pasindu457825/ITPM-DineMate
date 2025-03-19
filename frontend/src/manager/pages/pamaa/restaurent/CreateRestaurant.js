@@ -5,6 +5,8 @@ import { storage } from "../../../../firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { toast } from "react-toastify";
 import ManagerHeader from "../../../components/ManagerHeader";
+import ManagerFooter from "../../../components/ManagerFooter";
+
 
 const CreateRestaurant = () => {
   const [formData, setFormData] = useState({
@@ -205,10 +207,10 @@ const CreateRestaurant = () => {
     }
   };
 
-  return (
+  return (<div>
+    <ManagerHeader/>
     <div className="min-h-screen bg-gray-200 py-12 px-4 sm:px-6 lg:px-8">
-          <ManagerHeader/>
-          <br/>
+
       <div className="max-w-4xl mx-auto">
         <div className="bg-gray-900 rounded-lg shadow-xl overflow-hidden">
           <div className="bg-gradient-to-r from-amber-700 to-indigo-700 px-6 py-8">
@@ -481,6 +483,8 @@ const CreateRestaurant = () => {
           </form>
         </div>
       </div>
+    </div>
+    <ManagerFooter/>
     </div>
   );
 };
