@@ -107,7 +107,7 @@ const AppContent = () => {
         <Route path="/add-restaurant" element={<CreateRestaurant />} />
         <Route path="/display-restaurant" element={<RestaurantList />} />
         <Route path="/update-restaurant/:id" element={<UpdateRestaurant />} />
-        <Route path="/Managers" element={<Managers />}/>
+        <Route path="/managers" element={<Managers />}/>
 
         {/* Pamalka FoodItem */}
         <Route path="/add-food/:restaurantId" element={<AddFood />} />
