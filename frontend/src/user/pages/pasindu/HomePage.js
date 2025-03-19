@@ -43,6 +43,13 @@ const HomePage = () => {
       >
         Logout
       </Button>
+
+      <Button 
+          className="bg-green-500 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-green-600"
+          onClick={() => navigate("/me")}  // Navigate to Add Reservation page
+        >
+          my profile
+        </Button>
     </div>
   );
 };
