@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { storage } from "../../../../firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { toast } from "react-toastify";
+import ManagerHeader from "../../../components/ManagerHeader";
+import ManagerFooter from "../../../components/ManagerFooter";
+
 
 const CreateRestaurant = () => {
   const [formData, setFormData] = useState({
@@ -204,11 +207,13 @@ const CreateRestaurant = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  return (<div>
+    <ManagerHeader/>
+    <div className="min-h-screen bg-gray-200 py-12 px-4 sm:px-6 lg:px-8">
+
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-xl overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-8">
+        <div className="bg-gray-900 rounded-lg shadow-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-amber-700 to-indigo-700 px-6 py-8">
             <h2 className="text-3xl font-bold text-white">Create New Restaurant</h2>
             <p className="mt-2 text-blue-100">Fill in the details to add a new restaurant to our platform</p>
           </div>
@@ -217,7 +222,7 @@ const CreateRestaurant = () => {
             <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
               {/* Restaurant Name */}
               <div className="col-span-2 sm:col-span-1">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-100">
                   Restaurant Name
                 </label>
                 <div className="mt-1">
@@ -228,17 +233,17 @@ const CreateRestaurant = () => {
                     onChange={handleChange}
                     className={`appearance-none block w-full px-3 py-2 border ${
                       errors.name ? "border-red-300" : "border-gray-300"
-                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
+                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-700 focus:border-amber-700`}
                   />
                   {errors.name && (
                     <p className="mt-1 text-sm text-red-600">{errors.name}</p>
                   )}
                 </div>
               </div>
-
+  
               {/* Phone Number */}
               <div className="col-span-2 sm:col-span-1">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-100">
                   Phone Number
                 </label>
                 <div className="mt-1">
@@ -249,17 +254,17 @@ const CreateRestaurant = () => {
                     onChange={handleChange}
                     className={`appearance-none block w-full px-3 py-2 border ${
                       errors.phoneNumber ? "border-red-300" : "border-gray-300"
-                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
+                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-700 focus:border-amber-700`}
                   />
                   {errors.phoneNumber && (
                     <p className="mt-1 text-sm text-red-600">{errors.phoneNumber}</p>
                   )}
                 </div>
               </div>
-
+  
               {/* Location */}
               <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-100">
                   Location
                 </label>
                 <div className="mt-1">
@@ -270,17 +275,17 @@ const CreateRestaurant = () => {
                     onChange={handleChange}
                     className={`appearance-none block w-full px-3 py-2 border ${
                       errors.location ? "border-red-300" : "border-gray-300"
-                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
+                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-700 focus:border-amber-700`}
                   />
                   {errors.location && (
                     <p className="mt-1 text-sm text-red-600">{errors.location}</p>
                   )}
                 </div>
               </div>
-
+  
               {/* Description */}
               <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-100">
                   Description
                 </label>
                 <div className="mt-1">
@@ -291,7 +296,7 @@ const CreateRestaurant = () => {
                     rows={3}
                     className={`appearance-none block w-full px-3 py-2 border ${
                       errors.description ? "border-red-300" : "border-gray-300"
-                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
+                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-700 focus:border-amber-700`}
                     placeholder="Describe your restaurant"
                   />
                   {errors.description && (
@@ -299,15 +304,15 @@ const CreateRestaurant = () => {
                   )}
                 </div>
               </div>
-
+  
               {/* Image Upload */}
               <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-100">
                   Restaurant Image
                 </label>
                 <div className="mt-1 flex items-center">
                   <div className="flex-1">
-                    <div className="flex justify-center items-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                    <div className="flex justify-center items-center px-6 pt-5 pb-6 border-2 border-gray-500 border-dashed rounded-md">
                       <div className="space-y-1 text-center">
                         {imagePreview ? (
                           <div className="relative">
@@ -328,8 +333,8 @@ const CreateRestaurant = () => {
                             <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                               <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
-                            <div className="flex text-sm text-gray-600">
-                              <label className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none">
+                            <div className="flex text-sm text-gray-300">
+                              <label className="relative cursor-pointer bg-gray-800 rounded-md font-medium text-amber-500 hover:text-amber-400 focus-within:outline-none">
                                 <span>Upload a file</span>
                                 <input 
                                   type="file" 
@@ -340,7 +345,7 @@ const CreateRestaurant = () => {
                               </label>
                               <p className="pl-1">or drag and drop</p>
                             </div>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-gray-400">
                               PNG, JPG, GIF up to 5MB
                             </p>
                           </>
@@ -353,13 +358,13 @@ const CreateRestaurant = () => {
                     {uploadProgress > 0 && uploadProgress < 100 && (
                       <div className="mt-2">
                         <div className="relative pt-1">
-                          <div className="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
+                          <div className="overflow-hidden h-2 text-xs flex rounded bg-gray-700">
                             <div 
                               style={{ width: `${uploadProgress}%` }}
-                              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500"
+                              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-amber-600"
                             ></div>
                           </div>
-                          <div className="text-xs mt-1 text-gray-500">
+                          <div className="text-xs mt-1 text-gray-400">
                             Uploading: {Math.round(uploadProgress)}%
                           </div>
                         </div>
@@ -369,15 +374,15 @@ const CreateRestaurant = () => {
                 </div>
               </div>
             </div>
-
+  
             {/* Table Section */}
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-medium text-gray-700">Table Configuration</h3>
+                <h3 className="text-lg font-medium text-gray-100">Table Configuration</h3>
                 <button
                   type="button"
                   onClick={addTable}
-                  className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-amber-700 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
@@ -387,10 +392,10 @@ const CreateRestaurant = () => {
               </div>
               
               {formData.tables.map((table, index) => (
-                <div key={index} className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                <div key={index} className="bg-gray-800 p-4 rounded-lg shadow-sm">
                   <div className="grid grid-cols-8 gap-4">
                     <div className="col-span-3">
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-gray-100">
                         Seats per Table
                       </label>
                       <input
@@ -400,8 +405,8 @@ const CreateRestaurant = () => {
                         onChange={(e) => handleChange(e, index)}
                         min="1"
                         className={`mt-1 block w-full px-3 py-2 border ${
-                          errors.tables?.[index]?.seats ? "border-red-300" : "border-gray-300"
-                        } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
+                          errors.tables?.[index]?.seats ? "border-red-300" : "border-gray-500"
+                        } bg-gray-700 text-white rounded-md shadow-sm focus:outline-none focus:ring-amber-700 focus:border-amber-700`}
                       />
                       {errors.tables?.[index]?.seats && (
                         <p className="mt-1 text-sm text-red-600">{errors.tables[index].seats}</p>
@@ -409,7 +414,7 @@ const CreateRestaurant = () => {
                     </div>
                     
                     <div className="col-span-3">
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-gray-100">
                         Number of Tables
                       </label>
                       <input
@@ -419,8 +424,8 @@ const CreateRestaurant = () => {
                         onChange={(e) => handleChange(e, index)}
                         min="1"
                         className={`mt-1 block w-full px-3 py-2 border ${
-                          errors.tables?.[index]?.quantity ? "border-red-300" : "border-gray-300"
-                        } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
+                          errors.tables?.[index]?.quantity ? "border-red-300" : "border-gray-500"
+                        } bg-gray-700 text-white rounded-md shadow-sm focus:outline-none focus:ring-amber-700 focus:border-amber-700`}
                       />
                       {errors.tables?.[index]?.quantity && (
                         <p className="mt-1 text-sm text-red-600">{errors.tables[index].quantity}</p>
@@ -445,13 +450,13 @@ const CreateRestaurant = () => {
                 </div>
               ))}
             </div>
-
+  
             {/* Form Actions */}
             <div className="flex justify-end space-x-3 pt-5">
               <button
                 type="button"
                 onClick={() => navigate("/display-restaurant")}
-                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="bg-gray-700 py-2 px-4 border border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-200 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
               >
                 Cancel
               </button>
@@ -459,8 +464,8 @@ const CreateRestaurant = () => {
                 type="submit"
                 disabled={isSubmitting}
                 className={`${
-                  isSubmitting ? "bg-indigo-400" : "bg-indigo-600 hover:bg-indigo-700"
-                } py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+                  isSubmitting ? "bg-amber-500" : "bg-amber-700 hover:bg-amber-600"
+                } py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500`}
               >
                 {isSubmitting ? (
                   <div className="flex items-center">
@@ -478,6 +483,8 @@ const CreateRestaurant = () => {
           </form>
         </div>
       </div>
+    </div>
+    <ManagerFooter/>
     </div>
   );
 };
