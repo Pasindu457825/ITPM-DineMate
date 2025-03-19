@@ -31,6 +31,7 @@ import LoginPage from "./user/pages/tharusha/LoginPage";
 import UserSignupPage from "./user/pages/tharusha/UserSignupPage";
 import ManagerSignupPage from "./manager/pages/tharusha/ManagerSignupPage";
 import MyProfilePage from "./user/pages/tharusha/MyProfilePage";
+import AdminDashboard from "./admin/pages/tharusha/AdminDashboard";
 
 // Pamalka FoodItem
 import AddFood from "./manager/pages/pamaa/foodmenu/AddFood";
@@ -102,6 +103,7 @@ const AppContent = () => {
         <Route path="/signup/user" element={<UserSignupPage />} />
         <Route path="/signup/manager" element={<ManagerSignupPage />} />
         <Route path="/me" element={<MyProfilePage />} />
+        <Route path="/admindashboard" element={<AdminDashboard />} />
 
         {/* Pamalka Restaurant */}
         <Route path="/add-restaurant" element={<CreateRestaurant />} />
