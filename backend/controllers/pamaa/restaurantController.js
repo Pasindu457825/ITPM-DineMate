@@ -54,7 +54,7 @@ const getRestaurantById = async (req, res) => {
   }
 };
 
-// Update restaurant (including its tables)
+// Update restaurat
 const updateRestaurant = async (req, res) => {
   const { id } = req.params;
   const { name, description, location, phoneNumber, tables, image } = req.body;
