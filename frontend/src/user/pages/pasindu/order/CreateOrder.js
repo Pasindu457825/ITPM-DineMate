@@ -256,7 +256,7 @@ const AddOrderForm = () => {
   };
 
   return (
-    <div className="bg-gray-200 pt-6 px-20 h-auto">
+    <div className="bg-gray-200 pt-6 px-20 min-h-screen w-full">
       <div className="flex flex-col md:flex-row gap-8">
         {/* Left Section - Reservation & Order Info (1/3) */}
         <div className="md:w-2/3 ">
@@ -344,7 +344,7 @@ const AddOrderForm = () => {
             </div>
           </div>
         </div>
-        <div className="md:w-1/3">
+        <div className="md:w-1/3 mb-6">
           <div className="flex flex-col items-center space-y-6">
             {/* Reservation Details Card */}
             <div className="w-full max-w-lg bg-white shadow-2xl rounded-2xl p-6">
@@ -405,7 +405,7 @@ const AddOrderForm = () => {
             </div>
 
             {/* Order Summary Card */}
-            <div className="w-full max-w-lg bg-white shadow-2xl rounded-2xl p-6">
+            <div className="w-full max-w-lg bg-white shadow-2xl rounded-2xl p-6 ">
               {/* Order Summary Title */}
               <h2 className="text-2xl font-bold mb-4 text-gray-800 text-center">
                 Order Summary
