@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const ManagerFooter = () => {
   return (
@@ -9,11 +9,22 @@ const ManagerFooter = () => {
           © {new Date().getFullYear()} Dinemate - All Rights Reserved.
         </div>
         <div className="mt-2">
-          <a href="/privacy" className="hover:underline text-gray-300">Privacy Policy</a> | 
-          <a href="/terms" className="hover:underline text-gray-300">Terms of Service</a>
+          <a href="/privacy" className="hover:underline text-gray-300">
+            Privacy Policy
+          </a>{" "}
+          |
+          <a href="/terms" className="hover:underline text-gray-300">
+            Terms of Service
+          </a>
         </div>
         <div className="mt-2">
-          Need help? <a href="mailto:support@dinemate.com" className="hover:underline text-gray-300">Contact Support</a>
+          Need help?{" "}
+          <a
+            href="mailto:support@dinemate.com"
+            className="hover:underline text-gray-300"
+          >
+            Contact Support
+          </a>
         </div>
       </div>
     </footer>
