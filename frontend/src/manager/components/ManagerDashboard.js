@@ -1,14 +1,9 @@
 import React from 'react';
+import { useNavigate } from "react-router-dom";
 import { Card, Typography, Button } from "@material-tailwind/react";
 
 const ManagerDashboard = () => {
-  // Hardcoded stats for demonstration
-  const stats = {
-    totalRestaurants: 5,
-    totalReservations: 25,
-    pendingReservations: 3,
-    activeReservations: 22
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="bg-gray-200 p-6 rounded-lg">
@@ -21,7 +16,7 @@ const ManagerDashboard = () => {
             </svg>
           </div>
           <Typography variant="h4" color="white" className="mb-2">
-            {stats.totalRestaurants}
+           Restaurants
           </Typography>
           <Typography color="white" className="font-normal mb-4 opacity-70">
             Total Restaurants
@@ -30,6 +25,7 @@ const ManagerDashboard = () => {
             variant="outlined" 
             color="amber" 
             className="w-full text-white border-white hover:bg-amber-700"
+            onClick={() => navigate('/restaurants')}
           >
             View Restaurants
           </Button>
@@ -43,25 +39,19 @@ const ManagerDashboard = () => {
             </svg>
           </div>
           <Typography variant="h4" color="white" className="mb-2">
-            {stats.totalReservations}
+      Reservations
           </Typography>
           <Typography color="white" className="font-normal mb-4 opacity-70">
             Total Reservations
           </Typography>
-          <div className="space-y-2">
-            <Button 
-              variant="outlined" 
-              color="amber" 
-              className="w-full text-white border-white hover:bg-amber-700"
-            >
-              Manage Reservations
-            </Button>
-            {stats.pendingReservations > 0 && (
-              <Typography color="amber" className="text-sm">
-                {stats.pendingReservations} Pending Reservations
-              </Typography>
-            )}
-          </div>
+          <Button 
+            variant="outlined" 
+            color="amber" 
+            className="w-full text-white border-white hover:bg-amber-700"
+            onClick={() => navigate('/reservations')}
+          >
+            Manage Reservations
+          </Button>
         </div>
 
         {/* Profile Card */}
@@ -81,6 +71,7 @@ const ManagerDashboard = () => {
             variant="outlined" 
             color="amber" 
             className="w-full text-white border-white hover:bg-amber-700"
+            onClick={() => navigate('/profile')}
           >
             View Profile
           </Button>
@@ -99,23 +90,41 @@ const ManagerDashboard = () => {
           <Typography color="white" className="font-normal mb-4 opacity-70">
             Add or Manage
           </Typography>
-          <div className="space-y-2">
-            <Button 
-              variant="outlined" 
-              color="amber" 
-              className="w-full text-white border-white hover:bg-amber-700"
-            >
-              Add New Restaurant
-            </Button>
-            <Button 
-              variant="outlined" 
-              color="amber" 
-              className="w-full text-white border-white hover:bg-amber-700"
-            >
-              Create Reservation
-            </Button>
-          </div>
+          <Button 
+            variant="outlined" 
+            color="amber" 
+            className="w-full text-white border-white hover:bg-amber-700"
+            onClick={() => navigate('/add-restaurant')}
+          >
+            Add New Restaurant
+          </Button>
         </div>
+
+         {/* Orders Card */}
+<div className="bg-blue-gray-900 rounded-lg shadow-md p-6 text-center">
+  <div className="bg-amber-700/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 2H5a2 2 0 00-2 2v16c0 1.1.9 2 2 2h14a2 2 0 002-2V4a2 2 0 00-2-2h-1" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 2v4c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2V2" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01" />
+    </svg>
+  </div>
+  <Typography variant="h4" color="white" className="mb-2">
+    Orders
+  </Typography>
+  <Typography color="white" className="font-normal mb-4 opacity-70">
+     Manage Orders
+  </Typography>
+  <Button 
+    variant="outlined" 
+    color="amber" 
+    className="w-full text-white border-white hover:bg-amber-700"
+    onClick={() => navigate('/orders')}
+  >
+    View Orders
+  </Button>
+</div>
+
       </div>
     </div>
   );
