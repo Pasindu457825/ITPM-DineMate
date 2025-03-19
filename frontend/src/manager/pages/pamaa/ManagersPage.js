@@ -3,6 +3,7 @@ import { Button } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import ManagerHeader from "../../components/ManagerHeader";
 import ManagerDashboard from "../../components/ManagerDashboard";
+import ManagerFooter from "../../components/ManagerFooter";
 
 const ManagersPage = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const ManagersPage = () => {
       {/* Dashboard Component */}
       <ManagerDashboard />
     </div>
+    <ManagerFooter/>
     </div>
   );
 };

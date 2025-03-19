@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import deleteFood from "../foodmenu/DeleteFood"; // Ensure this is the correct import path
 import ManagerHeader from "../../../components/ManagerHeader";
+import ManagerFooter from "../../../components/ManagerFooter";
 
 const FoodsByRestaurant = () => {
   const { restaurantId } = useParams();
@@ -234,6 +235,7 @@ const FoodsByRestaurant = () => {
         </ul>
       )}
     </div>
+    <ManagerFooter />
     </div>
   );
 };

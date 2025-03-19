@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { storage } from "../../../../firebaseConfig"; // Ensure correct path
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import ManagerHeader from "../../../components/ManagerHeader";
+import ManagerFooter from "../../../components/ManagerFooter";
 
 const AddFoodForm = () => {
   const navigate = useNavigate();
@@ -392,6 +393,7 @@ const AddFoodForm = () => {
         </form>
       </div>
     </div>
+    <ManagerFooter/>
     </div>
   );
 };
