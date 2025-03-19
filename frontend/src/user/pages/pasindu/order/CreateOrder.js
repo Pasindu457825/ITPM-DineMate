@@ -59,20 +59,29 @@ const AddOrderForm = () => {
   }, [user]);
 
   useEffect(() => {
+    // Try to get cart data from sessionStorage if available, otherwise use cart from location.state
+    const savedCart = sessionStorage.getItem("cart")
+      ? JSON.parse(sessionStorage.getItem("cart"))
+      : cart;
+
     setItems(
-      cart.map((item) => ({
+      savedCart.map((item) => ({
         name: item.name,
         quantity: item.quantity,
         price: item.price,
-        portionSize: item.portionSize || "Medium", // ✅ Ensure portion size is included
+        portionSize: item.portionSize || "Medium",
       }))
     );
 
-    const totalAmount = cart.reduce(
+    const totalAmount = savedCart.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
+
     setTotal(totalAmount.toFixed(2));
+
+    // Save cart data to sessionStorage
+    sessionStorage.setItem("cart", JSON.stringify(savedCart));
   }, [cart]);
 
   // Update formData when user is fetched
@@ -143,21 +152,31 @@ const AddOrderForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (
+      !customerName ||
+      !customerEmail ||
+      !orderType ||
+      items.length === 0 ||
+      total <= 0
+    ) {
+      alert("❌ Missing required fields! Please check your order details.");
+      return;
+    }
+
     const orderData = {
       restaurantId,
       customerName,
       customerEmail,
       orderType,
       paymentType: isOnlinePayment
-        ? { paymentMethod: "Online Payment", paymentStatus: "Pending" } // Online payments have "Pending" status
-        : { paymentMethod: "Cash Payment", paymentStatus: "No" }, // Cash payments are directly marked
+        ? { paymentMethod: "Online Payment", paymentStatus: "Pending" }
+        : { paymentMethod: "Cash Payment", paymentStatus: "No" },
       orderStatus,
       total: parseFloat(total),
       items,
-      reservationStatus:
-        reservationId && reservationId.trim() !== ""
-          ? { reservationId: reservationId, status: "Available" }
-          : { reservationId: "No", status: "Unavailable" }, // Store as an array
+      reservationStatus: reservationId
+        ? { reservationId: reservationId, status: "Available" }
+        : { reservationId: "No", status: "Unavailable" },
     };
 
     console.log("🚀 Sending Order Data:", orderData);
@@ -170,6 +189,8 @@ const AddOrderForm = () => {
       );
 
       console.log("✅ Order Created:", response.data);
+
+      sessionStorage.removeItem("cart"); // Clear sessionStorage after order
 
       if (isOnlinePayment) {
         navigate("/payment-page", {
@@ -189,6 +210,29 @@ const AddOrderForm = () => {
         }`
       );
     }
+  };
+
+  const updateItemQuantity = (index, change) => {
+    setItems((prevItems) => {
+      const updatedItems = prevItems.map((item, i) =>
+        i === index
+          ? { ...item, quantity: Math.max(1, item.quantity + change) } // Ensure quantity doesn't go below 1
+          : item
+      );
+
+      // ✅ Recalculate total price dynamically
+      const newTotal = updatedItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
+
+      setTotal(newTotal.toFixed(2)); // ✅ Update total price
+
+      // ✅ Save updated cart data to sessionStorage
+      sessionStorage.setItem("cart", JSON.stringify(updatedItems));
+
+      return updatedItems;
+    });
   };
 
   return (
@@ -242,11 +286,17 @@ const AddOrderForm = () => {
 
                       {/* Quantity & Total */}
                       <div className="flex items-center space-x-2">
-                        <button className="p-2 bg-gray-200 rounded-lg">
+                        <button
+                          className="p-2 bg-gray-200 rounded-lg"
+                          onClick={() => updateItemQuantity(index, -1)} // Decrease quantity
+                        >
                           ➖
                         </button>
                         <span className="font-semibold">{item.quantity}</span>
-                        <button className="p-2 bg-gray-200 rounded-lg">
+                        <button
+                          className="p-2 bg-gray-200 rounded-lg"
+                          onClick={() => updateItemQuantity(index, 1)} // Increase quantity
+                        >
                           ➕
                         </button>
                       </div>
