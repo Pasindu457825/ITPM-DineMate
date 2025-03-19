@@ -19,20 +19,25 @@ const createOrder = async (req, res) => {
       reservationStatus,
     } = req.body;
 
+    // ✅ Validate required fields
     if (
       !restaurantId ||
       !customerName ||
       !customerEmail ||
       !orderType ||
       !paymentType ||
-      !orderStatus
+      !orderStatus ||
+      !items ||
+      items.length === 0
     ) {
       console.error("❌ Missing required fields");
       return res.status(400).json({ message: "Required fields are missing" });
     }
 
+    // ✅ Generate Unique Order ID
     const orderId = `ORD-${Date.now()}`;
 
+    // ✅ Process Items and Fetch Additional Info
     const enrichedItems = await Promise.all(
       items.map(async (item) => {
         const foodItem = await FoodItem.findOne({
@@ -40,15 +45,25 @@ const createOrder = async (req, res) => {
           restaurantId: restaurantId,
         });
 
+        // ✅ Adjust price based on portion size if necessary
+        let finalPrice = item.price;
+        if (item.portionSize === "Large") {
+          finalPrice = item.price; // Large costs 1.5x of base price
+        } else {
+          finalPrice = item.price; // Medium or any default size uses base price
+        }
+
         return {
           name: item.name,
           quantity: item.quantity,
-          price: item.price,
+          price: finalPrice,
+          portionSize: item.portionSize || "Medium", // ✅ Ensure portion size is saved
           image: foodItem?.image || "", // ✅ Store image URL if available, otherwise empty string
         };
       })
     );
 
+    // ✅ Create New Order Document
     const newOrder = new Order({
       restaurantId,
       orderId,
@@ -62,16 +77,20 @@ const createOrder = async (req, res) => {
       reservationStatus,
     });
 
+    // ✅ Save Order in Database
     await newOrder.save();
 
-    res
-      .status(201)
-      .json({ message: "Order added successfully", order: newOrder });
+    // ✅ Send Response
+    res.status(201).json({
+      message: "✅ Order added successfully",
+      order: newOrder,
+    });
   } catch (error) {
     console.error("❌ Error saving order:", error);
-    res
-      .status(500)
-      .json({ message: "Error adding order", error: error.message });
+    res.status(500).json({
+      message: "Error adding order",
+      error: error.message,
+    });
   }
 };
 
