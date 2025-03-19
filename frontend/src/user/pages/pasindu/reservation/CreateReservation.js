@@ -60,7 +60,16 @@ const CreateReservation = () => {
   }, [restaurantId]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "date") {
+      const today = new Date().toISOString().split("T")[0];
+      if (value !== today) {
+        setFormData((prev) => ({ ...prev, time: "" })); // Reset time if date changes
+      }
+    }
+
+    setFormData({ ...formData, [name]: value });
   };
 
   // Fetch available tables when date & time are selected
@@ -181,6 +190,28 @@ const CreateReservation = () => {
     0
   );
 
+  const isTimeSlotPast = (slot) => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinutes = now.getMinutes();
+
+    // Extract the start time from the time slot
+    const [startTime, endTime] = slot.split(" - ");
+    let [startHour, startMinutes] = startTime.split(":").map(Number);
+    const isPM = slot.includes("PM") && !slot.includes("12:");
+
+    // Convert 12-hour format to 24-hour format
+    if (isPM) startHour += 12;
+    if (slot.includes("AM") && startHour === 12) startHour = 0;
+
+    // Compare the time slot with the current system time
+    if (startHour < currentHour) return true;
+    if (startHour === currentHour && startMinutes <= currentMinutes)
+      return true;
+
+    return false;
+  };
+
   const handleTableSelect = (tableNumber, seats) => {
     if (reservedTables.includes(tableNumber)) return;
 
@@ -220,195 +251,249 @@ const CreateReservation = () => {
   );
 
   return (
-    <div className="p-6 bg-white rounded shadow-md max-w-lg mx-auto">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-        Create Reservation for {restaurant.name}
-      </h2>
+    <div className="bg-gray-200 p-4">
+      <div className="flex flex-col md:flex-row gap-8">
+        <div className="md:w-1/5 bg-white shadow-2xl rounded-2xl p-6 flex flex-col items-start self-start">
+          <h2 className="text-4xl font-semibold text-gray-800 mb-4">
+            {restaurant.name}
+          </h2>
 
-      {/* Display Restaurant & Reservation Details */}
-      <div className="bg-gray-100 p-4 rounded shadow-sm">
-        <p className="text-lg">
-          <strong>Restaurant Name:</strong> {restaurant.name}
-        </p>
-        <p className="text-lg">
-          <strong>Location:</strong> {restaurant.location}
-        </p>
-        <p className="text-lg">
-          <strong>Phone:</strong> {restaurant.phoneNumber}
-        </p>
-      </div>
+          {/* Display Restaurant & Reservation Details */}
+          <div className="">
+            <img
+              src={restaurant.image}
+              alt={restaurant.name}
+              className="w-full h-64 object-cover rounded-xl shadow-lg my-4"
+            />
+            <p className="text-lg text-gray-700 font-medium flex items-start">
+              <span className="text-pink-600 text-xl mr-2">📍</span>
+              <strong>Location:</strong>{" "}
+              <span className="ml-1 flex-1">{restaurant.location}</span>
+            </p>
+            <p className="text-lg text-gray-700 font-medium flex items-start">
+              <span className="text-pink-600 text-xl mr-2">☎️</span>
+              <strong>Phone:</strong>{" "}
+              <span className="ml-1 flex-1">{restaurant.phoneNumber}</span>
+            </p>
+          </div>
 
-      {/* Display Table Images with Numbering "001", "002", ... */}
-      <h3 className="text-xl font-semibold text-gray-800 mt-4 mb-2">
-        Select Tables
-      </h3>
-      <p className="text-md text-gray-600 mb-2">
-        Selected Tables:{" "}
-        {selectedTables.length > 0
-          ? selectedTables.map((t) => t.number).join(", ")
-          : "None"}
-      </p>
+          <button
+            onClick={handleGoBack}
+            className="mt-4 bg-gray-500 text-white px-4 py-2 rounded w-full hover:bg-gray-600"
+          >
+            Back to Restaurant
+          </button>
+        </div>
+        <div className="md:w-5/6 bg-white shadow-2xl rounded-2xl p-6 flex flex-col relative min-h-screen">
+          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+            <input type="text" value={formData.shopName} readOnly hidden />
+            <h2
+              className="text-5xl font-bold text-gray-800 mb-6"
+              style={{ fontFamily: "'Dancing Script', cursive" }}
+            >
+              Book A Table
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Left Side */}
 
-      <p className="text-md text-gray-600 mb-4">
-        Total Seating Capacity: {totalCapacity} persons
-      </p>
-
-      {/* ✅ Convert Object to Array Before Mapping */}
-      {Object.entries(groupedTables).map(([seats, tables]) => (
-        <div key={seats} className="mb-4">
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">
-            Tables with {seats} Seats
-          </h3>
-          <div className="grid grid-cols-4 gap-4 p-4 bg-gray-50 rounded">
-            {tables.map((tableNumber) => {
-              const isReserved = reservedTables.includes(tableNumber);
-              const isSelected = selectedTables.some(
-                (t) => t.number === tableNumber
-              );
-
-              return (
-                <div
-                  key={tableNumber}
-                  className={`relative text-center p-2 rounded transition ${
-                    isSelected
-                      ? "bg-green-500 text-white"
-                      : isReserved
-                      ? "bg-red-500 text-white"
-                      : "bg-green-300 hover:bg-green-500"
-                  } cursor-pointer`}
-                  onClick={() =>
-                    !isReserved &&
-                    handleTableSelect(tableNumber, parseInt(seats))
-                  }
-                >
-                  <img
-                    src={tableImage}
-                    alt={`Table ${tableNumber}`}
-                    className="mx-auto w-12 h-12"
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium">
+                    Customer Name
+                  </label>
+                  <input
+                    type="text"
+                    name="customerName"
+                    value={formData.customerName}
+                    readOnly
+                    className="p-2 border border-gray-300 rounded w-full bg-gray-100 cursor-not-allowed pointer-events-none"
                   />
-                  <p className="text-sm">{`Table ${tableNumber}`}</p>
+                </div>
 
-                  {isSelected && (
-                    <span className="absolute top-1 right-1 bg-white text-green-500 rounded-full p-1">
-                      ✅
-                    </span>
+                <div>
+                  <label className="block text-sm font-medium">
+                    Reservation Date
+                  </label>
+                  <input
+                    type="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleChange}
+                    required
+                    min={new Date().toISOString().split("T")[0]} // Prevent past dates
+                    className="p-2 border border-gray-300 rounded w-full"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium">
+                    Reservation Time
+                  </label>
+                  <select
+                    name="time"
+                    value={formData.time}
+                    onChange={handleChange}
+                    required
+                    className="p-2 border border-gray-300 rounded w-full"
+                  >
+                    <option value="">Select Time Slot</option>
+                    {timeSlots.map((slot, index) => {
+                      const shouldDisable =
+                        formData.date ===
+                          new Date().toISOString().split("T")[0] &&
+                        isTimeSlotPast(slot);
+
+                      return (
+                        <option
+                          key={index}
+                          value={slot}
+                          disabled={shouldDisable}
+                        >
+                          {slot} {shouldDisable ? "(Unavailable)" : ""}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium">
+                    Number of People
+                  </label>
+                  <input
+                    type="number"
+                    name="NoofPerson"
+                    value={formData.NoofPerson}
+                    onChange={handleChange}
+                    required
+                    className="p-2 border border-gray-300 rounded w-full"
+                  />
+                  {parseInt(formData.NoofPerson || 0, 10) > totalCapacity && (
+                    <p className="text-red-500 text-sm mt-1">
+                      Not enough seats! Selected tables can only seat{" "}
+                      {totalCapacity} people.
+                    </p>
                   )}
                 </div>
-              );
-            })}
+              </div>
+
+              {/* Right Side */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium">
+                    Customer Email
+                  </label>
+                  <input
+                    type="text"
+                    name="customerEmail"
+                    value={formData.customerEmail}
+                    readOnly
+                    className="p-2 border border-gray-300 rounded w-full bg-gray-100 cursor-not-allowed pointer-events-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium">
+                    Special Requests (Optional)
+                  </label>
+                  <textarea
+                    name="specialRequests"
+                    value={formData.specialRequests}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 200) {
+                        setFormData({
+                          ...formData,
+                          specialRequests: e.target.value,
+                        });
+                      }
+                    }}
+                    className="p-2 border border-gray-300 rounded w-full"
+                    placeholder="Any special requests (e.g., birthday setup, window seat)..."
+                    maxLength="200"
+                  />
+                  <p className="text-gray-500 text-sm mt-1">
+                    {200 - formData.specialRequests.length} characters remaining
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end mt-4 mb-2">
+              <button
+                type="submit"
+                className="bg-amber-700 font-sans font-bold text-white px-6 py-3 rounded-md hover:bg-amber-800 w-fit"
+              >
+                Book Now
+              </button>
+            </div>
+          </form>
+          {/* Display Table Images with Numbering "001", "002", ... */}
+          {/* Table Selection Section */}
+          <h3 className="text-xl font-semibold text-gray-800 mt-4 mb-2">
+            Select Tables
+          </h3>
+          <p className="text-md text-gray-600 mb-2">
+            Selected Tables:{" "}
+            {selectedTables.length > 0
+              ? selectedTables.map((t) => t.number).join(", ")
+              : "None"}
+          </p>
+
+          <p className="text-md text-gray-600 mb-4">
+            Total Seating Capacity: {totalCapacity} persons
+          </p>
+
+          {/* ✅ Wrap all grouped tables in a column layout */}
+          <div className="grid grid-cols-3 gap-6">
+            {Object.entries(groupedTables).map(([seats, tables]) => (
+              <div key={seats} className="bg-gray-50 py-3 pr-6 rounded shadow">
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                  Tables with {seats} Seats
+                </h3>
+                {/* Adjust grid for tables inside each section */}
+                <div className="grid grid-cols-3 gap-4">
+                  {tables.map((tableNumber) => {
+                    const isReserved = reservedTables.includes(tableNumber);
+                    const isSelected = selectedTables.some(
+                      (t) => t.number === tableNumber
+                    );
+
+                    return (
+                      <div
+                        key={tableNumber}
+                        className={`relative text-center p-2 rounded transition ${
+                          isSelected
+                            ? "bg-green-500 text-white"
+                            : isReserved
+                            ? "bg-red-500 text-white"
+                            : "bg-green-500 hover:bg-green-700"
+                        } cursor-pointer`}
+                        onClick={() =>
+                          !isReserved &&
+                          handleTableSelect(tableNumber, parseInt(seats))
+                        }
+                      >
+                        <img
+                          src={tableImage}
+                          alt={`Table ${tableNumber}`}
+                          className="mx-auto w-12 h-12"
+                        />
+                        <p className="text-sm">{`Table ${tableNumber}`}</p>
+
+                        {isSelected && (
+                          <span className="absolute top-1 right-1 bg-white text-green-500 rounded-full p-1">
+                            ✅
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      ))}
-
-      <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-        <input type="text" value={formData.shopName} readOnly hidden />
-
-        <div>
-          <label className="block text-sm font-medium">Customer Name</label>
-          <input
-            type="text"
-            name="customerName"
-            value={formData.customerName}
-            readOnly // 🔒 Prevents user from editing
-            className="p-2 border border-gray-300 rounded w-full bg-gray-100 cursor-not-allowed pointer-events-none"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">Customer Name</label>
-          <input
-            type="text"
-            name="customerName"
-            value={formData.customerEmail}
-            readOnly // 🔒 Prevents user from editing
-            className="p-2 border border-gray-300 rounded w-full bg-gray-100 cursor-not-allowed pointer-events-none"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">Number of People</label>
-          <input
-            type="number"
-            name="NoofPerson"
-            value={formData.NoofPerson}
-            onChange={handleChange}
-            required
-            className="p-2 border border-gray-300 rounded w-full"
-          />
-          {parseInt(formData.NoofPerson || 0, 10) > totalCapacity && (
-            <p className="text-red-500 text-sm mt-1">
-              Not enough seats! Selected tables can only seat {totalCapacity}{" "}
-              people.
-            </p>
-          )}
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">Reservation Date</label>
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            required
-            className="p-2 border border-gray-300 rounded w-full"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">Reservation Time</label>
-          <select
-            name="time"
-            value={formData.time}
-            onChange={handleChange}
-            required
-            className="p-2 border border-gray-300 rounded w-full"
-          >
-            <option value="">Select Time Slot</option>
-            {timeSlots.map((slot, index) => (
-              <option key={index} value={slot}>
-                {slot}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium">
-            Special Requests (Optional)
-          </label>
-          <textarea
-            name="specialRequests"
-            value={formData.specialRequests}
-            onChange={(e) => {
-              if (e.target.value.length <= 200) {
-                // ✅ Prevent input over 200 chars
-                setFormData({ ...formData, specialRequests: e.target.value });
-              }
-            }}
-            className="p-2 border border-gray-300 rounded w-full"
-            placeholder="Any special requests (e.g., birthday setup, window seat)..."
-            maxLength="200" // ✅ Prevent input over 200 chars (double safety)
-          />
-          <p className="text-gray-500 text-sm mt-1">
-            {200 - formData.specialRequests.length} characters remaining
-          </p>
-        </div>
-
-        <button
-          type="submit"
-          className="bg-blue-500 text-white p-2 rounded w-full hover:bg-blue-600"
-        >
-          Create Reservation
-        </button>
-      </form>
-
-      <button
-        onClick={handleGoBack}
-        className="mt-4 bg-gray-500 text-white px-4 py-2 rounded w-full hover:bg-gray-600"
-      >
-        Back to Restaurant
-      </button>
+      </div>
     </div>
   );
 };
