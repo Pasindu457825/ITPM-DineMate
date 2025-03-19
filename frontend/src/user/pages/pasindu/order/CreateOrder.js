@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
+import { Trash2 } from "lucide-react";
 
 const AddOrderForm = () => {
   const navigate = useNavigate();
@@ -235,6 +236,25 @@ const AddOrderForm = () => {
     });
   };
 
+  const removeItem = (index) => {
+    setItems((prevItems) => {
+      const updatedItems = prevItems.filter((_, i) => i !== index); // Remove item at index
+
+      // ✅ Recalculate total price after removal
+      const newTotal = updatedItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
+
+      setTotal(newTotal.toFixed(2)); // ✅ Update total price
+
+      // ✅ Save updated cart data to sessionStorage
+      sessionStorage.setItem("cart", JSON.stringify(updatedItems));
+
+      return updatedItems;
+    });
+  };
+
   return (
     <div className="bg-gray-200 pt-6 px-20 h-auto">
       <div className="flex flex-col md:flex-row gap-8">
@@ -257,7 +277,7 @@ const AddOrderForm = () => {
                 return (
                   <div key={index}>
                     {/* Item Container */}
-                    <div className="flex items-center pb-4">
+                    <div key={index} className="flex items-center pb-4">
                       {/* Food Image */}
                       <div className="w-24 h-24 flex-shrink-0">
                         {foodItem?.image ? (
@@ -274,37 +294,44 @@ const AddOrderForm = () => {
                       </div>
 
                       {/* Item Details */}
-                      <div className="ml-4 flex-grow">
+                      <div className="ml-4 flex-grow flex flex-col">
                         <h4 className="text-lg font-semibold">{item.name}</h4>
                         <p className="text-gray-500">
                           Portion: {item.portionSize}
                         </p>
-                        <p className="text-gray-500">
-                          Price: Rs.{item.price.toFixed(2)}
+
+                        {/* Dustbin Remove Button - Positioned Under Portion Size */}
+                        <button
+                          className="mt-2 bg-red-400 text-black w-8 h-8 rounded-full flex items-center justify-center hover:bg-red-800 hover:text-white transition"
+                          onClick={() => removeItem(index)}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+
+                      {/* Quantity Controls */}
+                      <div className="flex flex-col items-center">
+                        <div className="flex items-center space-x-2">
+                          <button
+                            className="p-2 bg-gray-200 rounded-lg"
+                            onClick={() => updateItemQuantity(index, -1)}
+                          >
+                            ➖
+                          </button>
+                          <span className="font-semibold">{item.quantity}</span>
+                          <button
+                            className="p-2 bg-gray-200 rounded-lg"
+                            onClick={() => updateItemQuantity(index, 1)}
+                          >
+                            ➕
+                          </button>
+                        </div>
+
+                        {/* Item Total Price */}
+                        <p className="text-lg font-bold text-green-600 mt-2">
+                          Rs.{(item.quantity * item.price).toFixed(2)}
                         </p>
                       </div>
-
-                      {/* Quantity & Total */}
-                      <div className="flex items-center space-x-2">
-                        <button
-                          className="p-2 bg-gray-200 rounded-lg"
-                          onClick={() => updateItemQuantity(index, -1)} // Decrease quantity
-                        >
-                          ➖
-                        </button>
-                        <span className="font-semibold">{item.quantity}</span>
-                        <button
-                          className="p-2 bg-gray-200 rounded-lg"
-                          onClick={() => updateItemQuantity(index, 1)} // Increase quantity
-                        >
-                          ➕
-                        </button>
-                      </div>
-
-                      {/* Item Total Price */}
-                      <p className="text-lg font-bold text-green-600 ml-4">
-                        Rs.{(item.quantity * item.price).toFixed(2)}
-                      </p>
                     </div>
 
                     {/* Divider Line */}
