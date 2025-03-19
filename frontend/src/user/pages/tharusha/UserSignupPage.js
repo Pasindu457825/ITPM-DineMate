@@ -20,7 +20,7 @@ const UserSignupPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/ITPM/users/register", {
+      await axios.post("http://localhost:5000/api/ITPM/users/signup/user", {
         ...formData,
         role: "registered_user",
       });
