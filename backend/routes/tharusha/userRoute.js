@@ -38,7 +38,9 @@ router.post("/signup/user", async (req, res) => {
     // Check if a user with this email already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "User with this email already exists" });
+      return res
+        .status(400)
+        .json({ message: "User with this email already exists" });
     }
     // Hash the password
     const hashedPwd = await bcrypt.hash(pwd, 10);
@@ -68,7 +70,9 @@ router.post("/signup/manager", async (req, res) => {
     // Check if a manager with this email already exists
     const existingManager = await User.findOne({ email });
     if (existingManager) {
-      return res.status(400).json({ message: "Manager with this email already exists" });
+      return res
+        .status(400)
+        .json({ message: "Manager with this email already exists" });
     }
     // Hash the password
     const hashedPwd = await bcrypt.hash(pwd, 10);
@@ -162,6 +166,27 @@ router.put("/:id", requireAuth, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ===================================
+// 6) Delete User
+// DELETE /:id
+// Protected route – allows a user or admin to delete a user
+// ===================================
+router.delete("/:id", requireAuth, async (req, res) => {
+  try {
+    // Ensure the user is deleting their own profile, unless they're an admin
+    if (req.user.userId !== req.params.id && req.user.role !== "admin") {
+      return res.status(403).json({ message: "Not authorized to delete this profile" });
+    }
+    const deletedUser = await User.findByIdAndDelete(req.params.id);
+    if (!deletedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

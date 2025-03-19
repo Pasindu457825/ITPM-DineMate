@@ -43,7 +43,7 @@ const ManagerSignupPage = () => {
       localStorage.setItem("userId", userId);
 
       // 4) Redirect to manager dashboard or home
-      navigate("/manager-dashboard"); 
+      navigate("/Managers"); 
     } catch (error) {
       console.error("Error signing up:", error);
       alert("Signup failed. Try again.");

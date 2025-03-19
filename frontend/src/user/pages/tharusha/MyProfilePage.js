@@ -10,7 +10,14 @@ import {
   Input,
   Spinner,
   IconButton,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
 } from "@material-tailwind/react";
+import { Cog6ToothIcon } from "@heroicons/react/24/outline";
+
+import { useNavigate } from "react-router-dom";
 
 const MyProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -22,14 +29,24 @@ const MyProfilePage = () => {
     email: "",
     phone_no: "",
   });
+
+  // Notification / error states
   const [notification, setNotification] = useState({ show: false, message: "", type: "" });
 
+  // For delete account modal
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteInput, setDeleteInput] = useState("");
+  const [deleting, setDeleting] = useState(false);
+
+  const navigate = useNavigate();
+
+  // Fetch profile on mount
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
-          console.warn("⚠️ No token found. Redirecting to login...");
+          console.warn("No token found. Redirecting to login...");
           setLoading(false);
           return;
         }
@@ -38,8 +55,6 @@ const MyProfilePage = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        console.log("✅ Profile fetched:", res.data);
-        sessionStorage.setItem("userProfile", JSON.stringify(res.data));
         setUser(res.data);
         setFormData({
           fname: res.data.fname,
@@ -48,10 +63,7 @@ const MyProfilePage = () => {
           phone_no: res.data.phone_no,
         });
       } catch (error) {
-        console.error(
-          "❌ Error fetching profile:",
-          error.response?.data || error.message
-        );
+        console.error("Error fetching profile:", error.response?.data || error.message);
         showNotification("Failed to load profile", "error");
       } finally {
         setLoading(false);
@@ -61,17 +73,16 @@ const MyProfilePage = () => {
     fetchProfile();
   }, []);
 
+  // Handle text changes in form fields
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Save changes to profile
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -83,34 +94,71 @@ const MyProfilePage = () => {
       const res = await axios.put(
         `http://localhost:5000/api/ITPM/users/${user._id}`,
         formData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      console.log("✅ Profile updated:", res.data);
       setUser(res.data);
       setIsEditing(false);
       showNotification("Profile updated successfully!", "success");
-      
-      // Update session storage
-      sessionStorage.setItem("userProfile", JSON.stringify(res.data));
     } catch (error) {
-      console.error(
-        "❌ Error updating profile:",
-        error.response?.data || error.message
-      );
+      console.error("Error updating profile:", error.response?.data || error.message);
       showNotification("Failed to update profile", "error");
     } finally {
       setLoading(false);
     }
   };
 
+  // Show a temporary notification
   const showNotification = (message, type) => {
     setNotification({ show: true, message, type });
     setTimeout(() => {
       setNotification({ show: false, message: "", type: "" });
     }, 3000);
+  };
+
+  // =========================
+  // Delete Account Functions
+  // =========================
+  const openDeleteModal = () => {
+    setShowDeleteModal(true);
+    setDeleteInput("");
+  };
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setDeleteInput("");
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      setDeleting(true);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        showNotification("Authentication error. Please login again.", "error");
+        setDeleting(false);
+        return;
+      }
+
+      // Call DELETE endpoint (make sure your backend supports this)
+      await axios.delete(`http://localhost:5000/api/ITPM/users/${user._id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      showNotification("Account deleted successfully!", "success");
+      // Clear local storage
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+      localStorage.removeItem("userId");
+
+      // Redirect to homepage or login
+      navigate("/login");
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      showNotification("Failed to delete account", "error");
+    } finally {
+      setDeleting(false);
+      setShowDeleteModal(false);
+    }
   };
 
   if (loading) {
@@ -137,7 +185,7 @@ const MyProfilePage = () => {
             <Button
               fullWidth
               className="bg-blue-600 hover:bg-blue-700"
-              onClick={() => window.location.href = "/login"}
+              onClick={() => navigate("/login")}
             >
               Go to Login
             </Button>
@@ -149,15 +197,65 @@ const MyProfilePage = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-900 py-8 px-4">
+      {/* Notification Banner */}
       {notification.show && (
-        <div className={`fixed top-4 right-4 p-4 rounded-lg z-50 ${
-          notification.type === "success" ? "bg-green-600" : "bg-red-600"
-        }`}>
+        <div
+          className={`fixed top-4 right-4 p-4 rounded-lg z-50 ${
+            notification.type === "success" ? "bg-green-600" : "bg-red-600"
+          }`}
+        >
           <Typography className="text-white">{notification.message}</Typography>
         </div>
       )}
-      
-      <Card className="w-full max-w-md bg-gray-800 text-white shadow-xl">
+
+      {/* Delete Confirmation Modal */}
+      <Dialog
+        open={showDeleteModal}
+        handler={closeDeleteModal}
+        className="bg-gray-900 bg-opacity-90"
+      >
+        <DialogHeader className="text-white">Delete Account</DialogHeader>
+        <DialogBody className="text-white">
+          <Typography>
+            Are you sure you want to delete your account? This action is permanent.
+          </Typography>
+          <Typography className="mt-4">
+            To confirm, type <span className="text-red-400 font-bold">deleteme</span> below:
+          </Typography>
+          <Input
+            variant="outlined"
+            color="red"
+            label="Type 'deleteme' to confirm"
+            className="mt-2 bg-gray-800 text-white"
+            value={deleteInput}
+            onChange={(e) => setDeleteInput(e.target.value)}
+          />
+        </DialogBody>
+        <DialogFooter className="space-x-2">
+          <Button variant="text" onClick={closeDeleteModal} className="text-gray-400">
+            Cancel
+          </Button>
+          <Button
+            color="red"
+            onClick={handleDeleteAccount}
+            disabled={deleteInput !== "deleteme" || deleting}
+          >
+            {deleting ? "Deleting..." : "Delete Account"}
+          </Button>
+        </DialogFooter>
+      </Dialog>
+
+      <Card className="w-full max-w-md bg-gray-800 text-white shadow-xl relative">
+        {/* Settings Icon (top-right) */}
+        <IconButton
+          variant="text"
+          className="absolute top-4 right-4 text-white hover:bg-white-700"
+          onClick={openDeleteModal}
+        >
+          <Cog6ToothIcon className="h-6 w-6 text-blue-500" />
+          <p>bdgshvvhgfhgghfghfhfh</p>
+        </IconButton>
+
         <CardHeader
           variant="gradient"
           color="blue"
@@ -175,7 +273,7 @@ const MyProfilePage = () => {
             {!isEditing ? user.role : "Update your information"}
           </Typography>
         </CardHeader>
-        
+
         <CardBody className="p-6">
           {isEditing ? (
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -188,16 +286,11 @@ const MyProfilePage = () => {
                     value={formData.fname}
                     onChange={handleChange}
                     className="text-white !border-gray-500 focus:!border-blue-500"
-                    labelProps={{
-                      className: "hidden",
-                    }}
-                    containerProps={{
-                      className: "bg-gray-700 rounded",
-                    }}
+                    labelProps={{ className: "hidden" }}
+                    containerProps={{ className: "bg-gray-700 rounded" }}
                     required
                   />
                 </div>
-                
                 <div>
                   <Typography className="text-gray-400 mb-2">Last Name</Typography>
                   <Input
@@ -206,16 +299,11 @@ const MyProfilePage = () => {
                     value={formData.lname}
                     onChange={handleChange}
                     className="text-white !border-gray-500 focus:!border-blue-500"
-                    labelProps={{
-                      className: "hidden",
-                    }}
-                    containerProps={{
-                      className: "bg-gray-700 rounded",
-                    }}
+                    labelProps={{ className: "hidden" }}
+                    containerProps={{ className: "bg-gray-700 rounded" }}
                     required
                   />
                 </div>
-                
                 <div>
                   <Typography className="text-gray-400 mb-2">Email</Typography>
                   <Input
@@ -224,16 +312,11 @@ const MyProfilePage = () => {
                     value={formData.email}
                     onChange={handleChange}
                     className="text-white !border-gray-500 focus:!border-blue-500"
-                    labelProps={{
-                      className: "hidden",
-                    }}
-                    containerProps={{
-                      className: "bg-gray-700 rounded",
-                    }}
+                    labelProps={{ className: "hidden" }}
+                    containerProps={{ className: "bg-gray-700 rounded" }}
                     required
                   />
                 </div>
-                
                 <div>
                   <Typography className="text-gray-400 mb-2">Phone Number</Typography>
                   <Input
@@ -242,12 +325,8 @@ const MyProfilePage = () => {
                     value={formData.phone_no}
                     onChange={handleChange}
                     className="text-white !border-gray-500 focus:!border-blue-500"
-                    labelProps={{
-                      className: "hidden",
-                    }}
-                    containerProps={{
-                      className: "bg-gray-700 rounded",
-                    }}
+                    labelProps={{ className: "hidden" }}
+                    containerProps={{ className: "bg-gray-700 rounded" }}
                     required
                   />
                 </div>
@@ -259,33 +338,31 @@ const MyProfilePage = () => {
                 <Typography className="text-sm text-gray-400 mb-1">First Name</Typography>
                 <Typography className="text-gray-100 font-medium">{user.fname}</Typography>
               </div>
-              
               <div className="bg-gray-700 p-4 rounded">
                 <Typography className="text-sm text-gray-400 mb-1">Last Name</Typography>
                 <Typography className="text-gray-100 font-medium">{user.lname}</Typography>
               </div>
-              
               <div className="bg-gray-700 p-4 rounded">
                 <Typography className="text-sm text-gray-400 mb-1">Email</Typography>
                 <Typography className="text-gray-100 font-medium">{user.email}</Typography>
               </div>
-              
               <div className="bg-gray-700 p-4 rounded">
                 <Typography className="text-sm text-gray-400 mb-1">Phone Number</Typography>
                 <Typography className="text-gray-100 font-medium">{user.phone_no}</Typography>
               </div>
-              
               <div className="bg-gray-700 p-4 rounded">
                 <Typography className="text-sm text-gray-400 mb-1">User Role</Typography>
                 <div className="flex items-center">
                   <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
-                  <Typography className="text-gray-100 font-medium capitalize">{user.role}</Typography>
+                  <Typography className="text-gray-100 font-medium capitalize">
+                    {user.role}
+                  </Typography>
                 </div>
               </div>
             </div>
           )}
         </CardBody>
-        
+
         <CardFooter className="p-6 pt-0">
           {isEditing ? (
             <div className="flex gap-4">
