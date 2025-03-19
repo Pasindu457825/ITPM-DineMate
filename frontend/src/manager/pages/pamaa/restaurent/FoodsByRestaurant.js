@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import deleteFood from "../foodmenu/DeleteFood"; // Ensure this is the correct import path
+import ManagerHeader from "../../../components/ManagerHeader";
+import ManagerFooter from "../../../components/ManagerFooter";
 
 const FoodsByRestaurant = () => {
   const { restaurantId } = useParams();
@@ -93,36 +95,77 @@ const FoodsByRestaurant = () => {
   if (error) return <p className="text-red-600 text-center">{error}</p>;
 
   return (
+    <div>
+      <ManagerHeader />
     <div className="p-6 bg-gray-200 min-h-screen">
       <h2 className="text-3xl font-bold mb-6 text-black-900 border-b border-amber-500 pb-3">{restaurantName} - Food Menu</h2>
-
-      {/* Search and filter inputs */}
-      <div className="mb-6 flex flex-col md:flex-row gap-4">
-        <input
-          type="text"
-          placeholder="Search by food name..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="border border-gray-300 p-3 rounded bg-white text-gray-800 focus:border-amber-500 focus:outline-none"
+      <div className="flex items-center space-x-4">
+  {/* Search Input with Icon */}
+  <div className="relative flex-1">
+    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          strokeWidth={2} 
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
         />
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="border border-gray-300 p-3 rounded bg-white text-gray-800 focus:border-amber-500 focus:outline-none"
-        >
-          <option value="">All Categories</option>
-          <option value="salad">Salad</option>
-          <option value="rolls">Rolls</option>
-          <option value="desserts">Desserts</option>
-          <option value="sandwich">Sandwich</option>
-          <option value="cake">Cake</option>
-          <option value="pure veg">Pure Veg</option>
-          <option value="pasta">Pasta</option>
-          <option value="noodles">Noodles</option>
-          <option value="noodles">Beverages</option>
-        </select>
-      </div>
+      </svg>
+    </div>
+    <input
+      type="text"
+      placeholder="Search by food name..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      className="w-full pl-10 border border-blue-gray-300 p-3 rounded-lg bg-white text-blue-gray-900 
+                 focus:border-amber-700 focus:ring-2 focus:ring-amber-500 focus:outline-none 
+                 transition duration-200 ease-in-out h-12"
+    />
+  </div>
 
+  {/* Category Dropdown with Icon */}
+  <div className="relative flex-1">
+    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          strokeWidth={2} 
+          d="M4 6h16M4 12h16M4 18h16" 
+        />
+      </svg>
+    </div>
+    <select
+      value={filter}
+      onChange={(e) => setFilter(e.target.value)}
+      className="w-full pl-10 pr-8 border border-blue-gray-300 p-3 rounded-lg bg-white text-blue-gray-900 
+                 focus:border-amber-700 focus:ring-2 focus:ring-amber-500 focus:outline-none 
+                 appearance-none transition duration-200 ease-in-out h-12"
+    >
+      <option value="" className="text-blue-gray-700">All Categories</option>
+      <option value="salad" className="text-blue-gray-700">Salad</option>
+      <option value="rolls" className="text-blue-gray-700">Rolls</option>
+      <option value="desserts" className="text-blue-gray-700">Desserts</option>
+      <option value="sandwich" className="text-blue-gray-700">Sandwich</option>
+      <option value="cake" className="text-blue-gray-700">Cake</option>
+      <option value="pure veg" className="text-blue-gray-700">Pure Veg</option>
+      <option value="pasta" className="text-blue-gray-700">Pasta</option>
+      <option value="noodles" className="text-blue-gray-700">Noodles</option>
+      <option value="beverages" className="text-blue-gray-700">Beverages</option>
+    </select>
+    {/* Custom dropdown arrow */}
+    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-amber-700">
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          strokeWidth={2} 
+          d="M19 9l-7 7-7-7" 
+        />
+      </svg>
+    </div>
+  </div>
+</div>
       {filteredFoods.length === 0 ? (
         <p className="text-center text-black-600">No matching food items found.</p>
       ) : (
@@ -191,6 +234,8 @@ const FoodsByRestaurant = () => {
           ))}
         </ul>
       )}
+    </div>
+    <ManagerFooter />
     </div>
   );
 };

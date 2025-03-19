@@ -15,24 +15,31 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Call the backend login API
+      // 1) Call the backend login API
       const response = await axios.post(
         "http://localhost:5000/api/ITPM/users/login",
         formData
       );
 
-      // Extract JWT token, role, userId from response
+      // 2) Extract JWT token, role, userId from response
       const { token, role, userId } = response.data;
       alert("Login successful!");
       console.log("Login Response:", response.data);
 
-      // Store token & other user info in localStorage (or sessionStorage)
+      // 3) Store token & other user info in localStorage (or sessionStorage)
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
       localStorage.setItem("userId", userId);
 
-      // Redirect to home or profile, depending on your app flow
-      navigate("/");
+      // 4) Redirect to different pages depending on role
+      if (role === "restaurant_manager") {
+        navigate("/manager-dashboard");
+      } else if (role === "admin") {
+        navigate("/admin-dashboard");
+      } else {
+        // Default: Registered user
+        navigate("/me");
+      }
     } catch (error) {
       console.error("Login error:", error);
       alert("Invalid credentials!");
