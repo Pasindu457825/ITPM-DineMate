@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { storage } from "../../../../firebaseConfig"; // Ensure correct path
+import { storage } from "../../../../firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { toast } from "react-toastify";
+import ManagerHeader from "../../../components/ManagerHeader";
+import ManagerFooter from "../../../components/ManagerFooter";
+
 
 const CreateRestaurant = () => {
   const [formData, setFormData] = useState({
@@ -14,18 +18,90 @@ const CreateRestaurant = () => {
     image: "",
   });
 
+  const [errors, setErrors] = useState({});
   const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  // Handle form input changes for text inputs and table entries
+  // Validation function
+  const validateForm = () => {
+    let tempErrors = {};
+    let isValid = true;
+
+    if (!formData.name.trim()) {
+      tempErrors.name = "Restaurant name is required";
+      isValid = false;
+    } else if (formData.name.length < 3) {
+      tempErrors.name = "Name must be at least 3 characters";
+      isValid = false;
+    }
+
+    if (!formData.description.trim()) {
+      tempErrors.description = "Description is required";
+      isValid = false;
+    } else if (formData.description.length < 10) {
+      tempErrors.description = "Description must be at least 10 characters";
+      isValid = false;
+    }
+
+    if (!formData.location.trim()) {
+      tempErrors.location = "Location is required";
+      isValid = false;
+    }
+
+    if (!formData.phoneNumber.trim()) {
+      tempErrors.phoneNumber = "Phone number is required";
+      isValid = false;
+    } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
+      tempErrors.phoneNumber = "Please enter a valid 10-digit phone number";
+      isValid = false;
+    }
+
+
+    let tableErrors = [];
+    formData.tables.forEach((table, index) => {
+      const tableError = {};
+      if (!table.seats || table.seats <= 0) {
+        tableError.seats = "Seats must be a positive number";
+        isValid = false;
+      }
+      if (!table.quantity || table.quantity <= 0) {
+        tableError.quantity = "Quantity must be a positive number";
+        isValid = false;
+      }
+      tableErrors[index] = tableError;
+    });
+
+    if (tableErrors.length > 0 && Object.keys(tableErrors[0]).length > 0) {
+      tempErrors.tables = tableErrors;
+    }
+
+    if (!imageFile && !formData.image) {
+      tempErrors.image = "Restaurant image is required";
+      isValid = false;
+    }
+
+    setErrors(tempErrors);
+    return isValid;
+  };
+
+  // Handle form input changes
   const handleChange = (e, index) => {
-    if (["seats", "quantity"].includes(e.target.name)) {
+    const { name, value } = e.target;
+    
+    if (["seats", "quantity"].includes(name) && index !== undefined) {
       const newTables = [...formData.tables];
-      newTables[index][e.target.name] = e.target.value;
+      newTables[index][name] = value;
       setFormData({ ...formData, tables: newTables });
     } else {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
+      setFormData({ ...formData, [name]: value });
+    }
+
+    // Clear error when field is changed
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
     }
   };
 
@@ -39,186 +115,376 @@ const CreateRestaurant = () => {
 
   // Remove table configuration
   const removeTable = (index) => {
-    const newTables = [...formData.tables];
-    newTables.splice(index, 1);
-    setFormData({ ...formData, tables: newTables });
+    if (formData.tables.length > 1) {
+      const newTables = [...formData.tables];
+      newTables.splice(index, 1);
+      setFormData({ ...formData, tables: newTables });
+    } else {
+      toast.error("At least one table configuration is required");
+    }
   };
 
   // Handle image selection
   const handleFileChange = (e) => {
-    if (e.target.files[0]) {
-      setImageFile(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      // Check file type
+      if (!file.type.match('image.*')) {
+        setErrors({ ...errors, image: "Please select an image file" });
+        return;
+      }
+      
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setErrors({ ...errors, image: "Image size should be less than 5MB" });
+        return;
+      }
+
+      setImageFile(file);
+      setErrors({ ...errors, image: "" });
+      
+      // Create a preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!imageFile) {
-      alert("Please select an image before submitting!");
+    
+    if (!validateForm()) {
+      toast.error("Please fix the errors in the form");
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
-      const fileName = `restaurantImages/${Date.now()}_${imageFile.name}`;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, imageFile);
+      let imageUrl = formData.image;
+      
+      if (imageFile) {
+        const fileName = `restaurantImages/${Date.now()}_${imageFile.name}`;
+        const storageRef = ref(storage, fileName);
+        const uploadTask = uploadBytesResumable(storageRef, imageFile);
 
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(progress);
-        },
-        (error) => {
-          console.error("Error uploading image:", error);
-          alert("Image upload failed!");
-        },
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          console.log("Image uploaded successfully! URL:", downloadURL);
+        await new Promise((resolve, reject) => {
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              setUploadProgress(progress);
+            },
+            (error) => {
+              console.error("Error uploading image:", error);
+              toast.error("Image upload failed!");
+              reject(error);
+            },
+            async () => {
+              imageUrl = await getDownloadURL(uploadTask.snapshot.ref);
+              resolve();
+            }
+          );
+        });
+      }
 
-          try {
-            const response = await axios.post(
-              "http://localhost:5000/api/ITPM/restaurants/create-restaurant",
-              { ...formData, image: downloadURL }
-            );
-            console.log("Restaurant created successfully:", response.data);
-            alert("Restaurant added successfully!");
-            navigate("/"); // Redirect after success
-          } catch (error) {
-            console.error(
-              "Error creating restaurant:",
-              error.response || error.message
-            );
-            alert("Failed to create restaurant!");
-          }
-        }
+      const response = await axios.post(
+        "http://localhost:5000/api/ITPM/restaurants/create-restaurant",
+        { ...formData, image: imageUrl }
       );
+      
+      toast.success("Restaurant added successfully!");
+      console.log("Restaurant created successfully:", response.data);
+      navigate("/display-restaurant");
     } catch (error) {
-      console.error("Unexpected error:", error);
-      alert("Something went wrong!");
+      console.error("Error creating restaurant:", error.response || error.message);
+      toast.error(error.response?.data?.message || "Failed to create restaurant");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  return (
-    <div className="p-4 bg-white rounded shadow-md">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-        Create Restaurant
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {["name", "description", "location", "phoneNumber"].map(
-          (field, index) => (
-            <div key={index}>
-              <label className="block text-sm font-medium text-gray-700">
-                {field.charAt(0).toUpperCase() + field.slice(1)}
-              </label>
-              <input
-                type="text"
-                name={field}
-                value={formData[field]}
-                onChange={handleChange}
-                required
-                className="p-2 border border-gray-300 rounded w-full"
-              />
-            </div>
-          )
-        )}
+  return (<div>
+    <ManagerHeader/>
+    <div className="min-h-screen bg-gray-200 py-12 px-4 sm:px-6 lg:px-8">
 
-        {formData.tables.map((table, index) => (
-          <div key={index} className="flex items-center space-x-2">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700">
-                Seats per Table
-              </label>
-              <input
-                type="number"
-                name="seats"
-                placeholder="Seats per Table"
-                value={table.seats}
-                onChange={(e) => handleChange(e, index)}
-                required
-                className="p-2 border border-gray-300 rounded w-full"
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700">
-                Number of Tables
-              </label>
-              <input
-                type="number"
-                name="quantity"
-                placeholder="Number of Tables"
-                value={table.quantity}
-                onChange={(e) => handleChange(e, index)}
-                required
-                className="p-2 border border-gray-300 rounded w-full"
-              />
-            </div>
-            {index > 0 && (
-            <button 
-            type="button" 
-            onClick={() => removeTable(index)} 
-            style={{ width: '20%' }}
-            className="bg-red-500 text-white py-2 rounded-full text-xs"
-            title="Remove this table type"
-        >
-            Remove
-        </button>
-           
-            )}
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-gray-900 rounded-lg shadow-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-amber-700 to-indigo-700 px-6 py-8">
+            <h2 className="text-3xl font-bold text-white">Create New Restaurant</h2>
+            <p className="mt-2 text-blue-100">Fill in the details to add a new restaurant to our platform</p>
           </div>
-        ))}
-        <button
-          type="button"
-          onClick={addTable}
-          className="mt-2 bg-green-500 text-white p-2 rounded flex items-center justify-center"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="2"
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 6v12m6-6H6"
-            />
-          </svg>
-        </button>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Upload Image
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            required
-            className="p-2 border border-gray-300 rounded w-full"
-          />
-          {uploadProgress > 0 && <p>Upload Progress: {uploadProgress}%</p>}
+          
+          <form onSubmit={handleSubmit} className="p-6 space-y-8">
+            <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+              {/* Restaurant Name */}
+              <div className="col-span-2 sm:col-span-1">
+                <label className="block text-sm font-medium text-gray-100">
+                  Restaurant Name
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className={`appearance-none block w-full px-3 py-2 border ${
+                      errors.name ? "border-red-300" : "border-gray-300"
+                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-700 focus:border-amber-700`}
+                  />
+                  {errors.name && (
+                    <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                  )}
+                </div>
+              </div>
+  
+              {/* Phone Number */}
+              <div className="col-span-2 sm:col-span-1">
+                <label className="block text-sm font-medium text-gray-100">
+                  Phone Number
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="text"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                    className={`appearance-none block w-full px-3 py-2 border ${
+                      errors.phoneNumber ? "border-red-300" : "border-gray-300"
+                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-700 focus:border-amber-700`}
+                  />
+                  {errors.phoneNumber && (
+                    <p className="mt-1 text-sm text-red-600">{errors.phoneNumber}</p>
+                  )}
+                </div>
+              </div>
+  
+              {/* Location */}
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-100">
+                  Location
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    className={`appearance-none block w-full px-3 py-2 border ${
+                      errors.location ? "border-red-300" : "border-gray-300"
+                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-700 focus:border-amber-700`}
+                  />
+                  {errors.location && (
+                    <p className="mt-1 text-sm text-red-600">{errors.location}</p>
+                  )}
+                </div>
+              </div>
+  
+              {/* Description */}
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-100">
+                  Description
+                </label>
+                <div className="mt-1">
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    rows={3}
+                    className={`appearance-none block w-full px-3 py-2 border ${
+                      errors.description ? "border-red-300" : "border-gray-300"
+                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-700 focus:border-amber-700`}
+                    placeholder="Describe your restaurant"
+                  />
+                  {errors.description && (
+                    <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+                  )}
+                </div>
+              </div>
+  
+              {/* Image Upload */}
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-100">
+                  Restaurant Image
+                </label>
+                <div className="mt-1 flex items-center">
+                  <div className="flex-1">
+                    <div className="flex justify-center items-center px-6 pt-5 pb-6 border-2 border-gray-500 border-dashed rounded-md">
+                      <div className="space-y-1 text-center">
+                        {imagePreview ? (
+                          <div className="relative">
+                            <img src={imagePreview} alt="Preview" className="h-32 w-full object-cover rounded-md" />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setImageFile(null);
+                                setImagePreview(null);
+                              }}
+                              className="absolute top-0 right-0 bg-red-500 rounded-full w-6 h-6 flex items-center justify-center text-white"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ) : (
+                          <>
+                            <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                              <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                            <div className="flex text-sm text-gray-300">
+                              <label className="relative cursor-pointer bg-gray-800 rounded-md font-medium text-amber-500 hover:text-amber-400 focus-within:outline-none">
+                                <span>Upload a file</span>
+                                <input 
+                                  type="file" 
+                                  accept="image/*" 
+                                  onChange={handleFileChange} 
+                                  className="sr-only" 
+                                />
+                              </label>
+                              <p className="pl-1">or drag and drop</p>
+                            </div>
+                            <p className="text-xs text-gray-400">
+                              PNG, JPG, GIF up to 5MB
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    {errors.image && (
+                      <p className="mt-1 text-sm text-red-600">{errors.image}</p>
+                    )}
+                    {uploadProgress > 0 && uploadProgress < 100 && (
+                      <div className="mt-2">
+                        <div className="relative pt-1">
+                          <div className="overflow-hidden h-2 text-xs flex rounded bg-gray-700">
+                            <div 
+                              style={{ width: `${uploadProgress}%` }}
+                              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-amber-600"
+                            ></div>
+                          </div>
+                          <div className="text-xs mt-1 text-gray-400">
+                            Uploading: {Math.round(uploadProgress)}%
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            {/* Table Section */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-medium text-gray-100">Table Configuration</h3>
+                <button
+                  type="button"
+                  onClick={addTable}
+                  className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-amber-700 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+                  </svg>
+                  Add Table Type
+                </button>
+              </div>
+              
+              {formData.tables.map((table, index) => (
+                <div key={index} className="bg-gray-800 p-4 rounded-lg shadow-sm">
+                  <div className="grid grid-cols-8 gap-4">
+                    <div className="col-span-3">
+                      <label className="block text-sm font-medium text-gray-100">
+                        Seats per Table
+                      </label>
+                      <input
+                        type="number"
+                        name="seats"
+                        value={table.seats}
+                        onChange={(e) => handleChange(e, index)}
+                        min="1"
+                        className={`mt-1 block w-full px-3 py-2 border ${
+                          errors.tables?.[index]?.seats ? "border-red-300" : "border-gray-500"
+                        } bg-gray-700 text-white rounded-md shadow-sm focus:outline-none focus:ring-amber-700 focus:border-amber-700`}
+                      />
+                      {errors.tables?.[index]?.seats && (
+                        <p className="mt-1 text-sm text-red-600">{errors.tables[index].seats}</p>
+                      )}
+                    </div>
+                    
+                    <div className="col-span-3">
+                      <label className="block text-sm font-medium text-gray-100">
+                        Number of Tables
+                      </label>
+                      <input
+                        type="number"
+                        name="quantity"
+                        value={table.quantity}
+                        onChange={(e) => handleChange(e, index)}
+                        min="1"
+                        className={`mt-1 block w-full px-3 py-2 border ${
+                          errors.tables?.[index]?.quantity ? "border-red-300" : "border-gray-500"
+                        } bg-gray-700 text-white rounded-md shadow-sm focus:outline-none focus:ring-amber-700 focus:border-amber-700`}
+                      />
+                      {errors.tables?.[index]?.quantity && (
+                        <p className="mt-1 text-sm text-red-600">{errors.tables[index].quantity}</p>
+                      )}
+                    </div>
+                    
+                    <div className="col-span-2 flex items-end">
+                      {formData.tables.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeTable(index)}
+                          className="mt-1 w-full inline-flex justify-center items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+  
+            {/* Form Actions */}
+            <div className="flex justify-end space-x-3 pt-5">
+              <button
+                type="button"
+                onClick={() => navigate("/display-restaurant")}
+                className="bg-gray-700 py-2 px-4 border border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-200 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`${
+                  isSubmitting ? "bg-amber-500" : "bg-amber-700 hover:bg-amber-600"
+                } py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500`}
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </div>
+                ) : (
+                  "Create Restaurant"
+                )}
+              </button>
+            </div>
+          </form>
         </div>
-
-        <button
-          type="submit"
-          className="bg-blue-500 text-white p-2 rounded w-full mt-4"
-        >
-          Create Restaurant
-        </button>
-      </form>
-      <button
-        onClick={() => navigate("/display-restaurant")}
-        className="mt-4 bg-gray-500 text-white px-4 py-2 rounded w-full"
-      >
-        Back to Restaurant List
-      </button>
+      </div>
+    </div>
+    <ManagerFooter/>
     </div>
   );
 };

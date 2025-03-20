@@ -22,6 +22,7 @@ const HomePage = () => {
     <div className="p-6">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Welcome to the Home Page</h1>
       <div className="flex space-x-4 mb-6">
+
         <Button 
           className="bg-blue-500 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-blue-600"
           onClick={() => navigate("/add-order")}  // Navigate to Add Order page
@@ -43,6 +44,13 @@ const HomePage = () => {
       >
         Logout
       </Button>
+
+      <Button 
+          className="bg-green-500 text-white px-6 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-green-600"
+          onClick={() => navigate("/me")}  // Navigate to Add Reservation page
+        >
+          my profile
+        </Button>
     </div>
   );
 };

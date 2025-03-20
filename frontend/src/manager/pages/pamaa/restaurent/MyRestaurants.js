@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import deleteRestaurant from '../../../../manager/pages/pamaa/restaurent/DeleteRestaurant';
+import deleteRestaurant from './DeleteRestaurant';
 
 const RestaurantsList = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -12,7 +12,7 @@ const RestaurantsList = () => {
     const fetchRestaurants = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/ITPM/restaurants/get-all-restaurants"
+          "http://localhost:5000/api/ITPM/restaurants/my-restaurants/:email"
         );
         setRestaurants(response.data);
       } catch (error) {
@@ -41,27 +41,13 @@ const RestaurantsList = () => {
   return (
     <div className="p-6 bg-gray-200 min-h-screen">
       <h1 className="text-3xl font-bold text-gray-800 mb-6 border-b border-amber-500 pb-3">Restaurants List</h1>
-      <div className="relative mb-6 w-full">
-    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path 
-          strokeLinecap="round" 
-          strokeLinejoin="round" 
-          strokeWidth={2} 
-          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
-        />
-      </svg>
-    </div>
-    <input
-      type="text"
-      placeholder="Search by restaurant name..."
-      value={search}
-      onChange={e => setSearch(e.target.value)}
-      className="pl-10 p-3 border border-blue-gray-300 rounded-lg bg-white text-blue-gray-900 w-full 
-                 focus:border-amber-700 focus:ring-2 focus:ring-amber-500 focus:outline-none 
-                 transition duration-200 ease-in-out"
-    />
-  </div>
+      <input
+        type="text"
+        placeholder="Search by restaurant name..."
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        className="mb-6 p-3 border border-gray-300 rounded bg-white text-gray-800 w-full focus:border-amber-500 focus:outline-none"
+      />
       {filteredRestaurants.length === 0 ? (
         <p className="text-gray-600">No restaurants match your search criteria.</p>
       ) : (
