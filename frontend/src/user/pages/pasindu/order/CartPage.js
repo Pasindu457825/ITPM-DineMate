@@ -137,6 +137,8 @@ const CartSidebar = ({
                 return;
               }
 
+              sessionStorage.setItem("cart", JSON.stringify(cart));
+
               navigate("/add-order-details", {
                 state: {
                   restaurantId,
@@ -150,7 +152,7 @@ const CartSidebar = ({
                 },
               });
             }}
-            className="w-full bg-amber-700 text-white text-lg px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-amber-900 transition"
+            className="w-full bg-amber-700 text-white text-lg px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-amber-00 transition"
           >
             Proceed to Checkout
           </button>
