@@ -44,6 +44,7 @@ import UpdateRestaurant from "./manager/pages/pamaa/restaurent/UpdateRestaurant"
 import FoodsByRestaurant from "./manager/pages/pamaa/restaurent/FoodsByRestaurant";
 import Managers from "./manager/pages/pamaa/ManagersPage"
 import MyRestaurant from "./manager/pages/pamaa/restaurent/MyRestaurants";
+import FoodLists from "./admin/pages/pamaa/restaurent/FoodLists"
 
 const AppContent = () => {
   const location = useLocation();
@@ -119,6 +120,10 @@ const AppContent = () => {
         <Route
           path="/restaurant/foods/:restaurantId"
           element={<FoodsByRestaurant />}
+        />
+        <Route
+          path="/admin/foods/:restaurantId"
+          element={<FoodLists/>}
         />
 
 

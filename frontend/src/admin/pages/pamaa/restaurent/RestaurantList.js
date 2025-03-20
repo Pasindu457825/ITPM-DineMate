@@ -191,7 +191,7 @@ const RestaurantsList = () => {
 
                   <div className="grid grid-cols-2 gap-3 mt-4">
                     <button 
-                      onClick={() => navigate(`/restaurant/foods/${restaurant._id}`)}
+                      onClick={() => navigate(`/admin/foods/${restaurant._id}`)}
                       className="flex justify-center items-center bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg py-2 px-4 transition-colors text-sm font-medium"
                     >
                       <Menu size={16} className="mr-2" />
