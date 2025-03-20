@@ -55,8 +55,6 @@ import UpdateManagerPayment from "./manager/pages/Isuri/payment/updatePayment";
 import DeleteManagerPayment from "./manager/pages/Isuri/payment/deletePayment";
 import ApproveManagerPayment from "./manager/pages/Isuri/payment/ApprovePayment";
 
-
-
 const AppContent = () => {
   const location = useLocation();
   const { loading, setLoading } = useLoading(); //  Use loading context
