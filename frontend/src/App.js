@@ -42,11 +42,24 @@ import CreateRestaurant from "./manager/pages/pamaa/restaurent/CreateRestaurant"
 import RestaurantList from "./admin/pages/pamaa/restaurent/RestaurantList";
 import UpdateRestaurant from "./manager/pages/pamaa/restaurent/UpdateRestaurant";
 import FoodsByRestaurant from "./manager/pages/pamaa/restaurent/FoodsByRestaurant";
-import Managers from "./manager/pages/pamaa/ManagersPage"
+import Managers from "./manager/pages/pamaa/ManagersPage";
+
+// Payment Management
+import UserPayments from "./user/pages/Isuri/payment/UserPayments";
+import CreatePayments from "./user/pages/Isuri/payment/CreatePayments";
+import UpdateUserPayment from "./user/pages/Isuri/payment/updatePayment";
+import DeleteUserPayment from "./user/pages/Isuri/payment/deletePayment";
+
+import ManagerPayments from "./manager/pages/Isuri/payment/ManagerPayments";
+import UpdateManagerPayment from "./manager/pages/Isuri/payment/updatePayment";
+import DeleteManagerPayment from "./manager/pages/Isuri/payment/deletePayment";
+import ApproveManagerPayment from "./manager/pages/Isuri/payment/ApprovePayment";
+
+
 
 const AppContent = () => {
   const location = useLocation();
-  const { loading, setLoading } = useLoading(); // ✅ Use loading context
+  const { loading, setLoading } = useLoading(); //  Use loading context
   const [forceLoading, setForceLoading] = useState(true);
 
   useEffect(() => {
@@ -118,7 +131,17 @@ const AppContent = () => {
           path="/restaurant/foods/:restaurantId"
           element={<FoodsByRestaurant />}
         />
+        {/* Payment Management (User) */}
+        <Route path="/user/payments" element={<UserPayments />} />
+        <Route path="/user/payment/create/:id" element={<CreateUserPayment />} />
+        <Route path="/user/payment/update/:id" element={<UpdateUserPayment />} />
+        <Route path="/user/payment/delete/:id" element={<DeleteUserPayment />} />
 
+        {/* Payment Management (Manager) */}
+        <Route path="/manager/payments" element={<ManagerPayments />} />
+        <Route path="/manager/payment/update/:id" element={<UpdateManagerPayment />} />
+        <Route path="/manager/payment/delete/:id" element={<DeleteManagerPayment />} />
+        <Route path="/manager/payment/approve/:id" element={<ApproveManagerPayment />} />
 
       </Routes>
     </>
