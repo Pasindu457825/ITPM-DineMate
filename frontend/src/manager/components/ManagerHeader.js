@@ -187,8 +187,8 @@ const ManagerHeader = ({ username = "Manager" }) => {
             )}
           </div>
         </div>
-        </div>
-</header>
+      </div>
+    </header>
   );
 };
 
