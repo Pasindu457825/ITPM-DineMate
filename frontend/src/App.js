@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { useLoading } from "./Context/LoadingContext"; // Import Loading Context
 import LoadingScreen from "./Components/LoadingScreen"; // ✅ Fixed import path
+import Layout from "./Components/Layout"; // ✅ Correct path
 
 // Pasindu Order
 import HomePage from "./user/pages/pasindu/HomePage";
@@ -41,7 +42,7 @@ import CreateRestaurant from "./manager/pages/pamaa/restaurent/CreateRestaurant"
 import RestaurantList from "./admin/pages/pamaa/restaurent/RestaurantList";
 import UpdateRestaurant from "./manager/pages/pamaa/restaurent/UpdateRestaurant";
 import FoodsByRestaurant from "./manager/pages/pamaa/restaurent/FoodsByRestaurant";
-import Managers from "./manager/pages/pamaa/ManagersPage"
+import Managers from "./manager/pages/pamaa/ManagersPage";
 
 const AppContent = () => {
   const location = useLocation();
@@ -70,54 +71,50 @@ const AppContent = () => {
       {(loading || forceLoading) && <LoadingScreen />}{" "}
       {/* ✅ Show loading screen when navigating */}
       <Routes>
-        {/* Pasindu Order */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/add-order-details" element={<AddOrderForm />} />
-        {/* <Route path="/display-orders" element={<OrdersList />} /> */}
-        <Route path="/update-order/:id" element={<UpdateOrderForm />} />
-        <Route path="/my-orders/:email" element={<ViewMyOrdersPage />} />
-        <Route path="/order/:id" element={<OrderDetailsPage />} />
-        <Route path="/cart" element={<CartPage />} />
-
-        {/* Pasindu Reservation */}
-        <Route
-          path="/add-reservation/:restaurantId"
-          element={<AddReservationForm />}
-        />
-        <Route path="/display-reservations" element={<ReservationsList />} />
-        <Route
-          path="/update-reservation/:id"
-          element={<UpdateReservationForm />}
-        />
-
-        {/* Pasindu Restaurant */}
-        <Route path="/user/display-restaurent" element={<RestaurentList />} />
-        <Route
-          path="/user/restaurent-details/:id"
-          element={<RestaurentDetails />}
-        />
-
-        {/* Tharusha Authentication */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup/user" element={<UserSignupPage />} />
-        <Route path="/signup/manager" element={<ManagerSignupPage />} />
-        <Route path="/me" element={<MyProfilePage />} />
-
-        {/* Pamalka Restaurant */}
-        <Route path="/add-restaurant" element={<CreateRestaurant />} />
-        <Route path="/display-restaurant" element={<RestaurantList />} />
-        <Route path="/update-restaurant/:id" element={<UpdateRestaurant />} />
-        <Route path="/managers" element={<Managers />}/>
-
-        {/* Pamalka FoodItem */}
-        <Route path="/add-food/:restaurantId" element={<AddFood />} />
-        <Route path="/update-food/:id" element={<UpdateFood />} />
-        <Route
-          path="/restaurant/foods/:restaurantId"
-          element={<FoodsByRestaurant />}
-        />
-
-
+        <Route path="/" element={<Layout />}>
+          {/* Pasindu Order */}
+          <Route index element={<HomePage />} />{" "}
+          {/* ✅ Home Page loads when app starts */}
+          <Route path="/add-order-details" element={<AddOrderForm />} />
+          {/* <Route path="/display-orders" element={<OrdersList />} /> */}
+          <Route path="/update-order/:id" element={<UpdateOrderForm />} />
+          <Route path="/my-orders/:email" element={<ViewMyOrdersPage />} />
+          <Route path="/order/:id" element={<OrderDetailsPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          {/* Pasindu Reservation */}
+          <Route
+            path="/add-reservation/:restaurantId"
+            element={<AddReservationForm />}
+          />
+          <Route path="/display-reservations" element={<ReservationsList />} />
+          <Route
+            path="/update-reservation/:id"
+            element={<UpdateReservationForm />}
+          />
+          {/* Pasindu Restaurant */}
+          <Route path="/user/display-restaurent" element={<RestaurentList />} />
+          <Route
+            path="/user/restaurent-details/:id"
+            element={<RestaurentDetails />}
+          />
+          {/* Tharusha Authentication */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup/user" element={<UserSignupPage />} />
+          <Route path="/signup/manager" element={<ManagerSignupPage />} />
+          <Route path="/me" element={<MyProfilePage />} />
+          {/* Pamalka Restaurant */}
+          <Route path="/add-restaurant" element={<CreateRestaurant />} />
+          <Route path="/display-restaurant" element={<RestaurantList />} />
+          <Route path="/update-restaurant/:id" element={<UpdateRestaurant />} />
+          <Route path="/managers" element={<Managers />} />
+          {/* Pamalka FoodItem */}
+          <Route path="/add-food/:restaurantId" element={<AddFood />} />
+          <Route path="/update-food/:id" element={<UpdateFood />} />
+          <Route
+            path="/restaurant/foods/:restaurantId"
+            element={<FoodsByRestaurant />}
+          />{" "}
+        </Route>
       </Routes>
     </>
   );
