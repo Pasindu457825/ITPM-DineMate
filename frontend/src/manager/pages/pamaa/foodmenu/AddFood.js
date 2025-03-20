@@ -6,9 +6,11 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import ManagerHeader from "../../../components/ManagerHeader";
 import ManagerFooter from "../../../components/ManagerFooter";
 
+
 const AddFoodForm = () => {
   const navigate = useNavigate();
   const { restaurantId } = useParams();
+  
 
   // State variables for food item details
   const [name, setName] = useState("");
@@ -66,7 +68,7 @@ const AddFoodForm = () => {
     }
     
     // Validate description (max 50 chars)
-    if (description.length > 50) {
+    if (description.length > 75) {
       newErrors.description = "Description must be 50 characters or less";
       isValid = false;
     } else if (description.trim() === "") {
@@ -159,15 +161,16 @@ const AddFoodForm = () => {
               "http://localhost:5000/api/ITPM/foodItems/create-food-item",
               foodData
             );
-
+          
             alert("Food item added successfully!");
-            // navigate(`/restaurant/${restaurantId}/foods`);
+            navigate(`/restaurant/foods/${restaurantId}`);  // Corrected the navigation path
           } catch (error) {
             console.error("Error adding food item:", error);
             alert("Failed to add food item!");
           } finally {
             setLoading(false);
           }
+          
         }
       );
     } catch (error) {

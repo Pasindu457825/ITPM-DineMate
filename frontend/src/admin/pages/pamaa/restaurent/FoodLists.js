@@ -168,7 +168,7 @@ const FoodLists = () => {
                       <span 
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
                           food.availability === "Available" 
-                            ? 'bg-emerald-100 text-emerald-800' 
+                            ? 'bg-yellow-200 text-green-800'
                             : 'bg-red-100 text-red-800'
                         }`}
                       >
