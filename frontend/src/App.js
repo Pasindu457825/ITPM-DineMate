@@ -43,6 +43,8 @@ import RestaurantList from "./admin/pages/pamaa/restaurent/RestaurantList";
 import UpdateRestaurant from "./manager/pages/pamaa/restaurent/UpdateRestaurant";
 import FoodsByRestaurant from "./manager/pages/pamaa/restaurent/FoodsByRestaurant";
 import Managers from "./manager/pages/pamaa/ManagersPage";
+import MyRestaurant from "./manager/pages/pamaa/restaurent/MyRestaurants";
+import FoodLists from "./admin/pages/pamaa/restaurent/FoodLists";
 
 // Payment Management
 import UserPayments from "./user/pages/isuri/payment/userPayment";
@@ -118,6 +120,8 @@ const AppContent = () => {
           <Route path="/display-restaurant" element={<RestaurantList />} />
           <Route path="/update-restaurant/:id" element={<UpdateRestaurant />} />
           <Route path="/managers" element={<Managers />} />
+          <Route path="/myrestaurant" element={<MyRestaurant/>}/>
+          
           {/* Pamalka FoodItem */}
           <Route path="/add-food/:restaurantId" element={<AddFood />} />
           <Route path="/update-food/:id" element={<UpdateFood />} />
@@ -125,6 +129,8 @@ const AppContent = () => {
             path="/restaurant/foods/:restaurantId"
             element={<FoodsByRestaurant />}
           />{" "}
+          <Route path="/admin/foods/:restaurantId" element={<FoodLists />} />
+
           {/* Payment Management (User) */}
           <Route path="/user/payments" element={<UserPayments />} />
           <Route path="/user/payment/create/:id" element={<CreatePayments />} />
