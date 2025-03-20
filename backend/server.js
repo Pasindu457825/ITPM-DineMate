@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs");
+require('dotenv').config();  // This should be at the very top
 
 // Import your models
 const User = require("./models/tharusha/userModel");

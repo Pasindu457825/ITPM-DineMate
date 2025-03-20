@@ -22,12 +22,11 @@ const ManagersPage = () => {
   return (
     <div>
  <ManagerHeader/>
+ <br/>
+ <br/>
     <div className="bg-gray-200 min-h-screen p-6">
       <br/>
       <h1 className="text-3xl font-bold text-blue-gray-900 mb-6">Welcome to the Managers Home Page</h1>
-      
-
-
       {/* Dashboard Component */}
       <ManagerDashboard />
     </div>
