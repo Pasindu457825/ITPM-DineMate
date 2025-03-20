@@ -51,7 +51,7 @@ const ManagerHeader = ({ username = "Manager" }) => {
   };
 
   return (
-    <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-amber-100 shadow-lg' : 'bg-gradient-to-r from-amber-50 to-amber-100'}`}>
+    <header className={fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-amber-100 shadow-lg' : 'bg-gradient-to-r from-amber-50 to-amber-100'}}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           {/* Logo and Brand */}
@@ -69,7 +69,7 @@ const ManagerHeader = ({ username = "Manager" }) => {
           <div className="hidden md:flex items-center space-x-3">
             <Link 
               to="/dashboard" 
-              className={`px-3 py-2 rounded-lg flex items-center space-x-1 transition-all duration-200 ${isActive('/dashboard') ? 'bg-amber-500 text-white font-medium shadow-md' : 'text-amber-700 hover:bg-amber-200'}`}
+              className={px-3 py-2 rounded-lg flex items-center space-x-1 transition-all duration-200 ${isActive('/dashboard') ? 'bg-amber-500 text-white font-medium shadow-md' : 'text-amber-700 hover:bg-amber-200'}}
             >
               <Home size={18} />
               <span>Dashboard</span>
@@ -79,13 +79,13 @@ const ManagerHeader = ({ username = "Manager" }) => {
             <div className="relative">
               <button 
                 onClick={toggleRestaurantDropdown} 
-                className={`px-3 py-2 rounded-lg flex items-center space-x-1 transition-all duration-200 ${isActive('/my-restaurant') || isActive('/create-restaurant') ? 'bg-amber-500 text-white font-medium shadow-md' : 'text-amber-700 hover:bg-amber-200'}`}
+                className={px-3 py-2 rounded-lg flex items-center space-x-1 transition-all duration-200 ${isActive('/my-restaurant') || isActive('/create-restaurant') ? 'bg-amber-500 text-white font-medium shadow-md' : 'text-amber-700 hover:bg-amber-200'}}
                 aria-expanded={isRestaurantDropdownOpen}
                 aria-haspopup="true"
               >
                 <Pizza size={18} />
                 <span>Restaurants</span>
-                <ChevronDown size={16} className={`ml-1 transition-transform duration-200 ${isRestaurantDropdownOpen ? 'transform rotate-180' : ''}`} />
+                <ChevronDown size={16} className={ml-1 transition-transform duration-200 ${isRestaurantDropdownOpen ? 'transform rotate-180' : ''}} />
               </button>
               
               {isRestaurantDropdownOpen && (
@@ -119,7 +119,7 @@ const ManagerHeader = ({ username = "Manager" }) => {
 
             <Link 
               to="/orders" 
-              className={`px-3 py-2 rounded-lg flex items-center space-x-1 transition-all duration-200 ${isActive('/orders') ? 'bg-amber-500 text-white font-medium shadow-md' : 'text-amber-700 hover:bg-amber-200'}`}
+              className={px-3 py-2 rounded-lg flex items-center space-x-1 transition-all duration-200 ${isActive('/orders') ? 'bg-amber-500 text-white font-medium shadow-md' : 'text-amber-700 hover:bg-amber-200'}}
             >
               <ShoppingBag size={18} />
               <span>Orders</span>
@@ -127,7 +127,7 @@ const ManagerHeader = ({ username = "Manager" }) => {
             
             <Link 
               to="/reservations" 
-              className={`px-3 py-2 rounded-lg flex items-center space-x-1 transition-all duration-200 ${isActive('/reservations') ? 'bg-amber-500 text-white font-medium shadow-md' : 'text-amber-700 hover:bg-amber-200'}`}
+              className={px-3 py-2 rounded-lg flex items-center space-x-1 transition-all duration-200 ${isActive('/reservations') ? 'bg-amber-500 text-white font-medium shadow-md' : 'text-amber-700 hover:bg-amber-200'}}
             >
               <CalendarCheck size={18} />
               <span>Reservations</span>
@@ -192,4 +192,4 @@ const ManagerHeader = ({ username = "Manager" }) => {
   );
 };
 
-export default ManagerHeader;
+export default ManagerHeader;
