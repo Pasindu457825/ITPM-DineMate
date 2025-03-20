@@ -48,6 +48,7 @@ const UpdateRestaurant = () => {
         setFormData(restaurantData);
         setImagePreview(restaurantData.image);
         setLoading(false);
+        toast.success("Restaurant details loaded successfully");
       } catch (err) {
         console.error("Error fetching restaurant:", err);
         toast.error("Failed to load restaurant details");
@@ -148,17 +149,20 @@ const UpdateRestaurant = () => {
       // Validate file type
       if (!file.type.match("image.*")) {
         setErrors({ ...errors, image: "Please select a valid image file" });
+        toast.error("Please select a valid image file");
         return;
       }
 
       // Validate file size (5MB max)
       if (file.size > 5 * 1024 * 1024) {
         setErrors({ ...errors, image: "Image must be smaller than 5MB" });
+        toast.error("Image must be smaller than 5MB");
         return;
       }
 
       setImageFile(file);
       setErrors({ ...errors, image: null });
+      toast.info("Image selected successfully");
 
       // Create preview
       const reader = new FileReader();
@@ -174,6 +178,7 @@ const UpdateRestaurant = () => {
     if (formData.tables.length > 1) {
       const updatedTables = formData.tables.filter((_, idx) => idx !== index);
       setFormData({ ...formData, tables: updatedTables });
+      toast.info("Table configuration removed");
     } else {
       toast.warning("At least one table configuration is required");
     }
@@ -185,11 +190,13 @@ const UpdateRestaurant = () => {
       ...formData,
       tables: [...formData.tables, { seats: "", quantity: "" }],
     });
+    toast.info("New table configuration added");
   };
 
   // Discard changes
   const handleDiscard = () => {
     if (window.confirm("Are you sure you want to discard all changes?")) {
+      toast.info("Changes discarded");
       navigate("/myRestaurant");
     }
   };
@@ -204,6 +211,7 @@ const UpdateRestaurant = () => {
     }
 
     setSubmitLoading(true);
+    toast.info("Updating restaurant information...");
 
     try {
       let imageUrl = formData.image;
@@ -223,10 +231,12 @@ const UpdateRestaurant = () => {
             },
             (error) => {
               console.error("Error uploading image:", error);
+              toast.error("Error uploading image");
               reject(error);
             },
             async () => {
               imageUrl = await getDownloadURL(uploadTask.snapshot.ref);
+              toast.success("Image uploaded successfully");
               resolve();
             }
           );
@@ -252,10 +262,10 @@ const UpdateRestaurant = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="p-8 bg-white rounded-lg shadow-lg text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
-          <p className="mt-4 text-gray-700">Loading restaurant details...</p>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="p-8 bg-white rounded-lg shadow-md text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-400"></div>
+          <p className="mt-4 text-gray-600">Loading restaurant details...</p>
         </div>
       </div>
     );
@@ -266,15 +276,15 @@ const UpdateRestaurant = () => {
       <ManagerHeader />
       <br />
       <br />
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-extrabold text-purple-900">
+            <h1 className="text-3xl font-extrabold text-gray-800">
               Update Restaurant
             </h1>
             <button
               onClick={() => navigate("/display-restaurant")}
-              className="flex items-center px-4 py-2 text-sm font-medium text-purple-600 bg-white border border-purple-300 rounded-md hover:bg-purple-50"
+              className="flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-100"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -292,7 +302,7 @@ const UpdateRestaurant = () => {
             </button>
           </div>
 
-          <div className="bg-white shadow-xl rounded-xl overflow-hidden">
+          <div className="bg-white shadow-md rounded-xl overflow-hidden">
             <div className="p-6 sm:p-10">
               <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -312,8 +322,8 @@ const UpdateRestaurant = () => {
                           className={`block w-full px-4 py-3 rounded-lg border ${
                             errors.name
                               ? "border-red-300 bg-red-50"
-                              : "border-gray-300"
-                          } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                              : "border-gray-200"
+                          } focus:ring-2 focus:ring-amber-400 focus:border-transparent`}
                         />
                         {errors.name && (
                           <p className="mt-1 text-sm text-red-500">
@@ -335,8 +345,8 @@ const UpdateRestaurant = () => {
                           className={`block w-full px-4 py-3 rounded-lg border ${
                             errors.phoneNumber
                               ? "border-red-300 bg-red-50"
-                              : "border-gray-300"
-                          } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                              : "border-gray-200"
+                          } focus:ring-2 focus:ring-amber-400 focus:border-transparent`}
                         />
                         {errors.phoneNumber && (
                           <p className="mt-1 text-sm text-red-500">
@@ -358,8 +368,8 @@ const UpdateRestaurant = () => {
                           className={`block w-full px-4 py-3 rounded-lg border ${
                             errors.location
                               ? "border-red-300 bg-red-50"
-                              : "border-gray-300"
-                          } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                              : "border-gray-200"
+                          } focus:ring-2 focus:ring-amber-400 focus:border-transparent`}
                         />
                         {errors.location && (
                           <p className="mt-1 text-sm text-red-500">
@@ -381,8 +391,8 @@ const UpdateRestaurant = () => {
                           className={`block w-full px-4 py-3 rounded-lg border ${
                             errors.description
                               ? "border-red-300 bg-red-50"
-                              : "border-gray-300"
-                          } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                              : "border-gray-200"
+                          } focus:ring-2 focus:ring-amber-400 focus:border-transparent`}
                         />
                         {errors.description && (
                           <p className="mt-1 text-sm text-red-500">
@@ -395,13 +405,13 @@ const UpdateRestaurant = () => {
                     {/* Table Configuration Section */}
                     <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-medium text-gray-800">
+                        <h3 className="text-lg font-medium text-gray-700">
                           Table Configuration
                         </h3>
                         <button
                           type="button"
                           onClick={addTable}
-                          className="inline-flex items-center px-3 py-1.5 bg-purple-600 text-white text-sm font-medium rounded-full hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                          className="inline-flex items-center px-3 py-1.5 bg-amber-500 text-white text-sm font-medium rounded-full hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-400"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -444,8 +454,8 @@ const UpdateRestaurant = () => {
                                 className={`block w-full px-3 py-2 rounded border ${
                                   errors.tableErrors?.[index]?.seats
                                     ? "border-red-300"
-                                    : "border-gray-300"
-                                } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                                    : "border-gray-200"
+                                } focus:ring-2 focus:ring-amber-400 focus:border-transparent`}
                               />
                               {errors.tableErrors?.[index]?.seats && (
                                 <p className="mt-1 text-xs text-red-500">
@@ -467,8 +477,8 @@ const UpdateRestaurant = () => {
                                 className={`block w-full px-3 py-2 rounded border ${
                                   errors.tableErrors?.[index]?.quantity
                                     ? "border-red-300"
-                                    : "border-gray-300"
-                                } focus:ring-2 focus:ring-purple-500 focus:border-transparent`}
+                                    : "border-gray-200"
+                                } focus:ring-2 focus:ring-amber-400 focus:border-transparent`}
                               />
                               {errors.tableErrors?.[index]?.quantity && (
                                 <p className="mt-1 text-xs text-red-500">
@@ -481,7 +491,7 @@ const UpdateRestaurant = () => {
                               <button
                                 type="button"
                                 onClick={() => removeTable(index)}
-                                className="px-3 py-2 text-xs text-white bg-red-500 hover:bg-red-600 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
+                                className="px-3 py-2 text-xs text-white bg-gray-400 hover:bg-gray-500 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1"
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -506,11 +516,11 @@ const UpdateRestaurant = () => {
                   {/* Right Column - Image Section */}
                   <div className="md:col-span-1">
                     <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 h-full">
-                      <h3 className="text-lg font-medium text-gray-800 mb-4">
+                      <h3 className="text-lg font-medium text-gray-700 mb-4">
                         Restaurant Image
                       </h3>
 
-                      <div className="aspect-w-1 aspect-h-1 mb-4 bg-gray-100 rounded-lg overflow-hidden">
+                      <div className="aspect-w-1 aspect-h-1 mb-4 bg-white rounded-lg overflow-hidden">
                         {imagePreview ? (
                           <img
                             src={imagePreview}
@@ -541,10 +551,10 @@ const UpdateRestaurant = () => {
                       </label>
 
                       <div className="flex items-center justify-center w-full">
-                        <label className="flex flex-col w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50">
+                        <label className="flex flex-col w-full h-32 border-2 border-gray-200 border-dashed rounded-lg cursor-pointer hover:bg-gray-100">
                           <div className="flex flex-col items-center justify-center pt-5 pb-6">
                             <svg
-                              className="w-8 h-8 mb-2 text-gray-500"
+                              className="w-8 h-8 mb-2 text-gray-400"
                               fill="none"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
@@ -582,7 +592,7 @@ const UpdateRestaurant = () => {
                         <div className="mt-3">
                           <div className="w-full bg-gray-200 rounded-full h-2.5">
                             <div
-                              className="bg-purple-600 h-2.5 rounded-full"
+                              className="bg-amber-500 h-2.5 rounded-full"
                               style={{ width: `${uploadProgress}%` }}
                             ></div>
                           </div>
@@ -600,7 +610,7 @@ const UpdateRestaurant = () => {
                   <button
                     type="button"
                     onClick={handleDiscard}
-                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-400"
                   >
                     Discard Changes
                   </button>
@@ -609,9 +619,9 @@ const UpdateRestaurant = () => {
                     disabled={submitLoading || !hasChanges}
                     className={`px-6 py-2 border border-transparent rounded-lg ${
                       submitLoading || !hasChanges
-                        ? "bg-purple-300 cursor-not-allowed"
-                        : "bg-purple-600 hover:bg-purple-700"
-                    } text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500`}
+                        ? "bg-amber-300 cursor-not-allowed"
+                        : "bg-amber-500 hover:bg-amber-600"
+                    } text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-400`}
                   >
                     {submitLoading ? (
                       <div className="flex items-center">
