@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import deleteOrder from "../order/DeleteOrder"; // Ensure correct path
 
 const OrderDetailsPage = () => {
   const location = useLocation();
@@ -16,11 +17,19 @@ const OrderDetailsPage = () => {
     );
   }
 
+  const handleDeleteOrder = () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this order?"
+    );
+    if (confirmDelete) {
+      deleteOrder(order.orderId, navigate); // Pass navigate function
+    }
+  };
+
   return (
     <div className="p-8 max-w-4xl mx-auto bg-white shadow-lg rounded-lg">
       <h2 className="text-3xl font-bold mb-6 text-center">Order Details</h2>
 
-      {/* Order Summary */}
       <div className="border p-6 rounded-lg bg-gray-100 shadow-sm">
         <h3 className="text-lg font-semibold mb-2">
           Order ID: {order.orderId}
@@ -52,7 +61,6 @@ const OrderDetailsPage = () => {
         </p>
       </div>
 
-      {/* Ordered Items */}
       <h3 className="text-xl font-semibold mt-6 mb-4">Ordered Items</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {order.items.map((item, index) => (
@@ -78,7 +86,6 @@ const OrderDetailsPage = () => {
         ))}
       </div>
 
-      {/* Reservation Details */}
       {order.reservationDetails && (
         <div className="border p-6 mt-6 bg-gray-100 rounded-lg shadow-sm">
           <h3 className="text-lg font-semibold">Reservation Details</h3>
@@ -109,13 +116,18 @@ const OrderDetailsPage = () => {
         </div>
       )}
 
-      {/* Back Button */}
-      <div className="flex justify-center mt-6">
+      <div className="flex justify-between mt-6">
         <button
           onClick={() => navigate(-1)}
           className="bg-gray-700 text-white px-5 py-2 rounded-md hover:bg-gray-800 transition"
         >
           Back to Orders
+        </button>
+        <button
+          onClick={handleDeleteOrder}
+          className="bg-red-600 text-white px-5 py-2 rounded-md hover:bg-red-700 transition"
+        >
+          Delete Order
         </button>
       </div>
     </div>
