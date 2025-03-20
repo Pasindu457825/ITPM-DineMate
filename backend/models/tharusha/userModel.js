@@ -26,7 +26,10 @@ const userSchema = new mongoose.Schema({
     phone_no: {
         type: String,
         required: true
-    }
+    },
+    // New fields for OTP-based reset
+    resetOTP: String,
+    resetOTPExpires: Date,
 }, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);
