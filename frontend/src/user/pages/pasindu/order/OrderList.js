@@ -13,7 +13,7 @@ import {
   Calendar,
   Clock,
   CreditCard,
-  HandCoins   ,
+  HandCoins,
   CheckCircle,
 } from "lucide-react";
 
@@ -116,8 +116,7 @@ const OrderDetails = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-7">
             {orders.map((order) => (
               <Card
-                key={order._id}
-                color=""
+                key={order._id} // ✅ Set a default valid color
                 variant="gradient"
                 className="p-8 bg-blue-gray-900"
               >
@@ -176,7 +175,7 @@ const OrderDetails = () => {
 
                     <li className="flex items-center gap-3">
                       <span className="p-1 bg-blue-gray-900 rounded-full border border-blue-gray-900">
-                        <HandCoins    className="h-4 w-4 text-orange-500" />
+                        <HandCoins className="h-4 w-4 text-orange-500" />
                       </span>
                       <Typography className="font-normal text-white">
                         Total: Rs. {order.total.toFixed(2)}

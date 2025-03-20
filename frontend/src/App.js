@@ -45,17 +45,15 @@ import FoodsByRestaurant from "./manager/pages/pamaa/restaurent/FoodsByRestauran
 import Managers from "./manager/pages/pamaa/ManagersPage";
 
 // Payment Management
-import UserPayments from "./user/pages/Isuri/payment/UserPayments";
-import CreatePayments from "./user/pages/Isuri/payment/CreatePayments";
-import UpdateUserPayment from "./user/pages/Isuri/payment/updatePayment";
-import DeleteUserPayment from "./user/pages/Isuri/payment/deletePayment";
+import UserPayments from "./user/pages/isuri/payment/userPayment";
+import CreatePayments from "./user/pages/isuri/payment/createPayment";
+import UpdateUserPayment from "./user/pages/isuri/payment/updatePayment";
+import DeleteUserPayment from "./user/pages/isuri/payment/deletePayment";
 
-import ManagerPayments from "./manager/pages/Isuri/payment/ManagerPayments";
+import ManagerPayments from "./manager/pages/Isuri/payment/managerPayment";
 import UpdateManagerPayment from "./manager/pages/Isuri/payment/updatePayment";
 import DeleteManagerPayment from "./manager/pages/Isuri/payment/deletePayment";
 import ApproveManagerPayment from "./manager/pages/Isuri/payment/ApprovePayment";
-
-
 
 const AppContent = () => {
   const location = useLocation();
@@ -122,7 +120,7 @@ const AppContent = () => {
         <Route path="/add-restaurant" element={<CreateRestaurant />} />
         <Route path="/display-restaurant" element={<RestaurantList />} />
         <Route path="/update-restaurant/:id" element={<UpdateRestaurant />} />
-        <Route path="/managers" element={<Managers />}/>
+        <Route path="/managers" element={<Managers />} />
 
         {/* Pamalka FoodItem */}
         <Route path="/add-food/:restaurantId" element={<AddFood />} />
@@ -133,16 +131,31 @@ const AppContent = () => {
         />
         {/* Payment Management (User) */}
         <Route path="/user/payments" element={<UserPayments />} />
-        <Route path="/user/payment/create/:id" element={<CreateUserPayment />} />
-        <Route path="/user/payment/update/:id" element={<UpdateUserPayment />} />
-        <Route path="/user/payment/delete/:id" element={<DeleteUserPayment />} />
+        <Route path="/user/payment/create/:id" element={<CreatePayments />} />
+
+        <Route
+          path="/user/payment/update/:id"
+          element={<UpdateUserPayment />}
+        />
+        <Route
+          path="/user/payment/delete/:id"
+          element={<DeleteUserPayment />}
+        />
 
         {/* Payment Management (Manager) */}
         <Route path="/manager/payments" element={<ManagerPayments />} />
-        <Route path="/manager/payment/update/:id" element={<UpdateManagerPayment />} />
-        <Route path="/manager/payment/delete/:id" element={<DeleteManagerPayment />} />
-        <Route path="/manager/payment/approve/:id" element={<ApproveManagerPayment />} />
-
+        <Route
+          path="/manager/payment/update/:id"
+          element={<UpdateManagerPayment />}
+        />
+        <Route
+          path="/manager/payment/delete/:id"
+          element={<DeleteManagerPayment />}
+        />
+        <Route
+          path="/manager/payment/approve/:id"
+          element={<ApproveManagerPayment />}
+        />
       </Routes>
     </>
   );
