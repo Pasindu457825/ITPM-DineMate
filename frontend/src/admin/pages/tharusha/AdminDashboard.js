@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';  // Import Link from react-router-dom
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -43,7 +44,11 @@ const AdminDashboard = () => {
         <ul>
           <li>Dashboard</li>
           <li>Users</li>
-          <li>Reports</li>
+          <li>
+            <Link to="/display-restaurant" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              Display Restaurant
+            </Link>
+          </li>
           <li>Settings</li>
         </ul>
       </aside>
@@ -56,10 +61,6 @@ const AdminDashboard = () => {
           </div>
         </header>
         <section className="cards">
-          <div className="card">
-            <h3>Total Users</h3>
-            <p>1,500</p>
-          </div>
           <div className="card">
             <h3>New Signups</h3>
             <p>120</p>

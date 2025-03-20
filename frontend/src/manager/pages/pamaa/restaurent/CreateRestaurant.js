@@ -9,6 +9,9 @@ import ManagerFooter from "../../../components/ManagerFooter";
 
 
 const CreateRestaurant = () => {
+  // Get user ID from localStorage (saved during login)
+  const userId = localStorage.getItem("userId");
+  
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -16,6 +19,7 @@ const CreateRestaurant = () => {
     phoneNumber: "",
     tables: [{ seats: "", quantity: "" }],
     image: "",
+    userId: userId, // Add the userId to formData
   });
 
   const [errors, setErrors] = useState({});
@@ -24,6 +28,15 @@ const CreateRestaurant = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+
+  // Check if user is logged in
+  useEffect(() => {
+    // If no userId is found in localStorage, show a warning
+    if (!userId) {
+      console.warn("No user ID found! Login is required.");
+      toast.warning("Please login to add a restaurant");
+    }
+  }, [userId]);
 
   // Validation function
   const validateForm = () => {
@@ -156,6 +169,11 @@ const CreateRestaurant = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Ensure userId is included
+    if (!formData.userId) {
+      setFormData({...formData, userId: userId});
+    }
+    
     if (!validateForm()) {
       toast.error("Please fix the errors in the form");
       return;
@@ -191,14 +209,23 @@ const CreateRestaurant = () => {
         });
       }
 
+      // Include userId in the request payload
+      const requestData = { 
+        ...formData, 
+        image: imageUrl,
+        userId: userId // Ensure userId is included
+      };
+      
+      console.log("Sending restaurant data with userId:", requestData.userId);
+
       const response = await axios.post(
         "http://localhost:5000/api/ITPM/restaurants/create-restaurant",
-        { ...formData, image: imageUrl }
+        requestData
       );
       
       toast.success("Restaurant added successfully!");
       console.log("Restaurant created successfully:", response.data);
-      navigate("/display-restaurant");
+      navigate("/myRestaurant");
     } catch (error) {
       console.error("Error creating restaurant:", error.response || error.message);
       toast.error(error.response?.data?.message || "Failed to create restaurant");
@@ -216,6 +243,11 @@ const CreateRestaurant = () => {
           <div className="bg-gradient-to-r from-amber-700 to-indigo-700 px-6 py-8">
             <h2 className="text-3xl font-bold text-white">Create New Restaurant</h2>
             <p className="mt-2 text-blue-100">Fill in the details to add a new restaurant to our platform</p>
+            {!userId && (
+              <p className="mt-2 text-white bg-red-600 p-2 rounded">
+                ⚠️ You are not logged in! Please log in to add restaurants.
+              </p>
+            )}
           </div>
           
           <form onSubmit={handleSubmit} className="p-6 space-y-8">
@@ -305,6 +337,9 @@ const CreateRestaurant = () => {
                 </div>
               </div>
   
+              {/* Hidden User ID field */}
+              <input type="hidden" name="userId" value={userId || ""} />
+  
               {/* Image Upload */}
               <div className="col-span-2">
                 <label className="block text-sm font-medium text-gray-100">
@@ -338,6 +373,7 @@ const CreateRestaurant = () => {
                                 <span>Upload a file</span>
                                 <input 
                                   type="file" 
+                                  hidden
                                   accept="image/*" 
                                   onChange={handleFileChange} 
                                   className="sr-only" 
@@ -455,7 +491,7 @@ const CreateRestaurant = () => {
             <div className="flex justify-end space-x-3 pt-5">
               <button
                 type="button"
-                onClick={() => navigate("/display-restaurant")}
+                onClick={() => navigate("/myRestaurant")}
                 className="bg-gray-700 py-2 px-4 border border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-200 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
               >
                 Cancel

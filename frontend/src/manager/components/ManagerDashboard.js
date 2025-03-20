@@ -25,7 +25,7 @@ const ManagerDashboard = () => {
             variant="outlined" 
             color="amber" 
             className="w-full text-white border-white hover:bg-amber-700"
-            onClick={() => navigate('/display-restaurant')}
+            onClick={() => navigate('/myRestaurant')}
           >
             View Restaurants
           </Button>

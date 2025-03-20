@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 const UpdateRestaurant = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const userId = localStorage.getItem("userId");
   
   const [formData, setFormData] = useState({
     name: "",
@@ -16,6 +17,7 @@ const UpdateRestaurant = () => {
     phoneNumber: "",
     tables: [{ seats: "", quantity: "" }],
     image: "",
+    userId: userId,
   });
   
   const [errors, setErrors] = useState({});
@@ -186,7 +188,7 @@ const UpdateRestaurant = () => {
   // Discard changes
   const handleDiscard = () => {
     if (window.confirm("Are you sure you want to discard all changes?")) {
-      navigate("/display-restaurant");
+      navigate("/myRestaurant");
     }
   };
 
@@ -234,7 +236,7 @@ const UpdateRestaurant = () => {
       );
       
       toast.success("Restaurant updated successfully!");
-      setTimeout(() => navigate("/display-restaurant"), 1500);
+      setTimeout(() => navigate("/myRestaurant"), 1500);
     } catch (error) {
       console.error("Error updating restaurant:", error);
       toast.error(error.response?.data?.message || "Failed to update restaurant");

@@ -1,92 +1,71 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import deleteRestaurant from '../../../../manager/pages/pamaa/restaurent/DeleteRestaurant';
+import { toast } from 'react-toastify';
 
 const RestaurantsList = () => {
   const [restaurants, setRestaurants] = useState([]);
-  const [search, setSearch] = useState("");  // State to hold the search term
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchRestaurants = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/api/ITPM/restaurants/get-all-restaurants"
-        );
-        setRestaurants(response.data);
-      } catch (error) {
-        console.error("Error fetching restaurants:", error);
-      }
-    };
-
     fetchRestaurants();
   }, []);
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this restaurant?")) {
-      await deleteRestaurant(id, setRestaurants, restaurants);
+  const fetchRestaurants = async () => {
+    try {
+      setLoading(true);
+      const userId = localStorage.getItem("userId");
+      
+      if (!userId) {
+        setError("You must be logged in to view your restaurants");
+        setLoading(false);
+        toast.error("Please login to view your restaurants");
+        return;
+      }
+      
+      const response = await axios.get(`http://localhost:5000/api/ITPM/restaurants/get-all-restaurants?userId=${userId}`);
+      setRestaurants(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching restaurants:", error);
+      setError(error.response?.data?.message || "Failed to load restaurants");
+      setLoading(false);
+      toast.error("Failed to load restaurants");
     }
   };
 
-  const handleUpdate = (id) => {
-    navigate(`/update-restaurant/${id}`);
+  const toggleRestaurantStatus = async (id, isEnabled) => {
+    try {
+      const userId = localStorage.getItem("userId");
+      await axios.patch(`http://localhost:5000/api/ITPM/restaurants/toggle-status/${id}?userId=${userId}`, { isEnabled: !isEnabled });
+      toast.success("Restaurant status updated successfully");
+      fetchRestaurants();
+    } catch (error) {
+      console.error("Error updating restaurant status:", error);
+      toast.error(error.response?.data?.message || "Failed to update restaurant status");
+    }
   };
-
-  // Function to filter restaurants based on the search term
-  const filteredRestaurants = restaurants.filter(restaurant => 
-    restaurant.name.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
     <div className="p-6 bg-gray-200 min-h-screen">
       <h1 className="text-3xl font-bold text-gray-800 mb-6 border-b border-amber-500 pb-3">Restaurants List</h1>
-      <div className="relative mb-6 w-full">
-    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path 
-          strokeLinecap="round" 
-          strokeLinejoin="round" 
-          strokeWidth={2} 
-          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
-        />
-      </svg>
-    </div>
-    <input
-      type="text"
-      placeholder="Search by restaurant name..."
-      value={search}
-      onChange={e => setSearch(e.target.value)}
-      className="pl-10 p-3 border border-blue-gray-300 rounded-lg bg-white text-blue-gray-900 w-full 
-                 focus:border-amber-700 focus:ring-2 focus:ring-amber-500 focus:outline-none 
-                 transition duration-200 ease-in-out"
-    />
-  </div>
-      {filteredRestaurants.length === 0 ? (
-        <p className="text-gray-600">No restaurants match your search criteria.</p>
+      {restaurants.length === 0 ? (
+        <p className="text-gray-600">No restaurants available.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredRestaurants.map((restaurant) => (
-            <div 
-              key={restaurant._id} 
-              className="bg-white rounded-lg shadow overflow-hidden border-l-4 border-amber-500"
-            >
+          {restaurants.map((restaurant) => (
+            <div key={restaurant._id} className="bg-white rounded-lg shadow overflow-hidden border-l-4 border-amber-500">
               <div className="relative">
-                <img 
-                  src={restaurant.image} 
-                  alt={restaurant.name} 
-                  className="w-full h-48 object-cover"
-                />
+                <img src={restaurant.image} alt={restaurant.name} className="w-full h-48 object-cover" />
               </div>
-              
               <div className="p-4">
                 <h2 className="text-xl font-bold text-gray-800 mb-2">{restaurant.name}</h2>
-                 {/* <p className="text-gray-700">{restaurant.description}</p> */}
                 <p className="text-gray-600 mb-2">{restaurant.location}</p>
                 <p className="text-gray-600 mb-3">{restaurant.phoneNumber}</p>
                 {restaurant.tables && restaurant.tables.length > 0 && (
                   <div className="text-gray-700 bg-gray-300 p-3 rounded-lg">
-                    <p className="text-gray-900 font-medium mb-2">Table Configurations:</p>
                     {restaurant.tables.map((table, index) => (
                       <p key={index} className="text-gray-700">
                         Table {index + 1}: <span className="text-amber-600">{table.quantity}</span> tables with <span className="text-amber-600">{table.seats}</span> seats each
@@ -94,7 +73,7 @@ const RestaurantsList = () => {
                     ))}
                   </div>
                 )}
-                <div className="bg-gray-100 p-4 grid grid-cols-2 gap-2">
+                <div className="bg-gray-100 p-4 grid grid-cols-3 gap-2">
                   <button 
                     onClick={() => navigate(`/restaurant/foods/${restaurant._id}`)}
                     className="flex justify-center items-center bg-gray-700 hover:bg-gray-600 text-white rounded py-2 transition-colors text-sm"
@@ -102,22 +81,10 @@ const RestaurantsList = () => {
                     <span>Food Menu</span>
                   </button>
                   <button 
-                    onClick={() => navigate(`/add-food/${restaurant._id}`)}
-                    className="flex justify-center items-center bg-amber-600 hover:bg-amber-700 text-white rounded py-2 transition-colors text-sm"
+                    onClick={() => toggleRestaurantStatus(restaurant._id, restaurant.isEnabled)}
+                    className={`flex justify-center items-center ${restaurant.isEnabled ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white rounded py-2 transition-colors text-sm`}
                   >
-                    <span>Add Food</span>
-                  </button>
-                  <button 
-                    onClick={() => handleUpdate(restaurant._id)}
-                    className="flex justify-center items-center bg-gray-500 hover:bg-gray-600 text-white rounded py-2 transition-colors text-sm"
-                  >
-                    <span>Update</span>
-                  </button>
-                  <button 
-                    onClick={() => handleDelete(restaurant._id)}
-                    className="flex justify-center items-center bg-red-600 hover:bg-red-700 text-white rounded py-2 transition-colors text-sm"
-                  >
-                    <span>Delete</span>
+                    <span>{restaurant.isEnabled ? 'Disable' : 'Enable'}</span>
                   </button>
                 </div>
               </div>
