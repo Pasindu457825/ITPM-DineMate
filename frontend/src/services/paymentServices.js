@@ -2,128 +2,34 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/api/ITPM/payments"; // Backend API URL
 
-// ===========================
-// User Payment Services
-// ===========================
-
+// ============  USER PAYMENT SERVICES =============
 // Create Payment (User)
 export const createPayment = async (paymentData) => {
-  try {
-    const response = await axios.post(`${API_URL}`, paymentData);
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error;
-  }
+  return await axios.post(`${API_URL}`, paymentData);
 };
 
-// Get All Payments (User)
+// Get Payments (User)
 export const getUserPayments = async (userId) => {
-  try {
-    const response = await axios.get(`${API_URL}/user/${userId}`);
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error;
-  }
+  return await axios.get(`${API_URL}/user/${userId}`);
 };
 
-// Update Payment (User can only update before approval)
+// Update Payment (User)
 export const updateUserPayment = async (paymentId, updatedData) => {
-  try {
-    const response = await axios.put(`${API_URL}/${paymentId}`, updatedData);
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error;
-  }
+  return await axios.put(`${API_URL}/${paymentId}`, updatedData);
 };
 
-// Delete Payment (Users can only delete before approval)
+// Delete Payment (User)
 export const deleteUserPayment = async (paymentId) => {
-  try {
-    const response = await axios.delete(`${API_URL}/${paymentId}`);
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error;
-  }
+  return await axios.delete(`${API_URL}/${paymentId}`);
 };
 
-// ===========================
-//  Manager Payment Services
-// ===========================
-
-// Get All Payments (Manager View)
+// ============  MANAGER PAYMENT SERVICES =============
+// Get All Payments (Manager)
 export const getManagerPayments = async () => {
-  try {
-    const response = await axios.get(`${API_URL}`);
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error;
-  }
+  return await axios.get(`${API_URL}`);
 };
 
 // Approve/Reject Payment (Manager)
 export const approvePayment = async (paymentId, status) => {
-  try {
-    const response = await axios.put(`${API_URL}/approve/${paymentId}`, { status });
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error;
-  }
-};
-
-// ===========================
-// Admin Payment Services
-// ===========================
-
-// Get All Payments (Admin)
-export const getAllPayments = async () => {
-  try {
-    const response = await axios.get(`${API_URL}`);
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error;
-  }
-};
-
-// Get Payment Details (Admin)
-export const getPaymentDetails = async (paymentId) => {
-  try {
-    const response = await axios.get(`${API_URL}/${paymentId}`);
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error;
-  }
-};
-
-// Update Payment (Admin)
-export const updateAdminPayment = async (paymentId, updatedData) => {
-  try {
-    const response = await axios.put(`${API_URL}/${paymentId}`, updatedData);
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error;
-  }
-};
-
-// Delete Payment (Admin)
-export const deleteAdminPayment = async (paymentId) => {
-  try {
-    const response = await axios.delete(`${API_URL}/${paymentId}`);
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error;
-  }
-};
-
-// ===========================
-// Report Generation Services (Admin)
-// ===========================
-
-// Generate Payment Report (Daily, Weekly, Monthly)
-export const generatePaymentReport = async (type) => {
-  try {
-    const response = await axios.get(`${API_URL}/report/${type}`);
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error;
-  }
+  return await axios.put(`${API_URL}/approve/${paymentId}`, { status });
 };
