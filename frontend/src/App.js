@@ -32,6 +32,8 @@ import UserSignupPage from "./user/pages/tharusha/UserSignupPage";
 import ManagerSignupPage from "./manager/pages/tharusha/ManagerSignupPage";
 import MyProfilePage from "./user/pages/tharusha/MyProfilePage";
 import AdminDashboard from "./admin/pages/tharusha/AdminDashboard";
+import ForgotPasswordPage from "./user/pages/tharusha/ForgotPasswordPage";
+import ResetPasswordOtpPage from "./user/pages/tharusha/ResetPasswordOtpPage";
 
 // Pamalka FoodItem
 import AddFood from "./manager/pages/pamaa/foodmenu/AddFood";
@@ -104,6 +106,8 @@ const AppContent = () => {
         <Route path="/signup/manager" element={<ManagerSignupPage />} />
         <Route path="/me" element={<MyProfilePage />} />
         <Route path="/admindashboard" element={<AdminDashboard />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password-otp" element={<ResetPasswordOtpPage />} />
 
         {/* Pamalka Restaurant */}
         <Route path="/add-restaurant" element={<CreateRestaurant />} />
