@@ -7,6 +7,7 @@ const UpdatePayment = () => {
   const navigate = useNavigate();
   const [payment, setPayment] = useState({
     amount: "",
+    status: "Pending",
   });
 
   useEffect(() => {
@@ -25,7 +26,7 @@ const UpdatePayment = () => {
     try {
       await axios.put(`http://localhost:5000/api/ITPM/payments/${id}`, payment);
       alert("Payment Updated Successfully!");
-      navigate("/user/payments");
+      navigate("/manager/payments");
     } catch (error) {
       console.error("Error updating payment", error);
     }
@@ -43,6 +44,16 @@ const UpdatePayment = () => {
           className="border p-2 w-full mb-3"
           placeholder="Enter Amount"
         />
+        <select
+          name="status"
+          value={payment.status}
+          onChange={handleChange}
+          className="border p-2 w-full mb-3"
+        >
+          <option value="Pending">Pending</option>
+          <option value="Completed">Completed</option>
+          <option value="Failed">Failed</option>
+        </select>
         <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">
           Update Payment
         </button>

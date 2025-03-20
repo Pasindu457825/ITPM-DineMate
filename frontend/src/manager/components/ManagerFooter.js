@@ -126,4 +126,4 @@ const ManagerFooter = () => {
   );
 };
 
-export default ManagerFooter;
+export default ManagerFooter;

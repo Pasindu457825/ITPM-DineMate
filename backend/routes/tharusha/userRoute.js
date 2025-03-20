@@ -1,16 +1,18 @@
+// userRoute.js
+
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 const User = require("../../models/tharusha/userModel");
 
 const router = express.Router();
 
 // =============================
-// Middleware to verify the JWT
+// 1) JWT Middleware
 // =============================
 const requireAuth = (req, res, next) => {
   try {
-    // Expecting header: "Authorization: Bearer <token>"
     const authHeader = req.headers.authorization;
     if (!authHeader) {
       return res.status(401).json({ message: "No token provided" });
@@ -19,7 +21,6 @@ const requireAuth = (req, res, next) => {
     if (!token) {
       return res.status(401).json({ message: "Malformed token" });
     }
-    // Verify token with JWT_SECRET (fallback to "secret" if not set)
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret");
     req.user = decoded; // e.g. { userId: "...", role: "..." }
     next();
@@ -28,23 +29,34 @@ const requireAuth = (req, res, next) => {
   }
 };
 
+// =============================
+// 2) Nodemailer Setup
+// =============================
+// Use environment variables: EMAIL_USER and EMAIL_PASS
+// e.g. .env file:
+// EMAIL_USER=mygmail@gmail.com
+// EMAIL_PASS=mygmailapppassword
+
+const transporter = nodemailer.createTransport({
+  service: "gmail", // or another email provider
+  auth: {
+    user: process.env.EMAIL_USER, // e.g. "mygmail@gmail.com"
+    pass: process.env.EMAIL_PASS, // e.g. "supersecretappassword"
+  },
+});
+
 // ===================================
-// 1) Regular User Signup
+// 3) Regular User Signup
 // POST /signup/user
 // ===================================
 router.post("/signup/user", async (req, res) => {
   const { fname, lname, email, pwd, phone_no } = req.body;
   try {
-    // Check if a user with this email already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "User with this email already exists" });
+      return res.status(400).json({ message: "User with this email already exists" });
     }
-    // Hash the password
     const hashedPwd = await bcrypt.hash(pwd, 10);
-    // Create a new user document
     const newUser = new User({
       fname,
       lname,
@@ -61,22 +73,17 @@ router.post("/signup/user", async (req, res) => {
 });
 
 // ===================================
-// 2) Restaurant Manager Signup
+// 4) Restaurant Manager Signup
 // POST /signup/manager
 // ===================================
 router.post("/signup/manager", async (req, res) => {
   const { fname, lname, email, pwd, phone_no } = req.body;
   try {
-    // Check if a manager with this email already exists
     const existingManager = await User.findOne({ email });
     if (existingManager) {
-      return res
-        .status(400)
-        .json({ message: "Manager with this email already exists" });
+      return res.status(400).json({ message: "Manager with this email already exists" });
     }
-    // Hash the password
     const hashedPwd = await bcrypt.hash(pwd, 10);
-    // Create a new manager document
     const newManager = new User({
       fname,
       lname,
@@ -93,24 +100,21 @@ router.post("/signup/manager", async (req, res) => {
 });
 
 // ===================================
-// 3) Common Login
+// 5) Common Login
 // POST /login
 // Returns a JWT token upon success
 // ===================================
 router.post("/login", async (req, res) => {
   const { email, pwd } = req.body;
   try {
-    // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
-    // Compare the provided password with the hashed password
     const isMatch = await bcrypt.compare(pwd, user.pwd);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-    // Generate a JWT token (includes userId and role)
     const token = jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET || "secret",
@@ -128,13 +132,12 @@ router.post("/login", async (req, res) => {
 });
 
 // ===================================
-// 4) Get Current User ("My Profile")
+// 6) Get Current User ("My Profile")
 // GET /me
 // Protected route (needs valid token)
 // ===================================
 router.get("/me", requireAuth, async (req, res) => {
   try {
-    // Retrieve user by ID from the token, omitting the password field
     const user = await User.findById(req.user.userId).select("-pwd");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -146,13 +149,12 @@ router.get("/me", requireAuth, async (req, res) => {
 });
 
 // ===================================
-// 5) Update User Profile
+// 7) Update User Profile
 // PUT /:id
 // Protected route – allows a user (or admin) to update their details
 // ===================================
 router.put("/:id", requireAuth, async (req, res) => {
   try {
-    // Ensure the user is updating their own profile, unless they're an admin
     if (req.user.userId !== req.params.id && req.user.role !== "admin") {
       return res.status(403).json({ message: "Not authorized to update this profile" });
     }
@@ -172,13 +174,12 @@ router.put("/:id", requireAuth, async (req, res) => {
 });
 
 // ===================================
-// 6) Delete User
+// 8) Delete User
 // DELETE /:id
 // Protected route – allows a user or admin to delete a user
 // ===================================
 router.delete("/:id", requireAuth, async (req, res) => {
   try {
-    // Ensure the user is deleting their own profile, unless they're an admin
     if (req.user.userId !== req.params.id && req.user.role !== "admin") {
       return res.status(403).json({ message: "Not authorized to delete this profile" });
     }
@@ -189,6 +190,88 @@ router.delete("/:id", requireAuth, async (req, res) => {
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// ===================================
+// 9) Forgot Password (OTP) – POST /forgot-password-otp
+// Generates a 6-digit OTP, hashes it, emails it, and stores it in user record
+// ===================================
+router.post("/forgot-password-otp", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    // Always respond success to avoid revealing if email doesn't exist
+    if (!user) {
+      return res.status(200).json({ message: "If an account exists, an OTP has been sent." });
+    }
+
+    // 1) Generate a 6-digit OTP
+    const otp = ("" + Math.floor(100000 + Math.random() * 900000)).slice(-6);
+
+    // 2) Hash the OTP
+    const hashedOTP = await bcrypt.hash(otp, 10);
+
+    // 3) Store hashedOTP & expiry in DB
+    user.resetOTP = hashedOTP;
+    user.resetOTPExpires = Date.now() + 15 * 60 * 1000; // 15 min
+    await user.save();
+
+    // 4) Send plain OTP via email
+    const mailOptions = {
+      from: `"MyApp Support" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: "Your Password Reset OTP",
+      text: `Hello ${user.fname},\n\nYour OTP code is: ${otp}\nIt will expire in 15 minutes.\n\nIf you did not request a password reset, please ignore this email.\n\nRegards,\nMyApp Team`,
+      // html: `<p>Hello <strong>${user.fname}</strong>,<br />Your OTP code is <strong>${otp}</strong>...</p>`
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return res.status(200).json({ message: "OTP sent if the account exists." });
+  } catch (error) {
+    console.error("Error in forgot-password-otp:", error);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// ===================================
+// 10) Reset Password with OTP – POST /reset-password-otp
+// Compares user input OTP with hashed OTP in DB, resets password if valid
+// ===================================
+router.post("/reset-password-otp", async (req, res) => {
+  try {
+    const { email, otp, newPwd } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired OTP." });
+    }
+
+    // Check expiry
+    if (Date.now() > user.resetOTPExpires) {
+      return res.status(400).json({ message: "OTP has expired. Please request a new one." });
+    }
+
+    // Compare provided OTP with hashed OTP in DB
+    const isMatch = await bcrypt.compare(otp, user.resetOTP);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid OTP. Please try again." });
+    }
+
+    // OTP valid; reset password
+    const hashedPwd = await bcrypt.hash(newPwd, 10);
+    user.pwd = hashedPwd;
+
+    // Clear OTP fields
+    user.resetOTP = undefined;
+    user.resetOTPExpires = undefined;
+    await user.save();
+
+    return res.status(200).json({ message: "Password reset successful." });
+  } catch (error) {
+    console.error("Error in reset-password-otp:", error);
+    return res.status(500).json({ error: error.message });
   }
 });
 
