@@ -52,10 +52,10 @@ import MyRestaurant from "./manager/pages/pamaa/restaurent/MyRestaurants";
 import FoodLists from "./admin/pages/pamaa/restaurent/FoodLists";
 
 // Payment Management
-import UserPayments from "./user/pages/isuri/payment/userPayment";
-import CreatePayments from "./user/pages/isuri/payment/createPayment";
-import UpdateUserPayment from "./user/pages/isuri/payment/updatePayment";
-import DeleteUserPayment from "./user/pages/isuri/payment/deletePayment";
+import UserPayments from "./user/pages/Isuri/payment/userPayment";
+import CreatePayments from "./user/pages/Isuri/payment/createPayment";
+import UpdateUserPayment from "./user/pages/Isuri/payment/updatePayment";
+import DeleteUserPayment from "./user/pages/Isuri/payment/deletePayment";
 
 import ManagerPayments from "./manager/pages/Isuri/payment/managerPayment";
 import UpdateManagerPayment from "./manager/pages/Isuri/payment/updatePayment";
