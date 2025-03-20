@@ -64,7 +64,7 @@ const AddOrderForm = () => {
     const savedCart = sessionStorage.getItem("cart")
       ? JSON.parse(sessionStorage.getItem("cart"))
       : cart;
-
+      console.log("✅ Items from sessionStorage:", savedCart);
     setItems(
       savedCart.map((item) => ({
         name: item.name,
@@ -90,7 +90,7 @@ const AddOrderForm = () => {
   // Fetch reservation details if reservationId is provided
   useEffect(() => {
     if (!reservationId) {
-      console.warn("⚠️ No reservation ID provided. Skipping API call.");
+      console.warn("⚠ No reservation ID provided. Skipping API call.");
       return;
     }
 
@@ -121,7 +121,7 @@ const AddOrderForm = () => {
     const fetchFoodItems = async () => {
       try {
         if (!restaurantId) {
-          console.warn("⚠️ No restaurantId provided. Skipping API call.");
+          console.warn("⚠ No restaurantId provided. Skipping API call.");
           return;
         }
 
@@ -192,7 +192,7 @@ const AddOrderForm = () => {
       console.log("✅ Order Created:", response.data);
 
       sessionStorage.removeItem("cart"); // Clear sessionStorage after order
-
+      console.log("Fetching food items for restaurant:", restaurantId);
       if (isOnlinePayment) {
         navigate("/payment-page", {
           state: { orderId: response.data._id, total },
