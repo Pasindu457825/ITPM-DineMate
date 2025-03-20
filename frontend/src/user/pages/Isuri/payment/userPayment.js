@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getUserPayments } from "../../../services/paymentService";
+import { getUserPayments } from "../../../../services/paymentServices";
 
 const UserPayments = () => {
   const [payments, setPayments] = useState([]);

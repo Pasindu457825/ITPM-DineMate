@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createPayment } from "../../../services/paymentService";
+import { createPayment } from "../../../../services/paymentServices"; // Ensure correct path
 
 const CreatePayment = () => {
   const navigate = useNavigate();
@@ -30,9 +30,26 @@ const CreatePayment = () => {
     <div className="max-w-lg mx-auto p-4 bg-white shadow-md rounded-lg">
       <h2 className="text-xl font-semibold mb-4">Create Payment</h2>
       <form onSubmit={handleSubmit}>
-        <input type="text" name="orderId" placeholder="Order ID" onChange={handleChange} className="border p-2 w-full mb-2"/>
-        <input type="number" name="amount" placeholder="Amount" onChange={handleChange} className="border p-2 w-full mb-2"/>
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">Submit Payment</button>
+        <input
+          type="text"
+          name="orderId"
+          placeholder="Order ID"
+          onChange={handleChange}
+          className="border p-2 w-full mb-2"
+        />
+        <input
+          type="number"
+          name="amount"
+          placeholder="Amount"
+          onChange={handleChange}
+          className="border p-2 w-full mb-2"
+        />
+        <button
+          type="submit"
+          className="bg-blue-500 text-white p-2 rounded w-full"
+        >
+          Submit Payment
+        </button>
       </form>
     </div>
   );
