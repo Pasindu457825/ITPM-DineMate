@@ -235,7 +235,7 @@ const FoodsByRestaurant = () => {
         </ul>
       )}
     </div>
-    <ManagerFooter />
+    <ManagerFooter/>
     </div>
   );
 };

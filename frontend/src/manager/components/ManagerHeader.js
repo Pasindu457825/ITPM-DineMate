@@ -56,7 +56,7 @@ const ManagerHeader = ({ username = "Manager" }) => {
         <div className="flex justify-between items-center py-4">
           {/* Logo and Brand */}
           <div className="flex items-center space-x-3">
-            <Link to="/dashboard" onClick={closeAllMenus} className="flex items-center space-x-2 group">
+            <Link to="/managers" onClick={closeAllMenus} className="flex items-center space-x-2 group">
               <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center text-white shadow-md group-hover:shadow-lg transition-all duration-200">
                 <Pizza size={24} className="text-white" />
               </div>
@@ -64,15 +64,6 @@ const ManagerHeader = ({ username = "Manager" }) => {
             </Link>
             <span className="hidden md:inline-block px-2 py-1 bg-amber-200 text-amber-700 text-xs font-semibold rounded-full">Manager Portal</span>
           </div>
-
-          {/* Mobile Menu Button */}
-          <button 
-            onClick={toggleMobileMenu} 
-            className="md:hidden focus:outline-none text-amber-700 hover:text-amber-500 transition-colors"
-            aria-label="Toggle menu"
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
 
           {/* Navigation - Desktop */}
           <div className="hidden md:flex items-center space-x-3">
@@ -142,11 +133,6 @@ const ManagerHeader = ({ username = "Manager" }) => {
               <span>Reservations</span>
             </Link>
 
-            {/* Notification bell */}
-            <button className="relative p-2 text-amber-700 hover:text-amber-500 transition-colors">
-              <Bell size={20} />
-              <span className="absolute top-0 right-0 h-4 w-4 bg-amber-500 rounded-full flex items-center justify-center text-xs text-white">3</span>
-            </button>
           </div>
 
           {/* User Profile */}
@@ -201,108 +187,8 @@ const ManagerHeader = ({ username = "Manager" }) => {
             )}
           </div>
         </div>
-
-        {/* Mobile Menu Dropdown */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden py-4 space-y-2 animate-fadeIn">
-            <Link 
-              to="/dashboard" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 transition-all duration-200 ${isActive('/dashboard') ? 'bg-amber-500 text-white font-medium' : 'bg-amber-200 text-amber-700'}`}
-            >
-              <Home size={18} />
-              <span>Dashboard</span>
-            </Link>
-
-            {/* Restaurant Dropdown for Mobile */}
-            <div className="space-y-2">
-              <button 
-                onClick={toggleRestaurantDropdown} 
-                className={`w-full text-left px-4 py-3 rounded-lg flex items-center justify-between transition-all duration-200 ${(isActive('/my-restaurant') || isActive('/create-restaurant')) ? 'bg-amber-500 text-white font-medium' : 'bg-amber-200 text-amber-700'}`}
-              >
-                <div className="flex items-center space-x-3">
-                  <Pizza size={18} />
-                  <span>Restaurants</span>
-                </div>
-                <ChevronDown size={18} className={`transition-transform duration-200 ${isRestaurantDropdownOpen ? 'transform rotate-180' : ''}`} />
-              </button>
-              
-              {isRestaurantDropdownOpen && (
-                <div className="pl-4 space-y-2 animate-fadeIn">
-                  <Link 
-                    to="/my-restaurant" 
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="w-full text-left px-4 py-2.5 bg-amber-100 text-amber-700 rounded-lg flex items-center space-x-3 hover:bg-amber-200 transition-all duration-200"
-                  >
-                    <Home size={16} />
-                    <span>My Restaurants</span>
-                  </Link>
-                  <Link 
-                    to="/create-restaurant" 
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="w-full text-left px-4 py-2.5 bg-amber-100 text-amber-700 rounded-lg flex items-center space-x-3 hover:bg-amber-200 transition-all duration-200"
-                  >
-                    <Pizza size={16} />
-                    <span>Add New Restaurant</span>
-                  </Link>
-                </div>
-              )}
-            </div>
-            
-            <Link 
-              to="/orders"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 transition-all duration-200 ${isActive('/orders') ? 'bg-amber-500 text-white font-medium' : 'bg-amber-200 text-amber-700'}`}
-            >
-              <ShoppingBag size={18} />
-              <span>Orders</span>
-            </Link>
-            
-            <Link 
-              to="/reservations"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 transition-all duration-200 ${isActive('/reservations') ? 'bg-amber-500 text-white font-medium' : 'bg-amber-200 text-amber-700'}`}
-            >
-              <CalendarCheck size={18} />
-              <span>Reservations</span>
-            </Link>
-
-            <div className="pt-2 border-t border-amber-200">
-              <div className="flex items-center px-4 py-2">
-                <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center text-white mr-3">
-                  <User size={20} />
-                </div>
-                <div>
-                  <p className="font-medium text-amber-700">{username}</p>
-                  <p className="text-xs text-amber-500">manager@dinemate.com</p>
-                </div>
-              </div>
-
-              <Link 
-                to="/profile"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full text-left px-4 py-2.5 text-amber-700 rounded-lg flex items-center space-x-3 hover:bg-amber-200 transition-all duration-200 mt-2"
-              >
-                <User size={16} />
-                <span>My Profile</span>
-              </Link>
-
-              <Link 
-                to="/logout"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full text-left px-4 py-2.5 text-red-500 rounded-lg flex items-center space-x-3 hover:bg-amber-200 transition-all duration-200"
-              >
-                <LogOut size={16} />
-                <span>Logout</span>
-              </Link>
-            </div>
-          </div>
-        )}
-      </div>
-      
-      {/* Add some extra space below when mobile menu is open */}
-      {isMobileMenuOpen && <div className="h-4"></div>}
-    </header>
+        </div>
+</header>
   );
 };
 
