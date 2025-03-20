@@ -33,6 +33,11 @@ import UserSignupPage from "./user/pages/tharusha/UserSignupPage";
 import ManagerSignupPage from "./manager/pages/tharusha/ManagerSignupPage";
 import MyProfilePage from "./user/pages/tharusha/MyProfilePage";
 
+import AdminDashboard from "./admin/pages/tharusha/AdminDashboard";
+import ForgotPasswordPage from "./user/pages/tharusha/ForgotPasswordPage";
+import ResetPasswordOtpPage from "./user/pages/tharusha/ResetPasswordOtpPage";
+
+
 // Pamalka FoodItem
 import AddFood from "./manager/pages/pamaa/foodmenu/AddFood";
 import UpdateFood from "./manager/pages/pamaa/foodmenu/UpdateFood";
@@ -47,10 +52,10 @@ import MyRestaurant from "./manager/pages/pamaa/restaurent/MyRestaurants";
 import FoodLists from "./admin/pages/pamaa/restaurent/FoodLists";
 
 // Payment Management
-import UserPayments from "./user/pages/isuri/payment/userPayment";
-import CreatePayments from "./user/pages/isuri/payment/createPayment";
-import UpdateUserPayment from "./user/pages/isuri/payment/updatePayment";
-import DeleteUserPayment from "./user/pages/isuri/payment/deletePayment";
+import UserPayments from "./user/pages/Isuri/payment/userPayment";
+import CreatePayments from "./user/pages/Isuri/payment/createPayment";
+import UpdateUserPayment from "./user/pages/Isuri/payment/updatePayment";
+import DeleteUserPayment from "./user/pages/Isuri/payment/deletePayment";
 
 import ManagerPayments from "./manager/pages/Isuri/payment/managerPayment";
 import UpdateManagerPayment from "./manager/pages/Isuri/payment/updatePayment";
@@ -115,6 +120,10 @@ const AppContent = () => {
           <Route path="/signup/user" element={<UserSignupPage />} />
           <Route path="/signup/manager" element={<ManagerSignupPage />} />
           <Route path="/me" element={<MyProfilePage />} />
+          <Route path="/admindashboard" element={<AdminDashboard />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password-otp" element={<ResetPasswordOtpPage />} />
+        
           {/* Pamalka Restaurant */}
           <Route path="/add-restaurant" element={<CreateRestaurant />} />
           <Route path="/display-restaurant" element={<RestaurantList />} />
