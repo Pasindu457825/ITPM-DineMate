@@ -66,8 +66,8 @@ const ManagerHeader = ({ username = "Manager" }) => {
     <header
       className={`fixed w-full z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-amber-100 shadow-lg"
-          : "bg-gradient-to-r from-amber-50 to-amber-100"
+          ? "bg-[#262B3E] shadow-lg"
+          : "bg-gradient-to-r from-[#262B3E] to-[#262B3E]"
       }`}
     >
       <div className="container mx-auto px-4">
@@ -79,14 +79,14 @@ const ManagerHeader = ({ username = "Manager" }) => {
               onClick={closeAllMenus}
               className="flex items-center space-x-2 group"
             >
-              <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center text-white shadow-md group-hover:shadow-lg transition-all duration-200">
+              <div className="w-10 h-10 bg-[#276265] rounded-full flex items-center justify-center text-white shadow-md group-hover:shadow-lg transition-all duration-200">
                 <Pizza size={24} className="text-white" />
               </div>
-              <span className="font-bold text-xl tracking-tight text-amber-700">
+              <span className="font-bold text-xl tracking-tight text-white">
                 Dinemate
               </span>
             </Link>
-            <span className="hidden md:inline-block px-2 py-1 bg-amber-200 text-amber-700 text-xs font-semibold rounded-full">
+            <span className="hidden md:inline-block px-2 py-1 bg-[#276265]/20 text-white text-xs font-semibold rounded-full">
               Manager Portal
             </span>
           </div>
@@ -97,8 +97,8 @@ const ManagerHeader = ({ username = "Manager" }) => {
               to="/dashboard"
               className={`px-3 py-2 rounded-lg flex items-center space-x-1 transition-all duration-200 ${
                 isActive("/dashboard")
-                  ? "bg-amber-500 text-white font-medium shadow-md"
-                  : "text-amber-700 hover:bg-amber-200"
+                  ? "bg-[#276265] text-white font-medium shadow-md"
+                  : "text-white hover:bg-[#276265]/30"
               }`}
             >
               <Home size={18} />
@@ -111,8 +111,8 @@ const ManagerHeader = ({ username = "Manager" }) => {
                 onClick={toggleRestaurantDropdown}
                 className={`px-3 py-2 rounded-lg flex items-center space-x-1 transition-all duration-200 ${
                   isActive("/my-restaurant") || isActive("/create-restaurant")
-                    ? "bg-amber-500 text-white font-medium shadow-md"
-                    : "text-amber-700 hover:bg-amber-200"
+                    ? "bg-[#276265] text-white font-medium shadow-md"
+                    : "text-white hover:bg-[#276265]/30"
                 }`}
                 aria-expanded={isRestaurantDropdownOpen}
                 aria-haspopup="true"
@@ -128,18 +128,18 @@ const ManagerHeader = ({ username = "Manager" }) => {
               </button>
 
               {isRestaurantDropdownOpen && (
-                <div className="absolute left-0 mt-2 w-56 bg-white text-gray-700 rounded-lg shadow-xl py-1.5 z-10 border border-gray-100 overflow-hidden">
-                  <div className="py-1 bg-amber-50 px-3 mb-1.5">
-                    <p className="text-xs font-medium text-amber-700 uppercase tracking-wider">
+                <div className="absolute left-0 mt-2 w-56 bg-[#262B3E] text-white rounded-lg shadow-xl py-1.5 z-10 border border-gray-700 overflow-hidden">
+                  <div className="py-1 bg-[#262B3E]/70 px-3 mb-1.5">
+                    <p className="text-xs font-medium text-gray-300 uppercase tracking-wider">
                       Restaurant Management
                     </p>
                   </div>
                   <Link
                     to="/my-restaurant"
                     onClick={() => setIsRestaurantDropdownOpen(false)}
-                    className="flex items-center px-4 py-2 hover:bg-amber-50 transition-colors duration-200"
+                    className="flex items-center px-4 py-2 hover:bg-[#276265]/30 transition-colors duration-200"
                   >
-                    <span className="w-8 text-amber-500">
+                    <span className="w-8 text-[#276265]">
                       <Home size={16} />
                     </span>
                     My Restaurants
@@ -147,9 +147,9 @@ const ManagerHeader = ({ username = "Manager" }) => {
                   <Link
                     to="/create-restaurant"
                     onClick={() => setIsRestaurantDropdownOpen(false)}
-                    className="flex items-center px-4 py-2 hover:bg-amber-50 transition-colors duration-200"
+                    className="flex items-center px-4 py-2 hover:bg-[#276265]/30 transition-colors duration-200"
                   >
-                    <span className="w-8 text-amber-500">
+                    <span className="w-8 text-[#276265]">
                       <Pizza size={16} />
                     </span>
                     Add New Restaurant
@@ -162,8 +162,8 @@ const ManagerHeader = ({ username = "Manager" }) => {
               to="/orders"
               className={`px-3 py-2 rounded-lg flex items-center space-x-1 transition-all duration-200 ${
                 isActive("/orders")
-                  ? "bg-amber-500 text-white font-medium shadow-md"
-                  : "text-amber-700 hover:bg-amber-200"
+                  ? "bg-[#276265] text-white font-medium shadow-md"
+                  : "text-white hover:bg-[#276265]/30"
               }`}
             >
               <ShoppingBag size={18} />
@@ -174,8 +174,8 @@ const ManagerHeader = ({ username = "Manager" }) => {
               to="/reservations"
               className={`px-3 py-2 rounded-lg flex items-center space-x-1 transition-all duration-200 ${
                 isActive("/reservations")
-                  ? "bg-amber-500 text-white font-medium shadow-md"
-                  : "text-amber-700 hover:bg-amber-200"
+                  ? "bg-[#276265] text-white font-medium shadow-md"
+                  : "text-white hover:bg-[#276265]/30"
               }`}
             >
               <CalendarCheck size={18} />
@@ -187,11 +187,11 @@ const ManagerHeader = ({ username = "Manager" }) => {
           <div className="relative">
             <button
               onClick={toggleProfile}
-              className="flex items-center space-x-2 text-amber-700 hover:text-amber-500 px-3 py-1.5 rounded-full hover:bg-amber-200 transition-colors duration-200"
+              className="flex items-center space-x-2 text-white hover:text-gray-200 px-3 py-1.5 rounded-full hover:bg-[#276265]/30 transition-colors duration-200"
               aria-expanded={isProfileOpen}
               aria-haspopup="true"
             >
-              <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-white">
+              <div className="w-8 h-8 bg-[#276265] rounded-full flex items-center justify-center text-white">
                 <User size={18} />
               </div>
               <span className="sm:inline hidden font-medium">{username}</span>
@@ -199,26 +199,26 @@ const ManagerHeader = ({ username = "Manager" }) => {
 
             {/* Profile Dropdown */}
             {isProfileOpen && (
-              <div className="absolute right-0 mt-2 w-64 bg-white text-gray-700 rounded-lg shadow-xl py-2 z-10 border border-gray-100">
-                <div className="px-4 py-2 border-b border-gray-100">
-                  <p className="font-medium text-gray-800">{username}</p>
-                  <p className="text-sm text-gray-500">manager@dinemate.com</p>
+              <div className="absolute right-0 mt-2 w-64 bg-[#262B3E] text-white rounded-lg shadow-xl py-2 z-10 border border-gray-700">
+                <div className="px-4 py-2 border-b border-gray-700">
+                  <p className="font-medium text-white">{username}</p>
+                  <p className="text-sm text-gray-400">manager@dinemate.com</p>
                 </div>
                 <Link
                   to="/profile"
                   onClick={() => setIsProfileOpen(false)}
-                  className="flex items-center px-4 py-2.5 hover:bg-amber-50 transition-colors duration-200"
+                  className="flex items-center px-4 py-2.5 hover:bg-[#276265]/20 transition-colors duration-200"
                 >
-                  <User size={16} className="mr-3 text-amber-500" />
+                  <User size={16} className="mr-3 text-[#276265]" />
                   <span>My Profile</span>
                 </Link>
                 <Link
                   to="/settings"
                   onClick={() => setIsProfileOpen(false)}
-                  className="flex items-center px-4 py-2.5 hover:bg-amber-50 transition-colors duration-200"
+                  className="flex items-center px-4 py-2.5 hover:bg-[#276265]/20 transition-colors duration-200"
                 >
                   <svg
-                    className="mr-3 h-4 w-4 text-amber-500"
+                    className="mr-3 h-4 w-4 text-[#276265]"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -231,11 +231,11 @@ const ManagerHeader = ({ username = "Manager" }) => {
                   </svg>
                   <span>Settings</span>
                 </Link>
-                <div className="border-t border-gray-100 my-1"></div>
+                <div className="border-t border-gray-700 my-1"></div>
                 <Link
                   to="/logout"
                   onClick={() => setIsProfileOpen(false)}
-                  className="flex items-center px-4 py-2.5 hover:bg-red-50 text-red-500 transition-colors duration-200"
+                  className="flex items-center px-4 py-2.5 hover:bg-red-900/30 text-red-400 transition-colors duration-200"
                 >
                   <LogOut size={16} className="mr-3" />
                   <span>Logout</span>
