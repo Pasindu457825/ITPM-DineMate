@@ -8,6 +8,9 @@ router.post("/create-restaurant", restaurantController.addRestaurant);
 // Get all restaurants
 router.get("/get-all-restaurants", restaurantController.getAllRestaurants);
 
+// Get all restaurants by ID
+router.get("/get-all-restaurants-id", restaurantController.getAllRestaurantsById);
+
 // Get a single restaurant by ID
 router.get("/get-restaurant/:id", restaurantController.getRestaurantById);
 
