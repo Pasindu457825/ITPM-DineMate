@@ -28,7 +28,12 @@ const OrderDetailsPage = () => {
 
   return (
     <div className="p-8 max-w-4xl mx-auto bg-white shadow-lg rounded-lg">
-      <h2 className="text-3xl font-bold mb-6 text-center">Order Details</h2>
+      <h2
+        className="text-5xl font-bold mb-6 text-center"
+        style={{ fontFamily: "'Dancing Script', cursive" }}
+      >
+        Order Details
+      </h2>
 
       <div className="border p-6 rounded-lg bg-gray-100 shadow-sm">
         <h3 className="text-lg font-semibold mb-2">
