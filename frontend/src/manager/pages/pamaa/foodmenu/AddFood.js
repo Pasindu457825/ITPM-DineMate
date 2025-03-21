@@ -190,7 +190,7 @@ const AddFoodForm = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-[#E9E4E4] min-h-screen">
       <ManagerHeader />
       <br/>
       <br/><br/>
@@ -209,7 +209,7 @@ const AddFoodForm = () => {
       
       <div className="py-8 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-          <div className="bg-gradient-to-r from-amber-400 to-amber-500 p-6">
+          <div className="bg-[#276265] p-6">
             <h2 className="text-3xl font-bold text-white mb-2">
               Add New Food Item
             </h2>
@@ -232,7 +232,7 @@ const AddFoodForm = () => {
                     setErrors({...errors, name: ""});
                   }
                 }}
-                className={`p-3 bg-white border rounded-lg w-full text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none transition ${
+                className={`p-3 bg-white border rounded-lg w-full text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-[#276265] focus:border-[#276265] outline-none transition ${
                   errors.name ? "border-red-500" : "border-gray-300"
                 }`}
               />
@@ -252,7 +252,7 @@ const AddFoodForm = () => {
                     setErrors({...errors, description: ""});
                   }
                 }}
-                className={`p-3 bg-white border rounded-lg w-full text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none transition min-h-[100px] ${
+                className={`p-3 bg-white border rounded-lg w-full text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-[#276265] focus:border-[#276265] outline-none transition min-h-[100px] ${
                   errors.description ? "border-red-500" : "border-gray-300"
                 }`}
               />
@@ -280,7 +280,7 @@ const AddFoodForm = () => {
                         setErrors({...errors, price: ""});
                       }
                     }}
-                    className={`p-3 pl-8 bg-white border rounded-lg w-full text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none transition ${
+                    className={`p-3 pl-8 bg-white border rounded-lg w-full text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-[#276265] focus:border-[#276265] outline-none transition ${
                       errors.price ? "border-red-500" : "border-gray-300"
                     }`}
                   />
@@ -297,7 +297,7 @@ const AddFoodForm = () => {
                     setCategory(e.target.value);
                     setErrors({...errors, category: ""});
                   }}
-                  className={`p-3 bg-white border rounded-lg w-full text-gray-700 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none transition ${
+                  className={`p-3 bg-white border rounded-lg w-full text-gray-700 focus:ring-2 focus:ring-[#276265] focus:border-[#276265] outline-none transition ${
                     errors.category ? "border-red-500" : "border-gray-300"
                   }`}
                 >
@@ -322,12 +322,14 @@ const AddFoodForm = () => {
                 <input
                   type="checkbox"
                   checked={availability === "Available"}
-                  onChange={(e) =>
-                    setAvailability(e.target.checked ? "Available" : "Unavailable")
-                  }
+                  onChange={(e) => {
+                    const newAvailability = e.target.checked ? "Available" : "Unavailable";
+                    setAvailability(newAvailability);
+                    toast.info(`Item set to ${newAvailability}`);
+                  }}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-amber-300/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#276265]/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#276265]"></div>
                 <span className="ml-3 text-sm font-medium text-gray-700">
                   {availability === "Available" ? "Available" : "Unavailable"}
                 </span>
@@ -338,7 +340,7 @@ const AddFoodForm = () => {
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">Food Image</label>
               <div className={`border-2 border-dashed rounded-lg p-6 text-center ${
-                errors.imageFile ? "border-red-500" : "border-gray-300 hover:border-amber-400"
+                errors.imageFile ? "border-red-500" : "border-gray-300 hover:border-[#276265]"
               } transition-colors bg-gray-50`}>
                 <input
                   type="file"
@@ -368,22 +370,22 @@ const AddFoodForm = () => {
                   </div>
                 ) : (
                   <label htmlFor="food-image" className="cursor-pointer flex flex-col items-center">
-                    <div className="h-16 w-16 rounded-full bg-amber-100 flex items-center justify-center mb-3 text-amber-500">
+                    <div className="h-16 w-16 rounded-full bg-[#276265]/20 flex items-center justify-center mb-3 text-[#276265]">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     </div>
-                    <span className="text-amber-500 font-medium">Click to upload image</span>
+                    <span className="text-[#276265] font-medium">Click to upload image</span>
                     <span className="text-gray-500 text-xs mt-1">JPG, PNG or GIF</span>
                   </label>
                 )}
                 {uploadProgress > 0 && (
                   <div className="w-full bg-gray-200 rounded-full h-2.5 mt-4">
-                    <div className="bg-amber-500 h-2.5 rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
+                    <div className="bg-[#276265] h-2.5 rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
                     <p className="text-xs text-gray-600 mt-1">{Math.round(uploadProgress)}% uploaded</p>
                   </div>
                 )}
-                <label htmlFor="food-image" className={`${previewURL ? "mt-4" : ""} text-amber-500 hover:text-amber-600 cursor-pointer text-sm inline-block transition-colors`}>
+                <label htmlFor="food-image" className={`${previewURL ? "mt-4" : ""} text-[#276265] hover:text-[#276265]/80 cursor-pointer text-sm inline-block transition-colors`}>
                   {previewURL ? "Change image" : ""}
                 </label>
               </div>
@@ -398,7 +400,7 @@ const AddFoodForm = () => {
                 className={`py-3 px-6 rounded-lg w-full text-white font-medium transition-colors shadow-md ${
                   loading 
                     ? "bg-gray-400 cursor-not-allowed" 
-                    : "bg-amber-500 hover:bg-amber-600"
+                    : "bg-[#262B3E] hover:bg-[#262B3E]/90"
                 }`}
               >
                 {loading ? (

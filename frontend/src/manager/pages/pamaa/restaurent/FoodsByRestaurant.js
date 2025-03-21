@@ -110,13 +110,13 @@ const FoodsByRestaurant = () => {
     <div>
       <ManagerHeader />
       <br/><br/><br/>
-      <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="p-6 bg-[#E9E4E4] min-h-screen">
         <ToastContainer position="top-right" autoClose={3000} />
-        <div className="flex justify-between items-center mb-6 border-b border-amber-300 pb-3">
+        <div className="flex justify-between items-center mb-6 border-b border-[#276265] pb-3">
           <h2 className="text-3xl font-bold text-gray-800">{restaurantName} - Food Menu</h2>
           <button 
             onClick={handleAddFood}
-            className="bg-amber-500 hover:bg-amber-600 text-white font-medium py-2 px-4 rounded-lg shadow transition-colors duration-200 flex items-center"
+            className="bg-[#276265] hover:bg-[#1e4e50] text-white font-medium py-2 px-4 rounded-lg shadow transition-colors duration-200 flex items-center"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -128,7 +128,7 @@ const FoodsByRestaurant = () => {
           {/* Search Input with Icon */}
           <div className="relative flex-1">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#276265]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path 
                   strokeLinecap="round" 
                   strokeLinejoin="round" 
@@ -143,7 +143,7 @@ const FoodsByRestaurant = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 border border-gray-300 p-3 rounded-lg bg-white text-gray-700 
-                       focus:border-amber-400 focus:ring-2 focus:ring-amber-200 focus:outline-none 
+                       focus:border-[#276265] focus:ring-2 focus:ring-[#27626540] focus:outline-none 
                        transition duration-200 ease-in-out h-12 shadow-sm"
             />
           </div>
@@ -151,7 +151,7 @@ const FoodsByRestaurant = () => {
           {/* Category Dropdown with Icon */}
           <div className="relative flex-1">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#276265]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path 
                   strokeLinecap="round" 
                   strokeLinejoin="round" 
@@ -164,7 +164,7 @@ const FoodsByRestaurant = () => {
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
               className="w-full pl-10 pr-8 border border-gray-300 p-3 rounded-lg bg-white text-gray-700 
-                       focus:border-amber-400 focus:ring-2 focus:ring-amber-200 focus:outline-none 
+                       focus:border-[#276265] focus:ring-2 focus:ring-[#27626540] focus:outline-none 
                        appearance-none transition duration-200 ease-in-out h-12 shadow-sm"
             >
               <option value="" className="text-gray-700">All Categories</option>
@@ -179,7 +179,7 @@ const FoodsByRestaurant = () => {
               <option value="beverages" className="text-gray-700">Beverages</option>
             </select>
             {/* Custom dropdown arrow */}
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-amber-500">
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#276265]">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path 
                   strokeLinecap="round" 
@@ -196,7 +196,7 @@ const FoodsByRestaurant = () => {
             <p className="text-gray-600 p-6 bg-white rounded-lg shadow-sm mb-4">No matching food items found.</p>
             <button 
               onClick={handleAddFood}
-              className="bg-amber-500 hover:bg-amber-600 text-white font-medium py-2 px-4 rounded-lg shadow transition-colors duration-200 flex items-center mx-auto"
+              className="bg-[#276265] hover:bg-[#1e4e50] text-white font-medium py-2 px-4 rounded-lg shadow transition-colors duration-200 flex items-center mx-auto"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -222,7 +222,7 @@ const FoodsByRestaurant = () => {
                   </div>
                 )}
                 <p className="text-gray-600 text-center mb-3 text-sm">{food.description}</p>
-                <p className="text-amber-600 font-bold text-lg mb-2">
+                <p className="text-[#276265] font-bold text-lg mb-2">
                   Rs.{food.price.toFixed(2)}
                 </p>
                 <p className="text-xs text-gray-500 mb-1">Category: <span className="text-gray-700">{food.category}</span></p>
@@ -258,8 +258,8 @@ const FoodsByRestaurant = () => {
                   onClick={() => toggleAvailability(food._id, food.availability)}
                   className={`mt-2 w-full ${
                     food.availability === "Available"
-                      ? "bg-amber-100 text-amber-700 hover:bg-amber-200"
-                      : "bg-amber-200 text-amber-800 hover:bg-amber-300"
+                      ? "bg-[#27626530] text-[#276265] hover:bg-[#27626540]"
+                      : "bg-[#27626540] text-[#276265] hover:bg-[#27626550]"
                   } py-1 px-3 rounded text-sm transition-colors shadow-sm`}
                 >
                   {food.availability === "Available"
@@ -275,7 +275,7 @@ const FoodsByRestaurant = () => {
         <div className="fixed bottom-6 right-6 md:hidden">
           <button 
             onClick={handleAddFood}
-            className="bg-amber-500 hover:bg-amber-600 text-white rounded-full p-4 shadow-lg transition-colors duration-200"
+            className="bg-[#276265] hover:bg-[#1e4e50] text-white rounded-full p-4 shadow-lg transition-colors duration-200"
             aria-label="Add New Food Item"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

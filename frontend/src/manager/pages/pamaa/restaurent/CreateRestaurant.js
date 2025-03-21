@@ -372,12 +372,12 @@ const CreateRestaurant = () => {
       <ManagerHeader/>
       <br/><br/>
       <ToastContainer />
-      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-[#E9E4E4] py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-lg shadow-xl overflow-hidden">
-            <div className="bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-8">
+            <div className="bg-gradient-to-r from-[#2C3E50] to-[#34495E] px-6 py-8">
               <h2 className="text-3xl font-bold text-white">Create New Restaurant</h2>
-              <p className="mt-2 text-amber-50">Fill in the details to add a new restaurant to our platform</p>
+              <p className="mt-2 text-gray-200">Fill in the details to add a new restaurant to our platform</p>
               {!userId && (
                 <div className="mt-4 px-4 py-3 rounded-md bg-red-100 border-l-4 border-red-500">
                   <div className="flex items-center">
@@ -412,7 +412,7 @@ const CreateRestaurant = () => {
                       placeholder="Enter restaurant name"
                       className={`appearance-none block w-full px-3 py-2 border ${
                         errors.name ? "border-red-300 ring-1 ring-red-500" : "border-gray-300"
-                      } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500`}
+                      } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#2C3E50] focus:border-[#2C3E50]`}
                     />
                     {errors.name && (
                       <p className="mt-1 text-sm text-red-600">{errors.name}</p>
@@ -434,7 +434,7 @@ const CreateRestaurant = () => {
                       placeholder="10-digit phone number"
                       className={`appearance-none block w-full px-3 py-2 border ${
                         errors.phoneNumber ? "border-red-300 ring-1 ring-red-500" : "border-gray-300"
-                      } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500`}
+                      } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#2C3E50] focus:border-[#2C3E50]`}
                     />
                     {errors.phoneNumber && (
                       <p className="mt-1 text-sm text-red-600">{errors.phoneNumber}</p>
@@ -456,7 +456,7 @@ const CreateRestaurant = () => {
                       placeholder="Full restaurant address"
                       className={`appearance-none block w-full px-3 py-2 border ${
                         errors.location ? "border-red-300 ring-1 ring-red-500" : "border-gray-300"
-                      } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500`}
+                      } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#2C3E50] focus:border-[#2C3E50]`}
                     />
                     {errors.location && (
                       <p className="mt-1 text-sm text-red-600">{errors.location}</p>
@@ -478,7 +478,7 @@ const CreateRestaurant = () => {
                       placeholder="Describe your restaurant: cuisine type, specialties, atmosphere, etc."
                       className={`appearance-none block w-full px-3 py-2 border ${
                         errors.description ? "border-red-300 ring-1 ring-red-500" : "border-gray-300"
-                      } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500`}
+                      } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#2C3E50] focus:border-[#2C3E50]`}
                     />
                     {errors.description && (
                       <p className="mt-1 text-sm text-red-600">{errors.description}</p>
@@ -528,7 +528,7 @@ const CreateRestaurant = () => {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                             <div className="flex text-sm text-gray-600 justify-center">
-                              <label className="relative cursor-pointer bg-white rounded-md font-medium text-amber-600 hover:text-amber-500 focus-within:outline-none">
+                              <label className="relative cursor-pointer bg-white rounded-md font-medium text-[#2C3E50] hover:text-[#34495E] focus-within:outline-none">
                                 <span>Upload a file</span>
                                 <input 
                                   type="file" 
@@ -556,7 +556,7 @@ const CreateRestaurant = () => {
                           <div className="overflow-hidden h-2 text-xs flex rounded bg-gray-200">
                             <div 
                               style={{ width: `${uploadProgress}%` }}
-                              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-amber-500 transition-all duration-300"
+                              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-[#2C3E50] transition-all duration-300"
                             ></div>
                           </div>
                           <div className="text-xs mt-1 text-gray-500 flex justify-between">
@@ -577,7 +577,7 @@ const CreateRestaurant = () => {
                   <button
                     type="button"
                     onClick={addTable}
-                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-amber-600 hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 shadow-sm transition-colors"
+                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-[#2C3E50] hover:bg-[#34495E] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2C3E50] shadow-sm transition-colors"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
@@ -590,7 +590,7 @@ const CreateRestaurant = () => {
                   {formData.tables.map((table, index) => (
                     <div key={index} className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
                       <div className="flex items-center mb-2">
-                        <span className="text-sm font-medium text-gray-700 bg-amber-100 px-2 py-1 rounded-md">
+                        <span className="text-sm font-medium text-gray-700 bg-[#E9E4E4] px-2 py-1 rounded-md">
                           Table Type {index + 1}
                         </span>
                       </div>
@@ -608,7 +608,7 @@ const CreateRestaurant = () => {
                             placeholder="Number of seats"
                             className={`mt-1 block w-full px-3 py-2 border ${
                               errors.tables?.[index]?.seats ? "border-red-300 ring-1 ring-red-500" : "border-gray-300"
-                            } bg-white text-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500`}
+                            } bg-white text-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-[#2C3E50] focus:border-[#2C3E50]`}
                           />
                           {errors.tables?.[index]?.seats && (
                             <p className="mt-1 text-sm text-red-600">{errors.tables[index].seats}</p>
@@ -628,7 +628,7 @@ const CreateRestaurant = () => {
                             placeholder="Available quantity"
                             className={`mt-1 block w-full px-3 py-2 border ${
                               errors.tables?.[index]?.quantity ? "border-red-300 ring-1 ring-red-500" : "border-gray-300"
-                            } bg-white text-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500`}
+                            } bg-white text-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-[#2C3E50] focus:border-[#2C3E50]`}
                           />
                           {errors.tables?.[index]?.quantity && (
                             <p className="mt-1 text-sm text-red-600">{errors.tables[index].quantity}</p>
@@ -660,7 +660,7 @@ const CreateRestaurant = () => {
                 <button
                   type="button"
                   onClick={() => navigate("/myRestaurant")}
-                  className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors"
+                  className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2C3E50] transition-colors"
                 >
                   Cancel
                 </button>
@@ -668,8 +668,8 @@ const CreateRestaurant = () => {
                   type="submit"
                   disabled={isSubmitting}
                   className={`${
-                    isSubmitting ? "bg-amber-400 cursor-not-allowed" : "bg-amber-600 hover:bg-amber-500"
-                  } py-2 px-6 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors`}
+                    isSubmitting ? "bg-[#34495E] cursor-not-allowed" : "bg-[#2C3E50] hover:bg-[#34495E]"
+                  } py-2 px-6 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2C3E50] transition-colors`}
                 >
                   {isSubmitting ? (
                     <div className="flex items-center">
