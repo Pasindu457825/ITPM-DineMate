@@ -7,7 +7,7 @@ import {
   FaGithub,
   FaGamepad,
 } from "react-icons/fa";
-import logo from "../assets/logo/DineMate.png";
+import logo from "../../assets/logo/DineMate.png";
 
 const LINKS = [
   {
