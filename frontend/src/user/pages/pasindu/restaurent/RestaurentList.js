@@ -40,7 +40,7 @@ const RestaurantsList = () => {
   const BackgroundBlogCard = ({ image, title, subtitle, avatar, onClick }) => (
     <Card
       shadow={false}
-      className="relative grid h-[30rem] w-full max-w-[28rem] items-end justify-center overflow-hidden text-center cursor-pointer"
+      className="relative grid h-[28rem] w-full max-w-[20rem] items-end justify-center overflow-hidden text-center cursor-pointer"
       onClick={onClick}
     >
       <CardHeader
@@ -79,7 +79,7 @@ const RestaurantsList = () => {
   );
 
   return (
-    <div className="p-6">
+    <div className="bg-gray-200 pt-6 px-20 min-h-screen w-full">
       <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
         Restaurants List
       </h1>
@@ -106,7 +106,7 @@ const RestaurantsList = () => {
       {filteredRestaurants.length === 0 ? (
         <p className="text-gray-500 text-center">No restaurants found.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {filteredRestaurants.map((restaurant) => (
             <BackgroundBlogCard
               key={restaurant._id}
