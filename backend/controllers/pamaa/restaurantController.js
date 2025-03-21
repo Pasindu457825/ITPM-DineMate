@@ -65,6 +65,38 @@ const getAllRestaurants = async (req, res) => {
   }
 };
 
+// Get all restaurants for a specific manager
+const getAllRestaurantsById = async (req, res) => {
+  try {
+    // Get managerId from query params
+    const managerId = req.query.userId;
+    console.log("Getting restaurants for managerId:", managerId);
+    
+    // Validate managerId
+    if (!managerId) {
+      return res.status(400).json({ message: "Manager ID (userId) is required in query parameters" });
+    }
+    
+    // Check if the user exists
+    const user = await User.findById(managerId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    // If the user is an admin, return all restaurants
+    // Otherwise, return only the restaurants managed by this user
+    const query = user.role === "admin" ? {} : { managerId };
+    
+    const restaurants = await Restaurant.find(query);
+    console.log(`Found ${restaurants.length} restaurants for ${user.role} with ID ${managerId}`);
+    
+    res.json(restaurants);
+  } catch (err) {
+    console.error("Error fetching restaurants:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // Get a single restaurant by ID
 const getRestaurantById = async (req, res) => {
   const { id } = req.params;
@@ -242,4 +274,5 @@ module.exports = {
   updateRestaurant,
   deleteRestaurant,
   toggleRestaurantStatus,
+  getAllRestaurantsById,
 };

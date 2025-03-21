@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { useLoading } from "./Context/LoadingContext"; // Import Loading Context
 import LoadingScreen from "./Components/LoadingScreen"; // ✅ Fixed import path
-import Layout from "./Components/Layout"; // ✅ Correct path
+import Layout from "./user/components/Layout"; // ✅ Correct path
 
 // Pasindu Order
 import HomePage from "./user/pages/pasindu/HomePage";
@@ -36,7 +36,6 @@ import MyProfilePage from "./user/pages/tharusha/MyProfilePage";
 import AdminDashboard from "./admin/pages/tharusha/AdminDashboard";
 import ForgotPasswordPage from "./user/pages/tharusha/ForgotPasswordPage";
 import ResetPasswordOtpPage from "./user/pages/tharusha/ResetPasswordOtpPage";
-
 
 // Pamalka FoodItem
 import AddFood from "./manager/pages/pamaa/foodmenu/AddFood";
@@ -84,6 +83,11 @@ const AppContent = () => {
     };
   }, [location.pathname]);
 
+  // ⛔ Prevent routes/layout from rendering while loading screen is active
+  if (loading || forceLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <>
       {(loading || forceLoading) && <LoadingScreen />}{" "}
@@ -96,7 +100,7 @@ const AppContent = () => {
           <Route path="/add-order-details" element={<AddOrderForm />} />
           {/* <Route path="/display-orders" element={<OrdersList />} /> */}
           <Route path="/update-order/:id" element={<UpdateOrderForm />} />
-          <Route path="/my-orders/:email" element={<ViewMyOrdersPage />} />
+          <Route path="/my-orders/:customerEmail" element={<ViewMyOrdersPage />} />
           <Route path="/order/:id" element={<OrderDetailsPage />} />
           <Route path="/cart" element={<CartPage />} />
           {/* Pasindu Reservation */}
@@ -120,26 +124,11 @@ const AppContent = () => {
           <Route path="/signup/user" element={<UserSignupPage />} />
           <Route path="/signup/manager" element={<ManagerSignupPage />} />
           <Route path="/me" element={<MyProfilePage />} />
-          <Route path="/admindashboard" element={<AdminDashboard />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password-otp" element={<ResetPasswordOtpPage />} />
-        
-          {/* Pamalka Restaurant */}
-          <Route path="/add-restaurant" element={<CreateRestaurant />} />
-          <Route path="/display-restaurant" element={<RestaurantList />} />
-          <Route path="/update-restaurant/:id" element={<UpdateRestaurant />} />
-          <Route path="/managers" element={<Managers />} />
-          <Route path="/myrestaurant" element={<MyRestaurant/>}/>
-          
-          {/* Pamalka FoodItem */}
-          <Route path="/add-food/:restaurantId" element={<AddFood />} />
-          <Route path="/update-food/:id" element={<UpdateFood />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route
-            path="/restaurant/foods/:restaurantId"
-            element={<FoodsByRestaurant />}
-          />{" "}
-          <Route path="/admin/foods/:restaurantId" element={<FoodLists />} />
-
+            path="/reset-password-otp"
+            element={<ResetPasswordOtpPage />}
+          />
           {/* Payment Management (User) */}
           <Route path="/user/payments" element={<UserPayments />} />
           <Route path="/user/payment/create/:id" element={<CreatePayments />} />
@@ -151,21 +140,37 @@ const AppContent = () => {
             path="/user/payment/delete/:id"
             element={<DeleteUserPayment />}
           />
-          {/* Payment Management (Manager) */}
-          <Route path="/manager/payments" element={<ManagerPayments />} />
-          <Route
-            path="/manager/payment/update/:id"
-            element={<UpdateManagerPayment />}
-          />
-          <Route
-            path="/manager/payment/delete/:id"
-            element={<DeleteManagerPayment />}
-          />
-          <Route
-            path="/manager/payment/approve/:id"
-            element={<ApproveManagerPayment />}
-          />
         </Route>
+        {/* Pamalka Restaurant */}
+        <Route path="/add-restaurant" element={<CreateRestaurant />} />
+        <Route path="/display-restaurant" element={<RestaurantList />} />
+        <Route path="/update-restaurant/:id" element={<UpdateRestaurant />} />
+        {/* Pamalka FoodItem */}
+        <Route path="/add-food/:restaurantId" element={<AddFood />} />
+        <Route path="/update-food/:id" element={<UpdateFood />} />
+        <Route
+          path="/restaurant/foods/:restaurantId"
+          element={<FoodsByRestaurant />}
+        />{" "}
+        <Route path="/admin/foods/:restaurantId" element={<FoodLists />} />
+        <Route path="/managers" element={<Managers />} />
+        <Route path="/myrestaurant" element={<MyRestaurant />} />
+        {/* Tharusha Authentication */}
+        <Route path="/admindashboard" element={<AdminDashboard />} />
+        {/* Payment Management (Manager) */}
+        <Route path="/manager/payments" element={<ManagerPayments />} />
+        <Route
+          path="/manager/payment/update/:id"
+          element={<UpdateManagerPayment />}
+        />
+        <Route
+          path="/manager/payment/delete/:id"
+          element={<DeleteManagerPayment />}
+        />
+        <Route
+          path="/manager/payment/approve/:id"
+          element={<ApproveManagerPayment />}
+        />
       </Routes>
     </>
   );
