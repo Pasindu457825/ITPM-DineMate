@@ -100,7 +100,7 @@ const AppContent = () => {
           <Route path="/add-order-details" element={<AddOrderForm />} />
           {/* <Route path="/display-orders" element={<OrdersList />} /> */}
           <Route path="/update-order/:id" element={<UpdateOrderForm />} />
-          <Route path="/my-orders/:email" element={<ViewMyOrdersPage />} />
+          <Route path="/my-orders/:customerEmail" element={<ViewMyOrdersPage />} />
           <Route path="/order/:id" element={<OrderDetailsPage />} />
           <Route path="/cart" element={<CartPage />} />
           {/* Pasindu Reservation */}
