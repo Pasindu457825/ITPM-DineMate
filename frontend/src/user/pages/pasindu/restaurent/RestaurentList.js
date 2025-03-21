@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Typography,
+  Avatar,
+} from "@material-tailwind/react";
 
 const RestaurantsList = () => {
   const [restaurants, setRestaurants] = useState([]);
-  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -13,7 +20,10 @@ const RestaurantsList = () => {
         const response = await axios.get(
           "http://localhost:5000/api/ITPM/restaurants/get-all-restaurants"
         );
-        setRestaurants(response.data);
+        const enabledRestaurants = response.data.filter(
+          (restaurant) => restaurant.isEnabled
+        );
+        setRestaurants(enabledRestaurants);
       } catch (error) {
         console.error("Error fetching restaurants:", error);
       }
@@ -22,9 +32,50 @@ const RestaurantsList = () => {
     fetchRestaurants();
   }, []);
 
-  // Filter restaurants based on search query
   const filteredRestaurants = restaurants.filter((restaurant) =>
     restaurant.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // 👇 Embedded version of the BackgroundBlogCard component
+  const BackgroundBlogCard = ({ image, title, subtitle, avatar, onClick }) => (
+    <Card
+      shadow={false}
+      className="relative grid h-[30rem] w-full max-w-[28rem] items-end justify-center overflow-hidden text-center cursor-pointer"
+      onClick={onClick}
+    >
+      <CardHeader
+        floated={false}
+        shadow={false}
+        color="transparent"
+        style={{
+          backgroundImage: `url(${image})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+        className="absolute inset-0 m-0 h-full w-full rounded-none"
+      >
+        <div className="absolute inset-0 h-full w-full bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
+      </CardHeader>
+      <CardBody className="relative py-14 px-6 md:px-12">
+        <Typography
+          variant="h4"
+          color="white"
+          className="mb-2 font-semibold leading-snug"
+        >
+          {title}
+        </Typography>
+        <Typography variant="h6" className="mb-4 text-gray-300">
+          {subtitle}
+        </Typography>
+        <Avatar
+          size="xl"
+          variant="circular"
+          alt={title}
+          className="border-2 border-white mx-auto"
+          src={avatar}
+        />
+      </CardBody>
+    </Card>
   );
 
   return (
@@ -57,32 +108,19 @@ const RestaurantsList = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredRestaurants.map((restaurant) => (
-            <div
+            <BackgroundBlogCard
               key={restaurant._id}
-              className="bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out overflow-hidden cursor-pointer"
-              onClick={() => navigate(`/user/restaurent-details/${restaurant._id}`)}
-            >
-              {/* Restaurant Image */}
-              <img
-                src={restaurant.image || "https://via.placeholder.com/300"}
-                alt={restaurant.name}
-                className="w-full h-48 object-cover"
-              />
-
-              {/* Restaurant Details */}
-              <div className="p-4">
-                <h2 className="text-xl font-semibold text-gray-800">
-                  {restaurant.name}
-                </h2>
-                <p className="text-gray-600 truncate">{restaurant.description}</p>
-                <p className="text-gray-700">
-                  <strong>Location:</strong> {restaurant.location}
-                </p>
-                <p className="text-gray-700">
-                  <strong>Phone:</strong> {restaurant.phoneNumber}
-                </p>
-              </div>
-            </div>
+              image={restaurant.image || "https://via.placeholder.com/300"}
+              title={restaurant.name}
+              subtitle={restaurant.location}
+              avatar={
+                restaurant.image ||
+                "https://images.unsplash.com/photo-1633332755192-727a05c4013d?auto=format&fit=crop&w=1480&q=80"
+              }
+              onClick={() =>
+                navigate(`/user/restaurent-details/${restaurant._id}`)
+              }
+            />
           ))}
         </div>
       )}
