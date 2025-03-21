@@ -49,7 +49,7 @@ const RestaurantsList = () => {
         return;
       }
       
-      const response = await axios.get(`http://localhost:5000/api/ITPM/restaurants/get-all-restaurants?userId=${userId}`);
+      const response = await axios.get(`http://localhost:5000/api/ITPM/restaurants/get-all-restaurants-id?userId=${userId}`);
       setRestaurants(response.data);
       setFilteredRestaurants(response.data);
       setLoading(false);
