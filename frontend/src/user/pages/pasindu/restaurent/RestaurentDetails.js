@@ -216,7 +216,7 @@ const RestaurantDetails = () => {
           <div className="md:w-5/6 relative min-h-screen">
             <div className="fixed top-4 right-4 z-50">
               {!cartOpen && ( // ✅ Hide when cart is open
-                <div className="fixed top-4 right-4 z-50">
+                <div className="fixed top-[70px] right-4 z-50">
                   <button
                     onClick={() => setCartOpen(true)}
                     className="bg-amber-700 text-black w-12 h-12 flex items-center justify-center text-sm font-semibold rounded-full shadow-lg hover:bg-amber-900 transition border border-white"
@@ -224,8 +224,7 @@ const RestaurantDetails = () => {
                     <FontAwesomeIcon
                       icon={faShoppingCart}
                       className="text-black w-5 h-5"
-                    />{" "}
-                    {/* ✅ Black Icon */}
+                    />
                   </button>
                 </div>
               )}

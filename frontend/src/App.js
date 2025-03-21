@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { useLoading } from "./Context/LoadingContext"; // Import Loading Context
 import LoadingScreen from "./Components/LoadingScreen"; // ✅ Fixed import path
-import Layout from "./Components/Layout"; // ✅ Correct path
+import Layout from "./user/components/Layout"; // ✅ Correct path
 
 // Pasindu Order
 import HomePage from "./user/pages/pasindu/HomePage";
@@ -82,6 +82,11 @@ const AppContent = () => {
       clearTimeout(minLoadTime);
     };
   }, [location.pathname]);
+
+  // ⛔ Prevent routes/layout from rendering while loading screen is active
+  if (loading || forceLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <>
