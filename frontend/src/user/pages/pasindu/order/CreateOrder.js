@@ -194,7 +194,7 @@ const AddOrderForm = () => {
       sessionStorage.removeItem("cart"); // Clear sessionStorage after order
 
       if (isOnlinePayment) {
-        navigate("/payment-page", {
+        navigate(`/my-orders/${customerEmail}`, {
           state: { orderId: response.data._id, total },
         });
       } else {
