@@ -83,6 +83,11 @@ const AppContent = () => {
     };
   }, [location.pathname]);
 
+  // ⛔ Prevent routes/layout from rendering while loading screen is active
+  if (loading || forceLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <>
       {(loading || forceLoading) && <LoadingScreen />}{" "}
