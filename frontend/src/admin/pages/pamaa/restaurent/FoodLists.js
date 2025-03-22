@@ -108,7 +108,7 @@ const FoodLists = () => {
             />
           </div>
 
-          <div className="relative w-full sm:w-64">
+          <div className="relative w-full sm:w-64 pt-2">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Filter size={18} className="text-indigo-400" />
             </div>
