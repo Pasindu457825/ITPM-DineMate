@@ -443,19 +443,22 @@ const RestaurantDetails = () => {
                         </CardBody>
 
                         <CardFooter className="flex items-center justify-between">
-                          <Typography color="white" className="font-medium">
-                            Rs.{" "}
-                            {(
-                              (selectedPortionSizes[food._id] === "Large"
-                                ? food.price * 1.5
-                                : food.price) || 0
-                            ).toFixed(2)}
-                          </Typography>
+                          <div className="flex items-center gap-1 text-white font-medium">
+                            <span>Rs.</span>
+                            <span>
+                              {(
+                                (selectedPortionSizes[food._id] === "Large"
+                                  ? food.price * 1.5
+                                  : food.price) || 0
+                              ).toFixed(2)}
+                            </span>
+                          </div>
 
                           {food.availability !== "Available" ? (
-                            <span className="text-red-400 font-semibold p-3">
-                              ❌ Unavailable
-                            </span>
+                            <div className="flex items-center gap-1 text-red-400 font-semibold p-3">
+                              <span>❌</span>
+                              <span>Unavailable</span>
+                            </div>
                           ) : (
                             <Button
                               onClick={() => handleAddToCart(food)}
