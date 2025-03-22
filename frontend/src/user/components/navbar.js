@@ -103,7 +103,7 @@ export function UserNavbar() {
       <div className="flex items-center justify-between w-full">
         {/* Logo + Brand Name */}
         <div className="flex items-center">
-          <img src={Logo} alt="DineMate Logo" className="h-10 w-10 mr-2" />
+          {/* <img src={Logo} alt="DineMate Logo" className="h-10 w-10 mr-2" /> */}
           <Typography
             as="a"
             href="#"
