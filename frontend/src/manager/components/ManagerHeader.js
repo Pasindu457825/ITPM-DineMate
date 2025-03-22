@@ -135,7 +135,7 @@ const ManagerHeader = ({ username = "Manager" }) => {
                     </p>
                   </div>
                   <Link
-                    to="/my-restaurant"
+                    to="/myrestaurant"
                     onClick={() => setIsRestaurantDropdownOpen(false)}
                     className="flex items-center px-4 py-2 hover:bg-[#276265]/30 transition-colors duration-200"
                   >
@@ -145,7 +145,7 @@ const ManagerHeader = ({ username = "Manager" }) => {
                     My Restaurants
                   </Link>
                   <Link
-                    to="/create-restaurant"
+                    to="/add-restaurant"
                     onClick={() => setIsRestaurantDropdownOpen(false)}
                     className="flex items-center px-4 py-2 hover:bg-[#276265]/30 transition-colors duration-200"
                   >
@@ -205,7 +205,7 @@ const ManagerHeader = ({ username = "Manager" }) => {
                   <p className="text-sm text-gray-400">manager@dinemate.com</p>
                 </div>
                 <Link
-                  to="/profile"
+                  to="/me"
                   onClick={() => setIsProfileOpen(false)}
                   className="flex items-center px-4 py-2.5 hover:bg-[#276265]/20 transition-colors duration-200"
                 >
@@ -213,7 +213,7 @@ const ManagerHeader = ({ username = "Manager" }) => {
                   <span>My Profile</span>
                 </Link>
                 <Link
-                  to="/settings"
+                  to="/me"
                   onClick={() => setIsProfileOpen(false)}
                   className="flex items-center px-4 py-2.5 hover:bg-[#276265]/20 transition-colors duration-200"
                 >
