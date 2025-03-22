@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import deleteOrder from "../order/DeleteOrder"; // Ensure correct path
+import Swal from "sweetalert2";
 
 const OrderDetailsPage = () => {
   const location = useLocation();
@@ -18,12 +19,26 @@ const OrderDetailsPage = () => {
   }
 
   const handleDeleteOrder = () => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this order?"
-    );
-    if (confirmDelete) {
-      deleteOrder(order.orderId, navigate); // Pass navigate function
-    }
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This action will permanently delete the order!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteOrder(order.orderId, navigate);
+        Swal.fire({
+          title: "Deleted!",
+          text: "The order has been deleted.",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+    });
   };
 
   return (

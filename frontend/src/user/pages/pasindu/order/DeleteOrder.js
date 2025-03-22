@@ -7,8 +7,6 @@ const deleteOrder = async (orderId, navigate) => {
     );
 
     if (response.status === 200) {
-      console.log("Order deleted successfully");
-      alert("Order has been deleted successfully.");
       navigate(-1); // Navigate back after deletion
     } else {
       console.error("Failed to delete order");
@@ -18,6 +16,5 @@ const deleteOrder = async (orderId, navigate) => {
     alert("Error deleting order. Please try again.");
   }
 };
-
 
 export default deleteOrder;
