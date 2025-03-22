@@ -20,7 +20,7 @@ import {
   ChevronDownIcon,
   Bars2Icon,
 } from "@heroicons/react/24/solid";
-import Logo from "../../assets/logo/DineMate.png";
+import Logo from "../../assets/logo/logo.png";
 
 // Profile Menu Items
 const profileMenuItems = [
