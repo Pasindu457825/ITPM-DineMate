@@ -272,11 +272,13 @@ const RestaurantDetails = () => {
                 <div className="relative w-40">
                   <div className="relative flex items-center bg-gray-400 rounded-full p-1 cursor-pointer overflow-hidden">
                     {/* Sliding background indicator */}
-                    <div
-                      className={`absolute top-1 bottom-1 w-1/2 bg-amber-700 rounded-full transition-all duration-300 ${
-                        orderType === "Dine-in" ? "left-0" : "left-1/2"
-                      }`}
-                    />
+                    {orderType && (
+                      <div
+                        className={`absolute top-1 bottom-1 w-1/2 bg-amber-700 rounded-full transition-all duration-300 ${
+                          orderType === "Dine-in" ? "left-0" : "left-1/2"
+                        }`}
+                      />
+                    )}
 
                     {/* Dine-in button */}
                     <div
