@@ -64,7 +64,7 @@ const AddOrderForm = () => {
     const savedCart = sessionStorage.getItem("cart")
       ? JSON.parse(sessionStorage.getItem("cart"))
       : cart;
-      console.log("✅ Items from sessionStorage:", savedCart);
+    console.log("✅ Items from sessionStorage:", savedCart);
     setItems(
       savedCart.map((item) => ({
         name: item.name,
@@ -192,13 +192,13 @@ const AddOrderForm = () => {
       console.log("✅ Order Created:", response.data);
 
       sessionStorage.removeItem("cart"); // Clear sessionStorage after order
-      console.log("Fetching food items for restaurant:", restaurantId);
+
       if (isOnlinePayment) {
-        navigate("/payment-page", {
+        navigate(`/my-orders/${customerEmail}`, {
           state: { orderId: response.data._id, total },
         });
       } else {
-        navigate("/success-page");
+        navigate(`/my-orders/${customerEmail}`);
       }
     } catch (error) {
       console.error(
@@ -261,7 +261,10 @@ const AddOrderForm = () => {
         {/* Left Section - Reservation & Order Info (1/3) */}
         <div className="md:w-2/3 ">
           <div className="py-3 px-8 bg-white shadow-2xl rounded-2xl">
-            <h2 className="text-3xl font-bold my-6 text-gray-800 text-center">
+            <h2
+              className="text-5xl font-bold my-6 text-gray-800 text-center "
+              style={{ fontFamily: "'Dancing Script', cursive" }}
+            >
               Order Items
             </h2>
             <div className="space-y-4">

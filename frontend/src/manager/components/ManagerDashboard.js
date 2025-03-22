@@ -68,7 +68,7 @@ const ManagerDashboard = () => {
             <p className="text-gray-300 mb-6">Track and manage food orders</p>
             <button 
               className="w-full py-2 px-4 bg-[#276265] text-white rounded-lg hover:bg-[#276265]/80 transition-colors duration-300 flex items-center justify-center"
-              onClick={() => navigate('/orders')}
+              onClick={() => navigate("/OrderRestaurent")}
             >
               View Orders
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">

@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import logo from "../assets/logo/DineMate.png";
 import picture1 from "../assets/logo/Picture1.png";
 
 const LoadingScreen = () => {

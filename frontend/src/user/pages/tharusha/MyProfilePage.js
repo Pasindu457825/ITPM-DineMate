@@ -1,33 +1,27 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
   Typography,
   Button,
   Input,
   Spinner,
-  IconButton,
   Dialog,
   DialogHeader,
   DialogBody,
   DialogFooter,
 } from "@material-tailwind/react";
-import { Cog6ToothIcon } from "@heroicons/react/24/outline";
-
 import { useNavigate } from "react-router-dom";
 
 const MyProfilePage = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
+
   const [formData, setFormData] = useState({
     fname: "",
     lname: "",
     email: "",
     phone_no: "",
+    website: "",
   });
 
   // Notification / error states
@@ -57,10 +51,11 @@ const MyProfilePage = () => {
 
         setUser(res.data);
         setFormData({
-          fname: res.data.fname,
-          lname: res.data.lname,
-          email: res.data.email,
-          phone_no: res.data.phone_no,
+          fname: res.data.fname || "",
+          lname: res.data.lname || "",
+          email: res.data.email || "",
+          phone_no: res.data.phone_no || "",
+          website: res.data.website || "",
         });
       } catch (error) {
         console.error("Error fetching profile:", error.response?.data || error.message);
@@ -78,9 +73,22 @@ const MyProfilePage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Show a temporary notification
+  const showNotification = (message, type) => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => {
+      setNotification({ show: false, message: "", type: "" });
+    }, 3000);
+  };
+
   // Save changes to profile
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Confirm dialog before saving
+    const confirmed = window.confirm("Are you sure you want to change your profile information?");
+    if (!confirmed) return;
+
     setLoading(true);
 
     try {
@@ -91,14 +99,17 @@ const MyProfilePage = () => {
         return;
       }
 
+      // Since email is disabled in the UI, we won't send it if you truly want no changes to email
+      const { fname, lname, phone_no } = formData;
+      const updateData = { fname, lname, phone_no };
+
       const res = await axios.put(
         `http://localhost:5000/api/ITPM/users/${user._id}`,
-        formData,
+        updateData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setUser(res.data);
-      setIsEditing(false);
       showNotification("Profile updated successfully!", "success");
     } catch (error) {
       console.error("Error updating profile:", error.response?.data || error.message);
@@ -108,17 +119,7 @@ const MyProfilePage = () => {
     }
   };
 
-  // Show a temporary notification
-  const showNotification = (message, type) => {
-    setNotification({ show: true, message, type });
-    setTimeout(() => {
-      setNotification({ show: false, message: "", type: "" });
-    }, 3000);
-  };
-
-  // =========================
   // Delete Account Functions
-  // =========================
   const openDeleteModal = () => {
     setShowDeleteModal(true);
     setDeleteInput("");
@@ -139,22 +140,25 @@ const MyProfilePage = () => {
         return;
       }
 
-      // Call DELETE endpoint (make sure your backend supports this)
+      // Call DELETE endpoint
       await axios.delete(`http://localhost:5000/api/ITPM/users/${user._id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      showNotification("Account deleted successfully!", "success");
+      // Show black notification bar for delete
+      showNotification("Account deleted successfully!", "delete");
+
       // Clear local storage
       localStorage.removeItem("token");
       localStorage.removeItem("role");
       localStorage.removeItem("userId");
 
-      // Redirect to homepage or login
+      // Redirect to login
       navigate("/login");
     } catch (error) {
       console.error("Error deleting account:", error);
-      showNotification("Failed to delete account", "error");
+      // Show black notification bar for delete
+      showNotification("Failed to delete account", "delete");
     } finally {
       setDeleting(false);
       setShowDeleteModal(false);
@@ -163,7 +167,7 @@ const MyProfilePage = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gradient-to-b from-gray-900 to-gray-800">
+      <div className="flex justify-center items-center h-screen bg-white">
         <Spinner className="h-12 w-12 text-blue-500" />
       </div>
     );
@@ -171,238 +175,245 @@ const MyProfilePage = () => {
 
   if (!user) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gradient-to-b from-gray-900 to-gray-800">
-        <Card className="w-96 bg-gray-800 text-white border border-gray-700 shadow-2xl">
-          <CardBody>
-            <Typography variant="h5" className="text-center text-red-400">
-              Not logged in
-            </Typography>
-            <Typography className="text-center mt-4 text-gray-300">
-              Please login to view your profile
-            </Typography>
-          </CardBody>
-          <CardFooter className="pt-0">
+      <div className="flex justify-center items-center h-screen bg-white">
+        <div className="w-96 p-6 bg-white shadow-md rounded-lg">
+          <Typography variant="h5" className="text-center text-red-500">
+            Not logged in
+          </Typography>
+          <Typography className="text-center mt-4 text-gray-600">
+            Please login to view your profile
+          </Typography>
+          <div className="mt-4">
             <Button
               fullWidth
-              className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/20"
+              className="bg-blue-gray-900 text-white"
               onClick={() => navigate("/login")}
             >
               Go to Login
             </Button>
-          </CardFooter>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-8 px-4">
+    <div className="min-h-screen bg-white flex">
       {/* Notification Banner */}
       {notification.show && (
         <div
           className={`fixed top-4 right-4 p-4 rounded-lg z-50 shadow-lg ${
-            notification.type === "success" ? "bg-green-600" : "bg-red-600"
-          } animate-fade-in-right`}
+            notification.type === "delete"
+              ? "bg-black"
+              : notification.type === "success"
+              ? "bg-blue-gray-900"
+              : "bg-red-500"
+          } text-white`}
         >
-          <Typography className="text-white">{notification.message}</Typography>
+          {notification.message}
         </div>
       )}
 
       {/* Delete Confirmation Modal */}
-      <Dialog
-        open={showDeleteModal}
-        handler={closeDeleteModal}
-        className="bg-gray-900 bg-opacity-90 backdrop-blur-sm border border-gray-700"
-      >
-        <DialogHeader className="text-white">Delete Account</DialogHeader>
-        <DialogBody className="text-white">
-          <Typography>
+      <Dialog open={showDeleteModal} handler={closeDeleteModal}  className="bg-gray-900 bg-opacity-90 backdrop-blur-sm border border-gray-700">
+        <DialogHeader  className="text-white">Delete Account</DialogHeader>
+        <DialogBody>
+          <Typography  className="text-white">
             Are you sure you want to delete your account? This action is permanent.
           </Typography>
-          <Typography className="mt-4">
-            To confirm, type <span className="text-red-400 font-bold">deleteme</span> below:
+          <Typography  className="mt-4 text-white">
+            To confirm, type <span className="text-red-500 font-bold">deleteme</span> below:
           </Typography>
           <Input
             variant="outlined"
             color="red"
             label="Type 'deleteme' to confirm"
-            className="mt-2 bg-gray-800 text-white"
+            className="mt-2"
             value={deleteInput}
             onChange={(e) => setDeleteInput(e.target.value)}
           />
         </DialogBody>
         <DialogFooter className="space-x-2">
-          <Button variant="text" onClick={closeDeleteModal} className="text-gray-400">
+          <Button variant="text" onClick={closeDeleteModal} className="text-gray-500">
             Cancel
           </Button>
           <Button
             color="red"
             onClick={handleDeleteAccount}
             disabled={deleteInput !== "deleteme" || deleting}
-            className="shadow-lg shadow-red-500/20"
           >
             {deleting ? "Deleting..." : "Delete Account"}
           </Button>
         </DialogFooter>
       </Dialog>
 
-      <div className="w-full max-w-md relative">
-        {/* Settings Button (positioned absolutely outside the card) */}
-        <div className="absolute -right-4 -top-4 z-10">
-          <IconButton
-            size="lg"
-            className="rounded-full bg-blue-500 shadow-lg shadow-blue-500/40 hover:shadow-blue-500/60 hover:scale-105 transition-all"
-            onClick={openDeleteModal}
-          >
-            <Cog6ToothIcon className="h-6 w-6 text-white" />
-          </IconButton>
-        </div>
-
-        <Card className="w-full bg-gray-800 text-white shadow-2xl border border-gray-700 overflow-hidden">
-          <CardHeader
-            variant="gradient"
-            className="h-52 flex flex-col justify-end items-center mb-4 bg-gradient-to-r from-blue-700 via-indigo-600 to-purple-600"
-          >
-            <div className="h-24 w-24 rounded-full bg-gray-100 mb-2 flex items-center justify-center overflow-hidden border-4 border-white shadow-xl">
-              <Typography variant="h1" className="text-gray-700">
-                {user.fname?.charAt(0)}{user.lname?.charAt(0)}
-              </Typography>
-            </div>
-            <Typography variant="h4" className="text-white mb-2">
-              {!isEditing ? `${user.fname} ${user.lname}` : "Edit Profile"}
+      {/* Sidebar */}
+      <div className="w-80 bg-white border-r border-gray-200">
+        <div className="p-6 flex flex-col items-center">
+          <div className="h-24 w-24 rounded-full bg-gray-200 mb-4 flex items-center justify-center overflow-hidden">
+            <Typography variant="h1" className="text-gray-600">
+              {user?.fname?.charAt(0)}
+              {user?.lname?.charAt(0)}
             </Typography>
-            <Typography className="text-blue-100 opacity-80">
-              {!isEditing ? user.role : "Update your information"}
-            </Typography>
-          </CardHeader>
-
-          <CardBody className="p-6">
-            {isEditing ? (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-4">
-                  <div>
-                    <Typography className="text-gray-400 mb-2">First Name</Typography>
-                    <Input
-                      type="text"
-                      name="fname"
-                      value={formData.fname}
-                      onChange={handleChange}
-                      className="text-white !border-gray-500 focus:!border-blue-500"
-                      labelProps={{ className: "hidden" }}
-                      containerProps={{ className: "bg-gray-700 rounded" }}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Typography className="text-gray-400 mb-2">Last Name</Typography>
-                    <Input
-                      type="text"
-                      name="lname"
-                      value={formData.lname}
-                      onChange={handleChange}
-                      className="text-white !border-gray-500 focus:!border-blue-500"
-                      labelProps={{ className: "hidden" }}
-                      containerProps={{ className: "bg-gray-700 rounded" }}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Typography className="text-gray-400 mb-2">Email</Typography>
-                    <Input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="text-white !border-gray-500 focus:!border-blue-500"
-                      labelProps={{ className: "hidden" }}
-                      containerProps={{ className: "bg-gray-700 rounded" }}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Typography className="text-gray-400 mb-2">Phone Number</Typography>
-                    <Input
-                      type="text"
-                      name="phone_no"
-                      value={formData.phone_no}
-                      onChange={handleChange}
-                      className="text-white !border-gray-500 focus:!border-blue-500"
-                      labelProps={{ className: "hidden" }}
-                      containerProps={{ className: "bg-gray-700 rounded" }}
-                      required
-                    />
-                  </div>
-                </div>
-              </form>
-            ) : (
-              <div className="space-y-4">
-                <div className="bg-gray-700 p-4 rounded-xl hover:bg-gray-650 transition-colors">
-                  <Typography className="text-sm text-gray-400 mb-1">First Name</Typography>
-                  <Typography className="text-gray-100 font-medium">{user.fname}</Typography>
-                </div>
-                <div className="bg-gray-700 p-4 rounded-xl hover:bg-gray-650 transition-colors">
-                  <Typography className="text-sm text-gray-400 mb-1">Last Name</Typography>
-                  <Typography className="text-gray-100 font-medium">{user.lname}</Typography>
-                </div>
-                <div className="bg-gray-700 p-4 rounded-xl hover:bg-gray-650 transition-colors">
-                  <Typography className="text-sm text-gray-400 mb-1">Email</Typography>
-                  <Typography className="text-gray-100 font-medium">{user.email}</Typography>
-                </div>
-                <div className="bg-gray-700 p-4 rounded-xl hover:bg-gray-650 transition-colors">
-                  <Typography className="text-sm text-gray-400 mb-1">Phone Number</Typography>
-                  <Typography className="text-gray-100 font-medium">{user.phone_no}</Typography>
-                </div>
-                <div className="bg-gray-700 p-4 rounded-xl hover:bg-gray-650 transition-colors">
-                  <Typography className="text-sm text-gray-400 mb-1">User Role</Typography>
-                  <div className="flex items-center">
-                    <span className="inline-block w-3 h-3 bg-green-500 rounded-full mr-2 animate-pulse"></span>
-                    <Typography className="text-gray-100 font-medium capitalize">
-                      {user.role}
-                    </Typography>
-                  </div>
-                </div>
-              </div>
-            )}
-          </CardBody>
-
-          <CardFooter className="p-6 pt-0">
-            {isEditing ? (
-              <div className="flex gap-4">
-                <Button
-                  fullWidth
-                  className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/20"
-                  onClick={handleSubmit}
-                  disabled={loading}
+          </div>
+          <ul className="w-full space-y-1 mt-6">
+            <li>
+              <button className="w-full text-left p-3 flex items-center bg-blue-gray-900 text-white rounded-md">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-3"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
                 >
-                  {loading ? <Spinner className="h-4 w-4 mx-auto" /> : "Save Changes"}
-                </Button>
-                <Button
-                  fullWidth
-                  className="bg-gray-600 hover:bg-gray-700 shadow-lg"
-                  onClick={() => {
-                    setIsEditing(false);
-                    setFormData({
-                      fname: user.fname,
-                      lname: user.lname,
-                      email: user.email,
-                      phone_no: user.phone_no,
-                    });
-                  }}
+                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                </svg>
+                Dashboard
+              </button>
+            </li>
+            <li>
+              <button className="w-full text-left p-3 flex items-center bg-blue-gray-900 text-white rounded-md">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-3"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
                 >
-                  Cancel
-                </Button>
-              </div>
-            ) : (
-              <Button
-                fullWidth
-                className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/20 transform hover:scale-105 transition-all"
-                onClick={() => setIsEditing(true)}
+                  <path
+                    fillRule="evenodd"
+                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Account Details
+              </button>
+            </li>
+            <li>
+              <button className="w-full text-left p-3 flex items-center bg-blue-gray-900 text-white rounded-md">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-3"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Change Password
+              </button>
+            </li>
+            <li>
+              <button className="w-full text-left p-3 flex items-center bg-blue-gray-900 text-white rounded-md">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-3"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Logout
+              </button>
+            </li>
+            <li className="pt-4">
+              <button
+                onClick={openDeleteModal}
+                className="w-full text-left p-3 flex items-center bg-blue-gray-900 text-white rounded-md"
               >
-                Edit Profile
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-3"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Delete Account
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 p-8">
+        <h1 className="text-3xl font-semibold text-gray-800 mb-8">Account Settings</h1>
+
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-6 max-w-2xl">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+              <Input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full"
+                placeholder="Email address"
+                required
+                disabled  // <--- Email is not editable
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">First name</label>
+              <Input
+                type="text"
+                name="fname"
+                value={formData.fname}
+                onChange={handleChange}
+                className="w-full"
+                placeholder="First name"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Last name</label>
+              <Input
+                type="text"
+                name="lname"
+                value={formData.lname}
+                onChange={handleChange}
+                className="w-full"
+                placeholder="Last name"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <Input
+                type="text"
+                name="phone_no"
+                value={formData.phone_no}
+                onChange={handleChange}
+                className="w-full"
+                placeholder="Phone number"
+              />
+            </div>
+
+            <div className="pt-4">
+              <Button
+                type="submit"
+                className="bg-blue-gray-900 text-white"
+                disabled={loading}
+              >
+                {loading ? <Spinner className="h-4 w-4 mx-auto" /> : "Save Changes"}
               </Button>
-            )}
-          </CardFooter>
-        </Card>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   );

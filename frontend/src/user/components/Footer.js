@@ -7,7 +7,7 @@ import {
   FaGithub,
   FaGamepad,
 } from "react-icons/fa";
-import logo from "../../assets/logo/DineMate.png";
+import logo from "../../assets/logo/logo.png";
 
 const LINKS = [
   {
@@ -46,7 +46,7 @@ const Footer = () => {
             <img
               src={logo} // ✅ Replace with your actual logo path
               alt="Restaurant Logo"
-              className="h-8 w-auto"
+              className="h-20 w-20"
             />
             <Typography variant="h5" className="font-bold text-white">
               Restaurant Shop Management
