@@ -99,7 +99,7 @@ export function UserNavbar() {
   ];
 
   return (
-    <Navbar className="w-full max-w-full bg-blue-gray-900 bg-opacity-100 border-none fixed top-0 left-0 z-50 shadow-md px-4 py-4">
+    <Navbar className="w-full max-w-full bg-blue-gray-900 bg-opacity-100 border-none fixed top-0 left-0 z-50 shadow-md px-4 py-4 rounded-t-none">
       <div className="flex items-center justify-between w-full">
         {/* Logo + Brand Name */}
         <div className="flex items-center">
@@ -130,17 +130,16 @@ export function UserNavbar() {
         {/* Right-side Buttons + Profile Menu (Desktop) */}
         <div className="hidden lg:flex items-center gap-4">
           {/* Login Button */}
-         <Button
-   onClick={() => navigate("/login")}
-  variant="filled"
-  className="bg-amber-700 text-black hover:text-white
+          <Button
+            onClick={() => navigate("/login")}
+            variant="filled"
+            className="bg-amber-700 text-black hover:text-white
              px-4 py-2 rounded-lg transition duration-300
              ease-in-out transform hover:scale-105 hover:shadow-lg 
              hover:bg-amber-800"
->
-  Login
-</Button>
-
+          >
+            Login
+          </Button>
 
           {/* Logout Button */}
           {/* <Button
