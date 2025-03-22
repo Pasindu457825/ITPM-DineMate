@@ -11,17 +11,17 @@ const HomePage = () => {
   // Carousel images
   const carouselImages = [
     {
-      url: "https://source.unsplash.com/random/1600x900/?restaurant",
+      url: "https://res.cloudinary.com/dh4gisxcw/image/upload/v1742647946/res1_zjxqol.jpg",
       title: "Discover the Best Dining Experience",
       description: "Manage your restaurant with our powerful tools"
     },
     {
-      url: "https://source.unsplash.com/random/1600x900/?food",
+      url: "https://res.cloudinary.com/dh4gisxcw/image/upload/v1742647946/res2_gieiuw.jpg",
       title: "Streamline Your Operations",
       description: "Handle reservations, orders, and more with ease"
     },
     {
-      url: "https://source.unsplash.com/random/1600x900/?chef",
+      url: "https://res.cloudinary.com/dh4gisxcw/image/upload/v1742647946/res3_dpotxa.jpg",
       title: "Grow Your Business",
       description: "Analytics and insights to help you thrive"
     }
@@ -126,31 +126,21 @@ const HomePage = () => {
             <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center px-4 text-center">
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{slide.title}</h1>
               <p className="text-xl text-white mb-8">{slide.description}</p>
-              <Button
+              {/* <Button
                 color="amber"
                 size="lg"
                 className="mt-4"
                 onClick={() => navigate("/restaurants")}
               >
                 Explore Restaurants
-              </Button>
+              </Button> */}
             </div>
           </div>
         ))}
 
         {/* Carousel Controls */}
-        <button
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-black bg-opacity-50 text-white"
-          onClick={prevSlide}
-        >
-          <ArrowLeftCircle size={30} />
-        </button>
-        <button
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full bg-black bg-opacity-50 text-white"
-          onClick={nextSlide}
-        >
-          <ArrowRightCircle size={30} />
-        </button>
+       
+       
 
         {/* Carousel Indicators */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
@@ -266,7 +256,7 @@ const HomePage = () => {
               </p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="mx-auto bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mb-4">
+              {/* <div className="mx-auto bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mb-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-8 w-8 text-blue-600"
@@ -281,7 +271,7 @@ const HomePage = () => {
                     d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
                   />
                 </svg>
-              </div>
+              </div> */}
               <h3 className="text-xl font-semibold mb-2">Secure Payments</h3>
               <p className="text-gray-600">
                 Fast and secure payment processing for all your orders
