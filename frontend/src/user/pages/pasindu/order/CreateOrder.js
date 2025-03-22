@@ -15,6 +15,7 @@ const AddOrderForm = () => {
   const [isOnlinePayment, setIsOnlinePayment] = useState(false);
   const [reservationDetails, setReservationDetails] = useState(null);
   const [foodItems, setFoodItems] = useState([]);
+  const [authError, setAuthError] = useState(false);
 
   const { restaurantId, restaurantName, cart, orderType, reservationId } =
     location.state || {
@@ -153,6 +154,11 @@ const AddOrderForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!user) {
+      setAuthError(true);
+      return;
+    }
+
     if (
       !customerName ||
       !customerEmail ||
@@ -180,8 +186,6 @@ const AddOrderForm = () => {
         : { reservationId: "No", status: "Unavailable" },
     };
 
-    console.log("🚀 Sending Order Data:", orderData);
-
     try {
       const response = await axios.post(
         "http://localhost:5000/api/ITPM/orders/add-order",
@@ -189,9 +193,7 @@ const AddOrderForm = () => {
         { headers: { "Content-Type": "application/json" } }
       );
 
-      console.log("✅ Order Created:", response.data);
-
-      sessionStorage.removeItem("cart"); // Clear sessionStorage after order
+      sessionStorage.removeItem("cart");
 
       if (isOnlinePayment) {
         navigate(`/my-orders/${customerEmail}`, {
@@ -254,6 +256,28 @@ const AddOrderForm = () => {
       return updatedItems;
     });
   };
+
+  if (authError) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-gray-100/80">
+        <div className="bg-white shadow-xl rounded-2xl p-10 w-full max-w-md text-center border border-gray-200">
+          <div className="mb-4 text-yellow-500 text-5xl">⚠️</div>
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">
+            Login Required
+          </h2>
+          <p className="text-gray-600 mb-6">
+            You must be logged in to create a reservation.
+          </p>
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-amber-700 hover:bg-amber-600 text-black font-semibold py-2 px-6 rounded-md shadow-md transition duration-200 w-full"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-200 pt-6 px-20 min-h-screen w-full">
@@ -493,6 +517,7 @@ const AddOrderForm = () => {
                 </div>
 
                 {/* Place Order Button */}
+                {/* Place Order or Login Prompt */}
                 <button
                   type="submit"
                   className="w-full bg-blue-gray-900 text-white p-3 rounded-lg font-semibold text-lg hover:bg-blue-gray-600 transition duration-200"
