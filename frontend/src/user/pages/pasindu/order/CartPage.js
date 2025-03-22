@@ -41,7 +41,7 @@ const CartSidebar = ({
 
   return (
     <div
-      className={`fixed top-0 right-0 h-full w-[350px] bg-white shadow-2xl transform ${
+      className={`fixed top-20 right-0 h-full w-[350px] bg-white shadow-2xl transform ${
         cartOpen ? "translate-x-0" : "translate-x-full"
       } transition-transform duration-300 ease-in-out flex flex-col rounded-l-2xl`}
     >
