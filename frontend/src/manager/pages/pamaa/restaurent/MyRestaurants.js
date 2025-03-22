@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
 import ManagerHeader from "../../../components/ManagerHeader";
 import ManagerFooter from "../../../components/ManagerFooter";
 
@@ -60,34 +61,56 @@ const MyRestaurant = () => {
     }
   };
 
-  const handleDeleteRestaurant = async (id) => {
-    if (window.confirm("Are you sure you want to delete this restaurant?")) {
-      try {
-        const userId = localStorage.getItem("userId");
-        // Include userId in the request for authorization
-        await axios.delete(`http://localhost:5000/api/ITPM/restaurants/delete-restaurant/${id}?userId=${userId}`);
-        toast.success("Restaurant deleted successfully", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          icon: "🗑️",
-        });
-        fetchRestaurants(); // Refresh the list
-      } catch (error) {
-        console.error("Error deleting restaurant:", error);
-        toast.error(error.response?.data?.message || "Failed to delete restaurant", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
+  const handleDeleteRestaurant = async (id, restaurantName) => {
+    // Use SweetAlert2 instead of window.confirm
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `You are about to delete "${restaurantName}". This action cannot be undone!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3D4359',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true,
+      focusCancel: true,
+      customClass: {
+        container: 'swal-container',
+        popup: 'rounded-xl',
+        title: 'text-[#262B3E] font-bold',
+        content: 'text-[#404040]'
       }
-    }
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const userId = localStorage.getItem("userId");
+          // Include userId in the request for authorization
+          await axios.delete(`http://localhost:5000/api/ITPM/restaurants/delete-restaurant/${id}?userId=${userId}`);
+          
+          // Show success message with SweetAlert2
+          Swal.fire({
+            title: 'Deleted!',
+            text: 'Restaurant has been deleted successfully.',
+            icon: 'success',
+            confirmButtonColor: '#276265',
+            timer: 2000,
+            timerProgressBar: true
+          });
+          
+          fetchRestaurants(); // Refresh the list
+        } catch (error) {
+          console.error("Error deleting restaurant:", error);
+          
+          // Show error message with SweetAlert2
+          Swal.fire({
+            title: 'Error!',
+            text: error.response?.data?.message || "Failed to delete restaurant",
+            icon: 'error',
+            confirmButtonColor: '#276265'
+          });
+        }
+      }
+    });
   };
 
   return (
@@ -269,7 +292,7 @@ const MyRestaurant = () => {
                           Add Foods
                         </button>
                         <button 
-                          onClick={() => handleDeleteRestaurant(restaurant._id)} 
+                          onClick={() => handleDeleteRestaurant(restaurant._id, restaurant.name)} 
                           className="flex-1 inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
                         >
                           <svg className="mr-1.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
