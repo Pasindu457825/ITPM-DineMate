@@ -12,7 +12,7 @@ const UserSignupPage = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [step, setStep] = useState(1); // For multi-step form
+  const [step, setStep] = useState(1);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -21,21 +21,63 @@ const UserSignupPage = () => {
   };
 
   const validateStep1 = () => {
+    // First and Last Name Validation
+    const nameRegex = /^[a-zA-Z\s-]+$/;
     if (!formData.fname.trim() || !formData.lname.trim()) {
       setError("Please enter both first and last name");
+      return false;
+    }
+    if (formData.fname.length < 2 || formData.fname.length > 50) {
+      setError("First name must be between 2 and 50 characters");
+      return false;
+    }
+    if (!nameRegex.test(formData.fname)) {
+      setError("First name can only contain letters, spaces, and hyphens");
+      return false;
+    }
+    if (formData.lname.length < 2 || formData.lname.length > 50) {
+      setError("Last name must be between 2 and 50 characters");
+      return false;
+    }
+    if (!nameRegex.test(formData.lname)) {
+      setError("Last name can only contain letters, spaces, and hyphens");
       return false;
     }
     return true;
   };
 
   const validateStep2 = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Email and Password Validation
+    const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    const pwdRegex = /^(?=.*[A-Za-z])(?=.*\d).+$/;
+    
     if (!emailRegex.test(formData.email)) {
       setError("Please enter a valid email address");
       return false;
     }
     if (formData.pwd.length < 6) {
       setError("Password must be at least 6 characters long");
+      return false;
+    }
+    if (!pwdRegex.test(formData.pwd)) {
+      setError("Password must contain at least one letter and one number");
+      return false;
+    }
+    return true;
+  };
+
+  const validateStep3 = () => {
+    // Phone Number Validation (Sri Lankan format)
+    const phoneRegex = /^(?:\+94\d{9}|0\d{9})$/;
+    if (!phoneRegex.test(formData.phone_no)) {
+      setError("Please enter a valid Sri Lankan phone number (e.g., 0712345678 or +94712345678)");
+      return false;
+    }
+    const cleaned = formData.phone_no.startsWith('+94') 
+      ? formData.phone_no.replace('+94', '') 
+      : formData.phone_no.replace(/^0/, '');
+    if (cleaned.length !== 9) {
+      setError("Phone number must be exactly 10 digits including the mobile code");
       return false;
     }
     return true;
@@ -57,9 +99,7 @@ const UserSignupPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const phoneRegex = /^\d{10}$/;
-    if (!phoneRegex.test(formData.phone_no)) {
-      setError("Please enter a valid 10-digit phone number");
+    if (!validateStep3()) {
       return;
     }
     
@@ -119,38 +159,36 @@ const UserSignupPage = () => {
                 <label htmlFor="fname" className="block text-sm font-medium text-gray-700">
                   First Name
                 </label>
-                <div className="mt-1">
-                  <input
-                    id="fname"
-                    name="fname"
-                    type="text"
-                    autoComplete="given-name"
-                    required
-                    value={formData.fname}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
-                    placeholder="John"
-                  />
-                </div>
+                <input
+                  id="fname"
+                  name="fname"
+                  type="text"
+                  autoComplete="given-name"
+                  required
+                  value={formData.fname}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                  placeholder="John"
+                />
+                <p className="mt-1 text-xs text-gray-500">2-50 characters, letters only</p>
               </div>
               
               <div>
                 <label htmlFor="lname" className="block text-sm font-medium text-gray-700">
                   Last Name
                 </label>
-                <div className="mt-1">
-                  <input
-                    id="lname"
-                    name="lname"
-                    type="text"
-                    autoComplete="family-name"
-                    required
-                    value={formData.lname}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
-                    placeholder="Doe"
-                  />
-                </div>
+                <input
+                  id="lname"
+                  name="lname"
+                  type="text"
+                  autoComplete="family-name"
+                  required
+                  value={formData.lname}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                  placeholder="Doe"
+                />
+                <p className="mt-1 text-xs text-gray-500">2-50 characters, letters only</p>
               </div>
               
               <div className="pt-4">
@@ -171,39 +209,35 @@ const UserSignupPage = () => {
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Email Address
                 </label>
-                <div className="mt-1">
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
-                    placeholder="you@example.com"
-                  />
-                </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                  placeholder="you@example.com"
+                />
               </div>
               
               <div>
                 <label htmlFor="pwd" className="block text-sm font-medium text-gray-700">
                   Password
                 </label>
-                <div className="mt-1">
-                  <input
-                    id="pwd"
-                    name="pwd"
-                    type="password"
-                    autoComplete="new-password"
-                    required
-                    value={formData.pwd}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
-                    placeholder="••••••••"
-                  />
-                </div>
-                <p className="mt-1 text-xs text-gray-500">Password must be at least 6 characters</p>
+                <input
+                  id="pwd"
+                  name="pwd"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={formData.pwd}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                  placeholder="••••••••"
+                />
+                <p className="mt-1 text-xs text-gray-500">Min 6 characters, must include a letter and number</p>
               </div>
               
               <div className="flex space-x-4 pt-4">
@@ -231,20 +265,18 @@ const UserSignupPage = () => {
                 <label htmlFor="phone_no" className="block text-sm font-medium text-gray-700">
                   Phone Number
                 </label>
-                <div className="mt-1">
-                  <input
-                    id="phone_no"
-                    name="phone_no"
-                    type="tel"
-                    autoComplete="tel"
-                    required
-                    value={formData.phone_no}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
-                    placeholder="1234567890"
-                  />
-                </div>
-                <p className="mt-1 text-xs text-gray-500">Enter a 10-digit phone number</p>
+                <input
+                  id="phone_no"
+                  name="phone_no"
+                  type="tel"
+                  autoComplete="tel"
+                  required
+                  value={formData.phone_no}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                  placeholder="0712345678 or +94712345678"
+                />
+                <p className="mt-1 text-xs text-gray-500">Enter a 10-digit Sri Lankan number</p>
               </div>
               
               <div className="flex space-x-4 pt-4">
