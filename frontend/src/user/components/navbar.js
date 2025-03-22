@@ -95,7 +95,6 @@ export function UserNavbar() {
   const navItems = [
     { label: "Home", href: "/" },
     { label: "Restaurants", href: "/user/display-restaurent" },
-    { label: "Reservation", href: "#" },
     { label: "About Us", href: "#" },
     { label: "Our Services", href: "#" },
   ];
