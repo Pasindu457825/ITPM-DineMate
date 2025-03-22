@@ -15,8 +15,7 @@ import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Swal from 'sweetalert2';
-
+import Swal from "sweetalert2";
 
 const RestaurantDetails = () => {
   const { id: restaurantId } = useParams();
@@ -94,55 +93,79 @@ const RestaurantDetails = () => {
     }
 
     const quantity = quantities[food._id] || 1;
-    const portionSize = selectedPortionSizes[food._id] || "Medium"; // Default to Medium
+    const portionSize = selectedPortionSizes[food._id] || "Medium";
     const basePrice = parseFloat(food.price) || 0;
-    const finalPrice = portionSize === "Large" ? basePrice * 1.5 : basePrice; // Increase price by 50% for Large
+    const finalPrice = portionSize === "Large" ? basePrice * 1.5 : basePrice;
 
     let storedCart = JSON.parse(localStorage.getItem("cart")) || [];
 
-    if (storedCart.length > 0 && storedCart[0].restaurantId !== restaurantId) {
-      const confirmClear = window.confirm(
-        "You already have items from another restaurant. Do you want to clear the cart and add items from this restaurant?"
+    // ✅ Define this helper function inside
+    const addItemToCart = () => {
+      const existingItemIndex = storedCart.findIndex(
+        (item) => item._id === food._id && item.portionSize === portionSize
       );
 
-      if (confirmClear) {
-        storedCart = [];
-        setCart([]);
-        localStorage.setItem("cart", JSON.stringify([]));
-        toast.info("Cart cleared, adding new items.");
+      let updatedCart;
+
+      if (existingItemIndex !== -1) {
+        updatedCart = storedCart.map((item, index) =>
+          index === existingItemIndex
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        );
       } else {
-        return;
+        updatedCart = [
+          ...storedCart,
+          {
+            ...food,
+            quantity,
+            portionSize,
+            price: finalPrice,
+            restaurantId,
+            orderType,
+          },
+        ];
       }
+
+      setCart(updatedCart);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      toast.success(`✅ Added "${food.name}" (${portionSize}) to the cart!`);
+    };
+
+    if (storedCart.length > 0 && storedCart[0].restaurantId !== restaurantId) {
+      Swal.fire({
+        title: "Switch Restaurant?",
+        text: "You already have items from another restaurant. Do you want to clear the cart and add items from this one?",
+        icon: "warning",
+        showDenyButton: true,
+        confirmButtonColor: "#d33",
+        denyButtonColor: "#3085d6",
+        confirmButtonText: "Yes, clear it",
+        denyButtonText: "No",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          storedCart = [];
+          setCart([]);
+          localStorage.setItem("cart", JSON.stringify([]));
+          toast.info("Cart cleared, adding new items.");
+
+          addItemToCart(); // ✅ Add after confirmation
+        } else if (result.isDenied) {
+          Swal.fire({
+            icon: "info",
+            title: "Action Cancelled",
+            text: "Cart was not modified.",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        }
+      });
+
+      return; // Stop further execution until user responds
     }
 
-    const existingItemIndex = storedCart.findIndex(
-      (item) => item._id === food._id && item.portionSize === portionSize
-    );
-    let updatedCart;
-
-    if (existingItemIndex !== -1) {
-      updatedCart = storedCart.map((item, index) =>
-        index === existingItemIndex
-          ? { ...item, quantity: item.quantity + quantity }
-          : item
-      );
-    } else {
-      updatedCart = [
-        ...storedCart,
-        {
-          ...food,
-          quantity,
-          portionSize,
-          price: finalPrice,
-          restaurantId,
-          orderType,
-        },
-      ];
-    }
-
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-    toast.success(`✅ Added "${food.name}" (${portionSize}) to the cart!`);
+    // ✅ No conflict — add directly
+    addItemToCart();
   };
 
   if (!restaurant)
