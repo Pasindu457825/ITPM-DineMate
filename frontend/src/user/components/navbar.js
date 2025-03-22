@@ -44,6 +44,7 @@ function ProfileMenu({ items }) {
           <MenuItem
             key={idx}
             onClick={onClick}
+          
             className="flex items-center gap-2 mb-1 rounded-md px-3 py-2
                        transition duration-300 ease-in-out transform
                        hover:bg-amber-700 hover:text-white hover:scale-105 hover:shadow-lg"
@@ -83,7 +84,7 @@ export function UserNavbar() {
   // Profile menu items
   // =========================
   const profileMenuItems = [
-    { label: "My Profile" },
+    { label: "My Profile" , href:"/me",onClick: () => navigate("/me") },
     { label: "Logout", onClick: handleLogout }, // <--- added Logout item
   ];
 
@@ -103,7 +104,7 @@ export function UserNavbar() {
       <div className="flex items-center justify-between w-full">
         {/* Logo + Brand Name */}
         <div className="flex items-center">
-          <img src={Logo} alt="DineMate Logo" className="h-10 w-10 mr-2" />
+          {/* <img src={Logo} alt="DineMate Logo" className="h-10 w-10 mr-2" /> */}
           <Typography
             as="a"
             href="#"
