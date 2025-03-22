@@ -10,7 +10,7 @@ import {
   MenuItem,
   Avatar,
 } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Logo from "../../assets/logo/logo.png";
 
 // =========================
@@ -44,7 +44,6 @@ function ProfileMenu({ items }) {
           <MenuItem
             key={idx}
             onClick={onClick}
-          
             className="flex items-center gap-2 mb-1 rounded-md px-3 py-2
                        transition duration-300 ease-in-out transform
                        hover:bg-amber-700 hover:text-white hover:scale-105 hover:shadow-lg"
@@ -65,6 +64,8 @@ function ProfileMenu({ items }) {
 export function UserNavbar() {
   const [isNavOpen, setIsNavOpen] = React.useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   // =========================
   // Logout handler
@@ -84,7 +85,7 @@ export function UserNavbar() {
   // Profile menu items
   // =========================
   const profileMenuItems = [
-    { label: "My Profile" , href:"/me",onClick: () => navigate("/me") },
+    { label: "My Profile", href: "/me", onClick: () => navigate("/me") },
     { label: "Logout", onClick: handleLogout }, // <--- added Logout item
   ];
 
@@ -93,7 +94,7 @@ export function UserNavbar() {
   // =========================
   const navItems = [
     { label: "Home", href: "/" },
-    { label: "Restaurants", href: "user/display-restaurent" },
+    { label: "Restaurants", href: "/user/display-restaurent" },
     { label: "Reservation", href: "#" },
     { label: "About Us", href: "#" },
     { label: "Our Services", href: "#" },
@@ -121,7 +122,11 @@ export function UserNavbar() {
             <a
               key={label}
               href={href}
-              className="text-white font-medium transition-colors hover:text-amber-700"
+              className={`font-medium transition duration-300 ease-in-out ${
+                currentPath === href
+                  ? "text-amber-500 font-semibold underline underline-offset-4"
+                  : "text-white hover:text-amber-500"
+              }`}
             >
               {label}
             </a>
