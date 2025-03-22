@@ -54,15 +54,15 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
-      <div className="w-full max-w-md p-8 space-y-8 bg-gray-800 rounded-lg shadow-2xl">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-white">Welcome Back</h1>
-          <p className="mt-2 text-gray-300">Sign in to your restaurant account</p>
+          <h1 className="text-4xl font-bold text-gray-800">Welcome Back</h1>
+          <p className="mt-2 text-gray-600">Sign in to your restaurant account</p>
         </div>
         
         {error && (
-          <div className="p-3 text-sm text-red-200 bg-red-900 bg-opacity-25 rounded-md">
+          <div className="p-3 text-sm text-red-700 bg-red-100 rounded-md">
             {error}
           </div>
         )}
@@ -70,7 +70,7 @@ const LoginPage = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email Address
               </label>
               <div className="mt-1">
@@ -82,7 +82,7 @@ const LoginPage = () => {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
                   placeholder="your.email@example.com"
                 />
               </div>
@@ -90,11 +90,11 @@ const LoginPage = () => {
             
             <div>
               <div className="flex items-center justify-between">
-                <label htmlFor="pwd" className="block text-sm font-medium text-gray-300">
+                <label htmlFor="pwd" className="block text-sm font-medium text-gray-700">
                   Password
                 </label>
                 <div className="text-sm">
-                  <a href="forgot-password" className="text-blue-400 hover:text-blue-300">
+                  <a href="forgot-password" className="text-blue-600 hover:text-blue-800">
                     Forgot password?
                   </a>
                 </div>
@@ -108,7 +108,7 @@ const LoginPage = () => {
                   required
                   value={formData.pwd}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
                   placeholder="••••••••"
                 />
               </div>
@@ -119,7 +119,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-800 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+              className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
                 isLoading ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
@@ -139,9 +139,9 @@ const LoginPage = () => {
         </form>
         
         <div className="text-center mt-4">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-600">
             Don't have an account?{" "}
-            <a href="/signup/user" className="text-blue-400 hover:text-blue-300">
+            <a href="/signup/user" className="text-blue-600 hover:text-blue-800">
               Create an account
             </a>
           </p>

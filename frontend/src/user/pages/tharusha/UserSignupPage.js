@@ -82,32 +82,32 @@ const UserSignupPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
-      <div className="w-full max-w-md p-8 space-y-8 bg-gray-800 rounded-lg shadow-2xl">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-gray-100">
+      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-white">Create Your Account</h1>
-          <p className="mt-2 text-gray-300">Join our restaurant community</p>
+          <h1 className="text-3xl font-bold text-gray-800">Create Your Account</h1>
+          <p className="mt-2 text-gray-600">Join our restaurant community</p>
         </div>
         
         {/* Progress indicator */}
         <div className="flex items-center justify-center mb-8">
           <div className="flex items-center">
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full ${step >= 1 ? 'bg-blue-700' : 'bg-gray-600'}`}>
+            <div className={`flex items-center justify-center w-8 h-8 rounded-full ${step >= 1 ? 'bg-blue-600' : 'bg-gray-300'}`}>
               <span className="text-white">1</span>
             </div>
-            <div className={`w-12 h-1 ${step >= 2 ? 'bg-blue-700' : 'bg-gray-600'}`}></div>
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full ${step >= 2 ? 'bg-blue-700' : 'bg-gray-600'}`}>
+            <div className={`w-12 h-1 ${step >= 2 ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
+            <div className={`flex items-center justify-center w-8 h-8 rounded-full ${step >= 2 ? 'bg-blue-600' : 'bg-gray-300'}`}>
               <span className="text-white">2</span>
             </div>
-            <div className={`w-12 h-1 ${step >= 3 ? 'bg-blue-700' : 'bg-gray-600'}`}></div>
-            <div className={`flex items-center justify-center w-8 h-8 rounded-full ${step >= 3 ? 'bg-blue-700' : 'bg-gray-600'}`}>
+            <div className={`w-12 h-1 ${step >= 3 ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
+            <div className={`flex items-center justify-center w-8 h-8 rounded-full ${step >= 3 ? 'bg-blue-600' : 'bg-gray-300'}`}>
               <span className="text-white">3</span>
             </div>
           </div>
         </div>
         
         {error && (
-          <div className="p-3 text-sm text-red-200 bg-red-900 bg-opacity-25 rounded-md">
+          <div className="p-3 text-sm text-red-700 bg-red-100 rounded-md">
             {error}
           </div>
         )}
@@ -116,7 +116,7 @@ const UserSignupPage = () => {
           {step === 1 && (
             <div className="space-y-4">
               <div>
-                <label htmlFor="fname" className="block text-sm font-medium text-gray-300">
+                <label htmlFor="fname" className="block text-sm font-medium text-gray-700">
                   First Name
                 </label>
                 <div className="mt-1">
@@ -128,14 +128,14 @@ const UserSignupPage = () => {
                     required
                     value={formData.fname}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                    className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
                     placeholder="John"
                   />
                 </div>
               </div>
               
               <div>
-                <label htmlFor="lname" className="block text-sm font-medium text-gray-300">
+                <label htmlFor="lname" className="block text-sm font-medium text-gray-700">
                   Last Name
                 </label>
                 <div className="mt-1">
@@ -147,7 +147,7 @@ const UserSignupPage = () => {
                     required
                     value={formData.lname}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                    className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
                     placeholder="Doe"
                   />
                 </div>
@@ -157,7 +157,7 @@ const UserSignupPage = () => {
                 <button
                   type="button"
                   onClick={nextStep}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-800 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   Next
                 </button>
@@ -168,7 +168,7 @@ const UserSignupPage = () => {
           {step === 2 && (
             <div className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-300">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Email Address
                 </label>
                 <div className="mt-1">
@@ -180,14 +180,14 @@ const UserSignupPage = () => {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                    className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
                     placeholder="you@example.com"
                   />
                 </div>
               </div>
               
               <div>
-                <label htmlFor="pwd" className="block text-sm font-medium text-gray-300">
+                <label htmlFor="pwd" className="block text-sm font-medium text-gray-700">
                   Password
                 </label>
                 <div className="mt-1">
@@ -199,25 +199,25 @@ const UserSignupPage = () => {
                     required
                     value={formData.pwd}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                    className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
                     placeholder="••••••••"
                   />
                 </div>
-                <p className="mt-1 text-xs text-gray-400">Password must be at least 6 characters</p>
+                <p className="mt-1 text-xs text-gray-500">Password must be at least 6 characters</p>
               </div>
               
               <div className="flex space-x-4 pt-4">
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="w-1/2 flex justify-center py-3 px-4 border border-gray-600 rounded-lg shadow-sm text-gray-300 bg-transparent hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                  className="w-1/2 flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                 >
                   Back
                 </button>
                 <button
                   type="button"
                   onClick={nextStep}
-                  className="w-1/2 flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-800 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="w-1/2 flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   Next
                 </button>
@@ -228,7 +228,7 @@ const UserSignupPage = () => {
           {step === 3 && (
             <div className="space-y-4">
               <div>
-                <label htmlFor="phone_no" className="block text-sm font-medium text-gray-300">
+                <label htmlFor="phone_no" className="block text-sm font-medium text-gray-700">
                   Phone Number
                 </label>
                 <div className="mt-1">
@@ -240,25 +240,25 @@ const UserSignupPage = () => {
                     required
                     value={formData.phone_no}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 text-gray-200 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                    className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
                     placeholder="1234567890"
                   />
                 </div>
-                <p className="mt-1 text-xs text-gray-400">Enter a 10-digit phone number</p>
+                <p className="mt-1 text-xs text-gray-500">Enter a 10-digit phone number</p>
               </div>
               
               <div className="flex space-x-4 pt-4">
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="w-1/2 flex justify-center py-3 px-4 border border-gray-600 rounded-lg shadow-sm text-gray-300 bg-transparent hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                  className="w-1/2 flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                 >
                   Back
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`w-1/2 flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-800 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                  className={`w-1/2 flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
                     isLoading ? "opacity-70 cursor-not-allowed" : ""
                   }`}
                 >
@@ -280,9 +280,9 @@ const UserSignupPage = () => {
         </form>
         
         <div className="text-center mt-4">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-600">
             Already have an account?{" "}
-            <Link to="/login" className="text-blue-400 hover:text-blue-300">
+            <Link to="/login" className="text-blue-600 hover:text-blue-800">
               Sign in
             </Link>
           </p>
