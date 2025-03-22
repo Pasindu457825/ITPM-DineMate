@@ -8,6 +8,7 @@ const CreateReservation = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const { state } = location || {};
+  const [authError, setAuthError] = useState(false);
 
   const [restaurant, setRestaurant] = useState(null);
   const tableImage = "/img/table.png"; // Replace with your table image URL
@@ -102,24 +103,26 @@ const CreateReservation = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("token"); // Get token from localStorage
+        const token = localStorage.getItem("token");
         if (!token) {
-          console.log("No token found. User might not be logged in.");
+          console.log("No token found.");
+          setAuthError(true); // 👈 show message instead of immediate redirect
           return;
         }
 
-        // Send token in Authorization header
         const res = await axios.get("http://localhost:5000/api/ITPM/users/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+
         setUser(res.data);
       } catch (error) {
         console.error(
           "Error fetching profile:",
           error.response?.data || error.message
         );
+        setAuthError(true); // 👈 set auth error if fetching fails
       }
     };
 
@@ -139,9 +142,29 @@ const CreateReservation = () => {
     }
   }, [user, state]);
 
-  if (!user) {
-    return <div>Loading or not logged in...</div>;
+  if (authError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+        <div className="bg-white shadow-xl rounded-2xl p-10 w-full max-w-md text-center border border-gray-200">
+          <div className="mb-4 text-yellow-500 text-5xl">⚠️</div>
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">
+            Login Required
+          </h2>
+          <p className="text-gray-600 mb-6">
+            You must be logged in to create a reservation.
+          </p>
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-amber-700 hover:bg-amber-600 text-black font-semibold py-2 px-6 rounded-md shadow-md transition duration-200 w-full"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
   }
+
+  if (!restaurant) return null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -249,6 +272,16 @@ const CreateReservation = () => {
     },
     {}
   );
+
+  if (!restaurant) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 text-center">
+        <p className="text-xl text-gray-700 font-medium">
+          Loading restaurant details...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-200 p-4">
