@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import EmptyCartImg from '../../../../assets/img/emptycart.gif';
 
 const CartSidebar = ({
   cartOpen,
@@ -41,7 +42,7 @@ const CartSidebar = ({
 
   return (
     <div
-      className={`fixed top-0 right-0 h-full w-[350px] bg-white shadow-2xl transform ${
+      className={`fixed top-20 right-0 h-[calc(100vh-5rem)] w-[320px] bg-white shadow-2xl transform ${
         cartOpen ? "translate-x-0" : "translate-x-full"
       } transition-transform duration-300 ease-in-out flex flex-col rounded-l-2xl`}
     >
@@ -59,9 +60,16 @@ const CartSidebar = ({
       {/* Cart Content */}
       <div className="flex-1 p-6 overflow-y-auto">
         {cart.length === 0 ? (
-          <p className="text-gray-500 text-center text-lg">
-            Your cart is empty.
-          </p>
+          <div className="flex flex-col items-center justify-center h-full">
+            <img
+              src={EmptyCartImg}
+              alt="Empty cart"
+              className="w-24 h-24 opacity-75 mb-4"
+            />
+            <p className="text-gray-500 text-center text-lg font-medium">
+              Your cart is empty.
+            </p>
+          </div>
         ) : (
           <>
             {cart.map((item) => (
@@ -126,8 +134,9 @@ const CartSidebar = ({
       </div>
 
       {/* Checkout Button */}
+      {/* Checkout Button */}
       {cart.length > 0 && (
-        <div className="p-6 border-t shadow-md bg-gray-100 rounded-b-2xl">
+        <div className="p-4 border-t shadow-md bg-gray-100 rounded-b-2xl">
           <button
             onClick={() => {
               if (!orderType) {
@@ -136,6 +145,8 @@ const CartSidebar = ({
                 );
                 return;
               }
+
+              sessionStorage.setItem("cart", JSON.stringify(cart));
 
               navigate("/add-order-details", {
                 state: {
@@ -150,7 +161,7 @@ const CartSidebar = ({
                 },
               });
             }}
-            className="w-full bg-amber-700 text-white text-lg px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-amber-900 transition"
+            className="w-full bg-amber-700 text-white text-md px-4 py-2 rounded-lg font-semibold shadow-md hover:bg-amber-800 transition"
           >
             Proceed to Checkout
           </button>
