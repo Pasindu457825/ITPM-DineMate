@@ -27,6 +27,10 @@ import UpdateReservationForm from "./user/pages/pasindu/reservation/UpdateReserv
 import RestaurentList from "./user/pages/pasindu/restaurent/RestaurentList";
 import RestaurentDetails from "./user/pages/pasindu/restaurent/RestaurentDetails";
 
+// Pasindu manager order
+import RestaurantOrders from "./manager/pages/pasindu/MyRestaurantOrders";
+import OrderRestaurent from "./manager/pages/pasindu/OrderRestaurent";
+
 // Tharusha Authentication
 import LoginPage from "./user/pages/tharusha/LoginPage";
 import UserSignupPage from "./user/pages/tharusha/UserSignupPage";
@@ -100,7 +104,10 @@ const AppContent = () => {
           <Route path="/add-order-details" element={<AddOrderForm />} />
           {/* <Route path="/display-orders" element={<OrdersList />} /> */}
           <Route path="/update-order/:id" element={<UpdateOrderForm />} />
-          <Route path="/my-orders/:customerEmail" element={<ViewMyOrdersPage />} />
+          <Route
+            path="/my-orders/:customerEmail"
+            element={<ViewMyOrdersPage />}
+          />
           <Route path="/order/:id" element={<OrderDetailsPage />} />
           <Route path="/cart" element={<CartPage />} />
           {/* Pasindu Reservation */}
@@ -141,6 +148,13 @@ const AppContent = () => {
             element={<DeleteUserPayment />}
           />
         </Route>
+        {/* pasindu manager order */}
+        <Route
+          path="/restaurant-orders/:restaurantId"
+          element={<RestaurantOrders />}
+        />
+        <Route path="/OrderRestaurent" element={<OrderRestaurent />} />
+        
         {/* Pamalka Restaurant */}
         <Route path="/add-restaurant" element={<CreateRestaurant />} />
         <Route path="/display-restaurant" element={<RestaurantList />} />

@@ -261,7 +261,10 @@ const AddOrderForm = () => {
         {/* Left Section - Reservation & Order Info (1/3) */}
         <div className="md:w-2/3 ">
           <div className="py-3 px-8 bg-white shadow-2xl rounded-2xl">
-            <h2 className="text-3xl font-bold my-6 text-gray-800 text-center">
+            <h2
+              className="text-5xl font-bold my-6 text-gray-800 text-center "
+              style={{ fontFamily: "'Dancing Script', cursive" }}
+            >
               Order Items
             </h2>
             <div className="space-y-4">
