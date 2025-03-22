@@ -160,15 +160,7 @@ const HomePage = () => {
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-gray-800">Featured Restaurants</h2>
-          <Button
-            color="blue"
-            variant="text"
-            className="flex items-center gap-2"
-            onClick={() => navigate("/restaurants")}
-          >
-            View All
-            <ArrowRight size={20} />
-          </Button>
+         
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">

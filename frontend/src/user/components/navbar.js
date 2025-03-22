@@ -91,8 +91,8 @@ export function UserNavbar() {
   // Desktop nav items
   // =========================
   const navItems = [
-    { label: "Home", href: "#" },
-    { label: "Restaurants", href: "#" },
+    { label: "Home", href: "/" },
+    { label: "Restaurants", href: "user/display-restaurent" },
     { label: "Reservation", href: "#" },
     { label: "About Us", href: "#" },
     { label: "Our Services", href: "#" },
@@ -141,7 +141,7 @@ export function UserNavbar() {
           </Button>
 
           {/* Logout Button */}
-          <Button
+          {/* <Button
             variant="filled"
             onClick={handleLogout}
             className="bg-amber-700 text-black hover:text-white
@@ -150,7 +150,7 @@ export function UserNavbar() {
                        hover:bg-amber-800"
           >
             Logout
-          </Button>
+          </Button> */}
 
           {/* Profile Menu (Avatar Dropdown) */}
           <ProfileMenu items={profileMenuItems} />
