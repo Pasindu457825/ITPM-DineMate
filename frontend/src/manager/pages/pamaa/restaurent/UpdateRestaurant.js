@@ -283,7 +283,7 @@ const UpdateRestaurant = () => {
               Update Restaurant
             </h1>
             <button
-              onClick={() => navigate("/display-restaurant")}
+              onClick={() => navigate("/myrestaurant")}
               className="flex items-center px-4 py-2 text-sm font-medium text-white bg-[#3D5A73] border border-gray-300 rounded-md hover:bg-[#2D4A63] transition-colors"
             >
               <svg
