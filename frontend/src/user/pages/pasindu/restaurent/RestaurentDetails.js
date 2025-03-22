@@ -15,6 +15,8 @@ import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Swal from 'sweetalert2';
+
 
 const RestaurantDetails = () => {
   const { id: restaurantId } = useParams();

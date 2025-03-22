@@ -21,4 +21,10 @@ router.put("/update-order/:id", orderController.updateOrder);
 // Delete order route
 router.delete("/delete-order/:id", orderController.deleteOrder);
 
+// getOrdersByManager route
+router.get(
+  "/restaurant-orders/:restaurantId",
+  orderController.getManagerOrdersByRestaurantId
+);
+
 module.exports = router;

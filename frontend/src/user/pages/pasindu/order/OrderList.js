@@ -108,7 +108,12 @@ const OrderDetails = () => {
   return (
     <div className="bg-gray-200">
       <div className="p-6 max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-6">Your Orders</h2>
+        <h2
+          className="text-5xl font-bold text-center mb-6"
+          style={{ fontFamily: "'Dancing Script', cursive" }}
+        >
+          Your Orders
+        </h2>
 
         {orders.length === 0 ? (
           <p className="text-white text-center">No orders found.</p>

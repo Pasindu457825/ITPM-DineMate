@@ -234,6 +234,44 @@ const deleteOrder = async (req, res) => {
   }
 };
 
+// ✅ Get orders by manager userId
+// Get orders for a specific restaurant ID
+const getManagerOrdersByRestaurantId = async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+
+    // Get all orders for this restaurant
+    const orders = await Order.find({ restaurantId });
+
+    // Extract reservationIds (if present)
+    const reservationIds = orders
+      .map((order) => order.reservationStatus?.reservationId)
+      .filter((id) => id && id !== "No");
+
+    // Fetch full reservation objects
+    const reservations = await Reservation.find({
+      reservationId: { $in: reservationIds },
+    });
+
+    // Attach full reservation data to orders
+    const ordersWithReservations = orders.map((order) => {
+      const reservation = reservations.find(
+        (resv) => resv.reservationId === order.reservationStatus?.reservationId
+      );
+
+      return {
+        ...order._doc,
+        reservationDetails: reservation || null,
+      };
+    });
+
+    res.status(200).json(ordersWithReservations);
+  } catch (error) {
+    console.error("Error fetching orders with reservations:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   createOrder,
   getOrderById,
@@ -241,4 +279,5 @@ module.exports = {
   getOrdersByCustomerEmail,
   updateOrder,
   deleteOrder,
+  getManagerOrdersByRestaurantId,
 };

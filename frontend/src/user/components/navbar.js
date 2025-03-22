@@ -15,12 +15,12 @@ import {
   UserCircleIcon,
   HomeIcon,
   BuildingStorefrontIcon,
-  ViewColumnsIcon,
+  CalendarIcon,
   InformationCircleIcon,
   ChevronDownIcon,
   Bars2Icon,
 } from "@heroicons/react/24/solid";
-import Logo from "../../assets/logo/DineMate.png";
+import Logo from "../../assets/logo/logo.png";
 
 // Profile Menu Items
 const profileMenuItems = [
@@ -117,8 +117,8 @@ export function UserNavbar() {
             href="#"
             className="text-white font-medium flex items-center gap-2 hover:text-amber-700 transition-colors"
           >
-            <ViewColumnsIcon className="h-5 w-5" />
-            Blocks
+            <CalendarIcon  className="h-5 w-5" />
+            Reservations
           </a>
           <a
             href="#"

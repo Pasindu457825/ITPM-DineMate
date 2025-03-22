@@ -88,7 +88,7 @@ const RestaurantsList = () => {
       </h1>
 
       {/* Search Bar */}
-      <div className="flex justify-end p-4">
+      <div className="flex justify-start py-4">
         <div className="relative w-full md:w-1/4">
           <input
             type="text"
