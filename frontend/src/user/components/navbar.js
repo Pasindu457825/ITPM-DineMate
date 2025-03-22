@@ -130,15 +130,17 @@ export function UserNavbar() {
         {/* Right-side Buttons + Profile Menu (Desktop) */}
         <div className="hidden lg:flex items-center gap-4">
           {/* Login Button */}
-          <Button
-            variant="filled"
-            className="bg-amber-700 text-black hover:text-white
-                       px-4 py-2 rounded-lg transition duration-300
-                       ease-in-out transform hover:scale-105 hover:shadow-lg 
-                       hover:bg-amber-800"
-          >
-            Login
-          </Button>
+         <Button
+   onClick={() => navigate("/login")}
+  variant="filled"
+  className="bg-amber-700 text-black hover:text-white
+             px-4 py-2 rounded-lg transition duration-300
+             ease-in-out transform hover:scale-105 hover:shadow-lg 
+             hover:bg-amber-800"
+>
+  Login
+</Button>
+
 
           {/* Logout Button */}
           {/* <Button
