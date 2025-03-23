@@ -43,7 +43,7 @@ const LoginPage = () => {
         navigate("/admindashboard");
       } else {
         // Default: Registered user
-        navigate("/me");
+        navigate("/");
       }
     } catch (error) {
       console.error("Login error:", error);
