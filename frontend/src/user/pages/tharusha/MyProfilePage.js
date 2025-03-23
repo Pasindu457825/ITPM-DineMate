@@ -288,7 +288,8 @@ const MyProfilePage = () => {
               </button>
             </li>
             <li>
-              <button className="w-full text-left p-3 flex items-center bg-blue-gray-900 text-white rounded-md">
+              <button className="w-full text-left p-3 flex items-center bg-blue-gray-900 text-white rounded-md" onClick={() => navigate("/forgot-password")}>
+              
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-3"
