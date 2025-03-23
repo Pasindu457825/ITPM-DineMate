@@ -233,7 +233,7 @@ const ManagerHeader = ({ username = "Manager" }) => {
                 </Link>
                 <div className="border-t border-gray-700 my-1"></div>
                 <Link
-                  to="/logout"
+                  to="/login"
                   onClick={() => setIsProfileOpen(false)}
                   className="flex items-center px-4 py-2.5 hover:bg-red-900/30 text-red-400 transition-colors duration-200"
                 >
