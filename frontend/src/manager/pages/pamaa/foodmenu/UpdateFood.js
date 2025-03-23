@@ -344,7 +344,7 @@ const UpdateFoodForm = () => {
 
               {/* Category */}
               <div className="space-y-1">
-                <label className="block text-gray-700 text-sm font-medium">Category</label>
+                <label className="block text-gray-700 mb-3 text-sm font-medium">Category</label>
                 <select
                   name="category"
                   value={food.category}

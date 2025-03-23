@@ -290,7 +290,7 @@ const AddFoodForm = () => {
 
               {/* Category */}
               <div className="space-y-1">
-                <label className="block text-sm font-medium text-gray-700">Category</label>
+                <label className="block mb-3 text-sm font-medium text-gray-700">Category</label>
                 <select
                   value={category}
                   onChange={(e) => {
