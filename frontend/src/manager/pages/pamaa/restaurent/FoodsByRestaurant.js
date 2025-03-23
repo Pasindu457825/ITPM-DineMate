@@ -6,6 +6,7 @@ import ManagerHeader from "../../../components/ManagerHeader";
 import ManagerFooter from "../../../components/ManagerFooter";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 const FoodsByRestaurant = () => {
   const { restaurantId } = useParams();
@@ -60,9 +61,43 @@ const FoodsByRestaurant = () => {
     setFilteredFoods(result);
   }, [search, filter, foods]);
 
-  const handleDelete = (foodId) => {
-    deleteFood(foodId, setFoods, foods);
-    toast.success("Food item deleted successfully!");
+  const handleDelete = (foodId, foodName) => {
+    // Use SweetAlert2 for confirmation
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `You are about to delete "${foodName}". This action cannot be undone!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#276265',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+      backdrop: true,
+      showLoaderOnConfirm: true,
+      preConfirm: () => {
+        return deleteFood(foodId, setFoods, foods)
+          .then(() => {
+            return true;
+          })
+          .catch(error => {
+            Swal.showValidationMessage(
+              `Delete failed: ${error.message || 'Unknown error'}`
+            );
+          });
+      },
+      allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'The food item has been deleted successfully.',
+          icon: 'success',
+          confirmButtonColor: '#276265'
+        });
+        // Update the filtered foods as well
+        setFilteredFoods(prevFoods => prevFoods.filter(food => food._id !== foodId));
+      }
+    });
   };
 
   const handleUpdate = (foodId) => {
@@ -247,7 +282,7 @@ const FoodsByRestaurant = () => {
                     Update
                   </button>
                   <button
-                    onClick={() => handleDelete(food._id)}
+                    onClick={() => handleDelete(food._id, food.name)}
                     className="bg-red-100 text-red-700 py-1 px-3 rounded text-sm hover:bg-red-200 transition-colors shadow-sm"
                   >
                     Delete

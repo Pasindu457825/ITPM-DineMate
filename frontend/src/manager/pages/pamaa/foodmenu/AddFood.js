@@ -266,7 +266,7 @@ const AddFoodForm = () => {
               <div className="space-y-1">
                 <label className="block text-sm font-medium text-gray-700">Price</label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">$</span>
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">Rs  </span>
                   <input
                     type="number"
                     step="0.01"
