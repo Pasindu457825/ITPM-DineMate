@@ -166,7 +166,7 @@ const CartSidebar = ({
           </button>
         </div>
       )}
-      <ToastContainer
+      {/* <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
@@ -174,7 +174,7 @@ const CartSidebar = ({
         closeOnClick
         draggable
         pauseOnHover
-      />
+      /> */}
     </div>
   );
 };
