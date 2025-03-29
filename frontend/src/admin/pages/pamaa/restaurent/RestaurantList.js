@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Search, Filter, Menu, MapPin, Phone } from "lucide-react";
+import { User, Search, Filter, Menu, MapPin, Phone } from "lucide-react";
+import Swal from "sweetalert2";
 
 const RestaurantsList = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -66,21 +67,63 @@ const RestaurantsList = () => {
   };
 
   const toggleRestaurantStatus = async (id, isEnabled) => {
-    try {
-      const userId = localStorage.getItem("userId");
-      await axios.patch(
-        `http://localhost:5000/api/ITPM/restaurants/toggle-status/${id}?userId=${userId}`,
-        { isEnabled: !isEnabled }
-      );
-      toast.success("Restaurant status updated successfully");
-      fetchRestaurants();
-    } catch (error) {
-      console.error("Error updating restaurant status:", error);
-      toast.error(
-        error.response?.data?.message || "Failed to update restaurant status"
-      );
+    const action = isEnabled ? "disable" : "enable";
+
+    // Show confirmation dialog
+    const result = await Swal.fire({
+      title: `${isEnabled ? "Disable" : "Enable"} Restaurant?`,
+      text: `Are you sure you want to ${action} this restaurant?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: isEnabled ? "#d33" : "#3085d6",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: `Yes, ${action} it!`,
+      cancelButtonText: "Cancel",
+    });
+
+    // If confirmed, proceed with the status update
+    if (result.isConfirmed) {
+      try {
+        const userId = localStorage.getItem("userId");
+        await axios.patch(
+          `http://localhost:5000/api/ITPM/restaurants/toggle-status/${id}?userId=${userId}`,
+          { isEnabled: !isEnabled }
+        );
+
+        Swal.fire({
+          title: "Success!",
+          text: `Restaurant ${action}d successfully`,
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        fetchRestaurants();
+      } catch (error) {
+        console.error("Error updating restaurant status:", error);
+        Swal.fire({
+          title: "Error!",
+          text:
+            error.response?.data?.message || `Failed to ${action} restaurant`,
+          icon: "error",
+        });
+      }
     }
   };
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicked outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6">
@@ -90,7 +133,7 @@ const RestaurantsList = () => {
             Dinemate All the Restaurants
           </h1>
 
-          <div className="w-full flex flex-row gap-4">
+          <div className="w-full flex flex-row gap-4 items-center">
             {/* Search input */}
             <div className="relative flex-grow">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -106,7 +149,7 @@ const RestaurantsList = () => {
             </div>
 
             {/* Status filter */}
-            <div className="relative w-48 pt-2">
+            <div className="relative w-48">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Filter size={18} className="text-gray-400" />
               </div>
@@ -119,6 +162,55 @@ const RestaurantsList = () => {
                 <option value="enabled">Enabled Only</option>
                 <option value="disabled">Disabled Only</option>
               </select>
+            </div>
+
+            {/* Profile/Logout Button */}
+            <div className="relative" ref={dropdownRef}>
+              <div
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center cursor-pointer hover:bg-indigo-700 transition-colors"
+              >
+                <User size={20} className="text-white" />
+              </div>
+
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-10">
+                  <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
+                    <p className="font-medium">Admin User</p>
+                    <p className="text-xs text-gray-500">admin@dinemate.com</p>
+                  </div>
+                  <a
+                    href="#profile"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      console.log("Go to profile");
+                    }}
+                  >
+                    Your Profile
+                  </a>
+                  <a
+                    href="#settings"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      console.log("Go to settings");
+                    }}
+                  >
+                    Settings
+                  </a>
+                  <a
+                    href="#logout"
+                    className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate("/login");
+                    }}
+                  >
+                    Logout
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </div>

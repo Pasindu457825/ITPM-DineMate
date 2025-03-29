@@ -81,14 +81,14 @@ const CreateRestaurant = () => {
       isValid = false;
     }
 
-    // Phone number validation
-    if (!formData.phoneNumber.trim()) {
-      tempErrors.phoneNumber = "Phone number is required";
-      isValid = false;
-    } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
-      tempErrors.phoneNumber = "Please enter a valid 10-digit phone number";
-      isValid = false;
-    }
+// Phone number validation
+if (!formData.phoneNumber.trim()) {
+  tempErrors.phoneNumber = "Phone number is required";
+  isValid = false;
+} else if (!/^(077|076|078|075|011)\d{7}$/.test(formData.phoneNumber)) {
+  tempErrors.phoneNumber = "Please enter a valid 10-digit phone number starting with 077, 076, 078, 075, or 011";
+  isValid = false;
+}
 
     // Table validation
     let tableErrors = [];
@@ -97,16 +97,16 @@ const CreateRestaurant = () => {
       if (!table.seats || isNaN(table.seats) || parseInt(table.seats) <= 0) {
         tableError.seats = "Seats must be a positive number";
         isValid = false;
-      } else if (parseInt(table.seats) > 20) {
-        tableError.seats = "Maximum 20 seats per table allowed";
+      } else if (parseInt(table.seats) > 10) {
+        tableError.seats = "Maximum 10 seats per table allowed";
         isValid = false;
       }
       
       if (!table.quantity || isNaN(table.quantity) || parseInt(table.quantity) <= 0) {
         tableError.quantity = "Quantity must be a positive number";
         isValid = false;
-      } else if (parseInt(table.quantity) > 100) {
-        tableError.quantity = "Maximum 100 tables of one type allowed";
+      } else if (parseInt(table.quantity) > 10) {
+        tableError.quantity = "Maximum 10 tables of one type allowed";
         isValid = false;
       }
       
