@@ -60,6 +60,7 @@ import CardPaymentPage from "./user/pages/Isuri/payment/cardpayment";
 import CashPaymentPage from "./user/pages/Isuri/payment/cashpay";
 import ManagerPaymentsPage from "./manager/pages/Isuri/payment/receivedrequests";
 import CompletedPaymentsPage from "./manager/pages/Isuri/payment/viewcompletedpayments";
+import MyPayments from "./user/pages/Isuri/payment/mypayments";
 
 const AppContent = () => {
   const location = useLocation();
@@ -138,6 +139,7 @@ const AppContent = () => {
           <Route path="/cashpay" element={<CashPaymentPage />} />
           <Route path="/viewrequests" element={<ManagerPaymentsPage />} />
           <Route path="/payhistory" element={<CompletedPaymentsPage />} />
+          <Route path="/myhistory" element={<MyPayments />} />
           
         </Route>
         {/* pasindu manager order */}

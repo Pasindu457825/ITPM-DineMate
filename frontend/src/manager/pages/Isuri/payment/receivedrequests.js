@@ -5,18 +5,24 @@ import {
   Card,
   CardBody,
   Button,
-  Input,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
-
 
 const ManagerPaymentsPage = () => {
   const [payments, setPayments] = useState([]);
   const [filteredPayments, setFilteredPayments] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("All");
-  const navigate = useNavigate();
 
+  const [alertMsg, setAlertMsg] = useState("");
+  const [alertType, setAlertType] = useState("success");
+  const [showAlert, setShowAlert] = useState(false);
+
+  const [confirmAction, setConfirmAction] = useState(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmMsg, setConfirmMsg] = useState("");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchPayments();
@@ -34,25 +40,33 @@ const ManagerPaymentsPage = () => {
   };
 
   const updateStatus = async (id, action) => {
-    const confirmMsg =
+    const message =
       action === "Completed"
         ? "Are you sure you want to mark this payment as Completed?"
-        : "Are you sure you want to decline and delete this payment?";
-    const confirm = window.confirm(confirmMsg);
-    if (!confirm) return;
-  
-    try {
-      if (action === "Completed") {
-        await axios.put(`http://localhost:5000/api/ITPM/payments/${id}`, { status: "Completed" });
-      } else {
-        await axios.delete(`http://localhost:5000/api/ITPM/payments/${id}`);
+        : "Are you sure you want to mark this payment as Decline?";
+
+    setConfirmMsg(message);
+    setConfirmOpen(true);
+    setConfirmAction(() => async () => {
+      try {
+        await axios.put(`http://localhost:5000/api/ITPM/payments/${id}`, {
+          status: action === "Completed" ? "Completed" : "Failed",
+        });
+        setAlertMsg(`Payment marked as ${action}`);
+        setAlertType("success");
+        setShowAlert(true);
+        fetchPayments();
+      } catch (err) {
+        setAlertMsg("Failed to update payment.");
+        setAlertType("error");
+        setShowAlert(true);
+      } finally {
+        setConfirmOpen(false);
+        setTimeout(() => setShowAlert(false), 4000);
       }
-      fetchPayments(); // refresh list
-    } catch (err) {
-      console.error("Failed to update payment:", err.message);
-    }
+    });
   };
-  
+
   const filterByTab = (data, tab) => {
     if (tab === "Cash") return data.filter((p) => p.paymentMethod === "Cash");
     if (tab === "Card") return data.filter((p) => p.paymentMethod === "Card");
@@ -83,61 +97,103 @@ const ManagerPaymentsPage = () => {
         Pending Payments
       </Typography>
 
+      {/* Alert Message */}
+      {showAlert && (
+        <div
+          className={`mb-4 px-4 py-3 rounded-lg text-sm ${
+            alertType === "success"
+              ? "bg-green-100 text-green-800 border border-green-300"
+              : "bg-red-100 text-red-800 border border-red-300"
+          }`}
+        >
+          {alertMsg}
+        </div>
+      )}
+
+      {/* Confirm Modal */}
+      {confirmOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full border border-gray-200">
+            <Typography variant="h6" className="mb-4 text-blue-gray-900">
+              Confirmation
+            </Typography>
+            <p className="text-sm text-blue-gray-700 mb-6">{confirmMsg}</p>
+            <div className="flex justify-end gap-3">
+              <Button
+                size="sm"
+                className="bg-gray-300 text-black"
+                onClick={() => setConfirmOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                className="bg-blue-gray-900 text-white"
+                onClick={confirmAction}
+              >
+                Confirm
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Search & Tabs */}
       <div className="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
-  {/* Search Bar */}
-  <div className="relative w-full max-w-sm">
-    <span className="absolute left-3 top-2.5 text-gray-500">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="h-5 w-5"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 10.5a7.5 7.5 0 0013.65 6.15z"
-        />
-      </svg>
-    </span>
-    <input
-      type="text"
-      value={searchTerm}
-      onChange={handleSearch}
-      placeholder="Search by Txn ID..."
-      className="w-full pl-10 pr-4 py-2 border border-blue-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-    />
-  </div>
+        {/* Search Bar */}
+        <div className="relative w-full max-w-sm">
+          <span className="absolute left-3 top-2.5 text-gray-500">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 10.5a7.5 7.5 0 0013.65 6.15z"
+              />
+            </svg>
+          </span>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={handleSearch}
+            placeholder="Search by Txn ID..."
+            className="w-full pl-10 pr-4 py-2 border border-blue-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+          />
+        </div>
 
-  {/* View History Button */}
-  <Button
-    size="sm"
-    className="bg-blue-gray-900 text-white text-sm px-4 py-2 rounded"
-    onClick={() => navigate("/payhistory")}
-  >
-    View History
-  </Button>
+        {/* View History Button */}
+        <Button
+          size="sm"
+          className="bg-blue-gray-900 text-white text-sm px-4 py-2 rounded"
+          onClick={() => navigate("/payhistory")}
+        >
+          View History
+        </Button>
 
-  {/* Tabs */}
-  <div className="flex gap-2">
-    {["All", "Cash", "Card"].map((tab) => (
-      <button
-        key={tab}
-        onClick={() => handleTabClick(tab)}
-        className={`px-4 py-2 text-sm rounded-full border transition ${
-          activeTab === tab
-            ? "bg-blue-gray-900 text-white"
-            : "bg-white text-blue-gray-700 border-blue-gray-200 hover:bg-blue-gray-100"
-        }`}
-      >
-        {tab}
-      </button>
-    ))}
-  </div>
-</div>
+        {/* Tabs */}
+        <div className="flex gap-2">
+          {["All", "Cash", "Card"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => handleTabClick(tab)}
+              className={`px-4 py-2 text-sm rounded-full border transition ${
+                activeTab === tab
+                  ? "bg-blue-gray-900 text-white"
+                  : "bg-white text-blue-gray-700 border-blue-gray-200 hover:bg-blue-gray-100"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Table */}
       <Card className="overflow-x-auto">
         <CardBody className="p-0">
@@ -162,21 +218,20 @@ const ManagerPaymentsPage = () => {
                   </td>
                   <td className="p-4">
                     <div className="flex items-center gap-2">
-                    <Button
-                      size="sm"
-                      className="px-2 py-1 text-xs bg-green-600 w-auto min-w-fit"
-                      onClick={() => updateStatus(payment._id, "Completed")}
-                    >
-                      Accept
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="px-2 py-1 text-xs bg-red-600 w-auto min-w-fit"
-                      onClick={() => updateStatus(payment._id, "Decline")}
-                    >
-                      Decline
-                    </Button>
-
+                      <Button
+                        size="sm"
+                        className="px-2 py-1 text-xs bg-green-600 w-auto min-w-fit"
+                        onClick={() => updateStatus(payment._id, "Completed")}
+                      >
+                        Accept
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="px-2 py-1 text-xs bg-red-600 w-auto min-w-fit"
+                        onClick={() => updateStatus(payment._id, "Decline")}
+                      >
+                        Decline
+                      </Button>
                     </div>
                   </td>
                 </tr>
