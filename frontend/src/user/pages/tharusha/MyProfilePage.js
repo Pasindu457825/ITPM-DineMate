@@ -288,7 +288,7 @@ const MyProfilePage = () => {
             </li>
             <li>
               <button 
-              onClick={handleMyPaymentsClick}
+              onClick={handleMyPaymentsClick} //My payment button added
 
               className="w-full text-left p-3 flex items-center bg-blue-gray-900 text-white rounded-md">
                 <svg
