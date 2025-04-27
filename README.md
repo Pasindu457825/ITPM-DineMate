@@ -1,11 +1,9 @@
 🍽️ DineMate - Restaurant Management System with 360° Virtual Tour
-DineMate is a modern and complete Restaurant Management System built using the powerful MERN stack (MongoDB, Express.js, React.js, Node.js).
 
+DineMate is a modern and complete Restaurant Management System built using the powerful MERN stack (MongoDB, Express.js, React.js, Node.js).
 The system offers a seamless digital solution for both restaurant owners and customers.
 Customers can explore restaurants, view 360° virtual tours, browse menus, order food, and book tables directly through an easy-to-use web interface.
-
 Restaurant managers can manage food items, reservations, and customer orders — all from a centralized backend system.
-
 DineMate is designed with a mobile-first, responsive layout, smooth animations, real-time interactions, and beautiful modern UI components.
 It aims to bridge the gap between physical dining experiences and online convenience — offering a futuristic, immersive experience.
 
@@ -30,16 +28,12 @@ Node.js Express APIs with MongoDB database integration ensure robust and scalabl
 
 🎯 Project Goals
 Provide an easy and attractive way for customers to interact with restaurants online.
-
 Help restaurants digitize operations like food ordering, table booking, and customer engagement.
-
 Deliver a professional, production-ready MERN application for academic and commercial use.
 
 📈 Target Users
 ✅ Customers looking for restaurants to dine in or order takeaway.
-
 ✅ Restaurant owners/managers wanting to modernize their services.
-
 ✅ Developers looking for a full-stack project reference with MERN + 360° Virtual Integration.
 
 🚀 Quick Demo Preview
@@ -52,14 +46,8 @@ It combines real-world business logic with modern web development practices.
 
 👨‍💻 Developed by:
 Tharusha Rathnayaka
-
 Pasindu Rasanjana
-
 Isuri Karunathilaka
-
 Perera P D P N
-
-📃 License
-This project is licensed under the MIT License.
 
 🙌 Thank you for visiting DineMate!
