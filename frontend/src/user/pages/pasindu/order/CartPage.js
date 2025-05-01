@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import EmptyCartImg from '../../../../assets/img/emptycart.gif';
+import EmptyCartImg from "../../../../assets/img/emptycart.gif";
+import { ToastContainer, toast } from "react-toastify";
 
 const CartSidebar = ({
   cartOpen,
@@ -140,9 +141,7 @@ const CartSidebar = ({
           <button
             onClick={() => {
               if (!orderType) {
-                alert(
-                  "Please select an order type before proceeding to checkout."
-                );
+                toast.warn("⚠️ Please select an order type first!");
                 return;
               }
 
@@ -167,6 +166,15 @@ const CartSidebar = ({
           </button>
         </div>
       )}
+      {/* <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        draggable
+        pauseOnHover
+      /> */}
     </div>
   );
 };
