@@ -22,6 +22,7 @@ import CartPage from "./user/pages/pasindu/order/CartPage"; // ✅ Fixed path
 import AddReservationForm from "./user/pages/pasindu/reservation/CreateReservation";
 import ReservationsList from "./user/pages/pasindu/reservation/ReservationList";
 import UpdateReservationForm from "./user/pages/pasindu/reservation/UpdateReservation";
+import RestaurantVirtualTour  from "./user/pages/pasindu/virtualView/RestaurantVirtualTour";
 
 // Pasindu Restaurant
 import RestaurentList from "./user/pages/pasindu/restaurent/RestaurentList";
@@ -117,6 +118,8 @@ const AppContent = () => {
             path="/update-reservation/:id"
             element={<UpdateReservationForm />}
           />
+          <Route path="/restaurant/:id/virtual-tour" element={<RestaurantVirtualTour />} />
+
           {/* Pasindu Restaurant */}
           <Route path="/user/display-restaurent" element={<RestaurentList />} />
           <Route

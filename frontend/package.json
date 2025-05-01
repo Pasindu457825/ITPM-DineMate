@@ -5,6 +5,7 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@heroicons/react": "^2.2.0",
     "@material-tailwind/react": "^2.1.10",
+    "@photo-sphere-viewer/core": "^5.13.2",
     "axios": "^1.8.4",
     "body-parser": "^1.20.3",
     "chart.js": "^4.4.8",
@@ -13,13 +14,12 @@
     "express": "^4.21.2",
     "firebase": "^11.4.0",
     "framer-motion": "^12.5.0",
-
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
-
     "lucide-react": "^0.482.0",
     "mongoose": "^8.10.0",
+    "photo-sphere-viewer": "^4.0.4",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.3.0",
@@ -31,6 +31,7 @@
     "react-scripts": "^5.0.1",
     "react-toastify": "^11.0.5",
     "sweetalert2": "^11.17.2",
+    "three": "^0.150.1",
     "webpack": "^5.98.0"
   },
   "name": "frontend",
