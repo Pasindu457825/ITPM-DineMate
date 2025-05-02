@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import {
   Card,
   CardBody,
@@ -37,6 +39,30 @@ const PaymentReport = () => {
     }
   };
 
+  const exportToPDF = () => {
+    if (!reportData) return;
+
+    const doc = new jsPDF();
+    doc.text(`${reportType.toUpperCase()} PAYMENT REPORT`, 14, 15);
+
+    const rows = reportData.payments.map((p) => [
+      p.transactionId,
+      p.userId || "N/A",
+      `Rs. ${p.amount}`,
+      p.paymentMethod,
+      p.status,
+      new Date(p.createdAt).toLocaleDateString(),
+    ]);
+
+    doc.autoTable({
+      head: [["Txn ID", "User", "Amount", "Method", "Status", "Date"]],
+      body: rows,
+      startY: 25,
+    });
+
+    doc.save(`${reportType.replace(/ /g, "_")}_payment_report.pdf`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center">
       <Typography variant="h4" className="mb-4 text-blue-gray-900">
@@ -45,9 +71,15 @@ const PaymentReport = () => {
 
       {/* Quick Filters */}
       <div className="flex flex-wrap gap-4 mb-6">
-        <Button onClick={() => fetchReport("daily")} color="blue">Daily</Button>
-        <Button onClick={() => fetchReport("weekly")} color="green">Weekly</Button>
-        <Button onClick={() => fetchReport("monthly")} color="purple">Monthly</Button>
+        <Button onClick={() => fetchReport("daily")} color="blue">
+          Daily
+        </Button>
+        <Button onClick={() => fetchReport("weekly")} color="green">
+          Weekly
+        </Button>
+        <Button onClick={() => fetchReport("monthly")} color="purple">
+          Monthly
+        </Button>
       </div>
 
       {/* Date Range Filter */}
@@ -114,6 +146,13 @@ const PaymentReport = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* PDF Export Button */}
+            <div className="flex justify-end mt-4">
+              <Button color="red" onClick={exportToPDF}>
+                Download PDF Report
+              </Button>
             </div>
           </CardBody>
         </Card>
