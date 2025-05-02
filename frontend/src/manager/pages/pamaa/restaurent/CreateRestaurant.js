@@ -241,14 +241,15 @@ const CreateRestaurant = () => {
       return;
     }
 
-    setImage360File(file);
-    setErrors({ ...errors, image360: "" });
-
     const reader = new FileReader();
     reader.onloadend = () => {
+      setFormData((prev) => ({ ...prev, image360: reader.result })); // 👈 base64 stored
       setImage360Preview(reader.result);
+      setErrors({ ...errors, image360: "" });
     };
     reader.readAsDataURL(file);
+
+    setImage360File(file);
   };
 
   // Handle drag over event
@@ -318,33 +319,7 @@ const CreateRestaurant = () => {
     let imageUrl = formData.image;
     let image360Url = formData.image360;
 
-    if (image360File) {
-      const fileName360 = `restaurantImages/360_${Date.now()}_${
-        image360File.name
-      }`;
-      const storageRef360 = ref(storage, fileName360);
-      const uploadTask360 = uploadBytesResumable(storageRef360, image360File);
-
-      toast.info("Uploading 360° view image...");
-
-      await new Promise((resolve, reject) => {
-        uploadTask360.on(
-          "state_changed",
-          null,
-          (error) => {
-            console.error("Error uploading 360 image:", error);
-            toast.dismiss();
-            toast.error("360° image upload failed.");
-            reject(error);
-          },
-          async () => {
-            image360Url = await getDownloadURL(uploadTask360.snapshot.ref); // ✅ assign to local variable
-            toast.success("360° image uploaded successfully!");
-            resolve();
-          }
-        );
-      });
-    }
+    
 
     setIsSubmitting(true);
 

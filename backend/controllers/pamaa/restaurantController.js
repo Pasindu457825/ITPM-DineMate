@@ -66,19 +66,17 @@ const addRestaurant = async (req, res) => {
       phoneNumber,
       tables,
       image,
-      image360, // ✅ Add this line
+      image360, // ✅ stored directly (base64 string)
       managerId: userId,
     });
 
     await newRestaurant.save();
     console.log("Restaurant created successfully with ID:", newRestaurant._id);
 
-    res
-      .status(201)
-      .json({
-        message: "Restaurant added successfully",
-        restaurant: newRestaurant,
-      });
+    res.status(201).json({
+      message: "Restaurant added successfully",
+      restaurant: newRestaurant,
+    });
   } catch (error) {
     console.error("Error in addRestaurant:", error);
     res
@@ -107,11 +105,9 @@ const getAllRestaurantsById = async (req, res) => {
 
     // Validate managerId
     if (!managerId) {
-      return res
-        .status(400)
-        .json({
-          message: "Manager ID (userId) is required in query parameters",
-        });
+      return res.status(400).json({
+        message: "Manager ID (userId) is required in query parameters",
+      });
     }
 
     // Check if the user exists
@@ -315,12 +311,10 @@ const toggleRestaurantStatus = async (req, res) => {
       { new: true }
     );
 
-    res
-      .status(200)
-      .json({
-        message: "Restaurant status updated successfully",
-        restaurant: updatedRestaurant,
-      });
+    res.status(200).json({
+      message: "Restaurant status updated successfully",
+      restaurant: updatedRestaurant,
+    });
   } catch (error) {
     console.error("Error updating restaurant status:", error);
     res

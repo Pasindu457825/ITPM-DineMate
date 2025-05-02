@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import VirtualTour from "../virtualView/VirtualTour"; // ✅ Ensure correct path
+import VirtualTour from "../virtualView/VirtualTour";
 
 const RestaurantVirtualTour = () => {
   const { id } = useParams();
@@ -16,8 +16,16 @@ const RestaurantVirtualTour = () => {
         const res = await axios.get(
           `http://localhost:5000/api/ITPM/restaurants/get-restaurant/${id}`
         );
-        if (res.data && res.data.image360) {
-          setImage360URL(res.data.image360);
+
+        // Log the full response payload
+        console.log("API response:", res.data);
+
+        // Extract and log the 360° URL from the payload
+        const panoUrl = res.data?.image360;
+        console.log("⛱️ panorama URL from API:", panoUrl);
+
+        if (panoUrl) {
+          setImage360URL(panoUrl);
         } else {
           console.warn("No 360° image found for this restaurant.");
         }
@@ -34,6 +42,7 @@ const RestaurantVirtualTour = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
       <h1 className="text-3xl font-bold mb-4">360° Virtual Tour</h1>
+
       {loading ? (
         <p>Loading...</p>
       ) : image360URL ? (

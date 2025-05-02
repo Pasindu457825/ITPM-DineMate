@@ -283,32 +283,13 @@ const UpdateRestaurant = () => {
     let image360Url = formData.image360;
 
     if (image360File) {
-      const fileName = `restaurantImages/360_${Date.now()}_${
-        image360File.name
-      }`;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, image360File);
-
-      await new Promise((resolve, reject) => {
-        uploadTask.on(
-          "state_changed",
-          (snapshot) => {
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setUploadProgress360(progress);
-          },
-          (error) => {
-            console.error("360° image upload error:", error);
-            toast.error("Failed to upload 360° image");
-            reject(error);
-          },
-          async () => {
-            image360Url = await getDownloadURL(uploadTask.snapshot.ref);
-            toast.success("360° image uploaded");
-            resolve();
-          }
-        );
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(image360File); // converts to base64
       });
+      image360Url = base64; // assign base64 to send to MongoDB
     }
 
     setSubmitLoading(true);
@@ -353,7 +334,7 @@ const UpdateRestaurant = () => {
       const userId = localStorage.getItem("userId");
       await axios.put(
         `http://localhost:5000/api/ITPM/restaurants/update-restaurant/${id}`,
-        { ...formData, image: imageUrl, userId }
+        { ...formData, image: imageUrl, image360: image360Url, userId }
       );
 
       toast.success("Restaurant updated successfully!");
