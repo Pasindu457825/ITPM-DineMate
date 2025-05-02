@@ -60,6 +60,77 @@ async function deletePayment(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
+// Get daily, weekly, or monthly report
+async function getPaymentReport(req, res) {
+  try {
+    const { type } = req.query;
+
+    let startDate, endDate = new Date();
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (type === "daily") {
+      startDate = new Date(today);
+    } else if (type === "weekly") {
+      const firstDayOfWeek = new Date(today);
+      firstDayOfWeek.setDate(today.getDate() - today.getDay());
+      startDate = new Date(firstDayOfWeek);
+    } else if (type === "monthly") {
+      startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+    } else {
+      return res.status(400).json({ message: "Invalid report type" });
+    }
+
+    const payments = await Payment.find({
+      createdAt: { $gte: startDate, $lte: endDate },
+      status: { $in: ["Completed", "Accepted"] },
+    });
+
+    const totalAmount = payments.reduce((sum, p) => sum + p.amount, 0);
+
+    res.json({
+      type,
+      count: payments.length,
+      totalAmount,
+      payments,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+// Get report by custom date range
+async function getPaymentReportByDateRange(req, res) {
+  try {
+    const { start, end } = req.query;
+
+    if (!start || !end) {
+      return res.status(400).json({ message: "Start and End dates are required" });
+    }
+
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    endDate.setHours(23, 59, 59, 999); // Include full end day
+
+    const payments = await Payment.find({
+      createdAt: { $gte: startDate, $lte: endDate },
+      status: { $in: ["Accepted", "Completed"] },
+    });
+
+    const totalAmount = payments.reduce((sum, p) => sum + p.amount, 0);
+
+    res.json({
+      from: start,
+      to: end,
+      count: payments.length,
+      totalAmount,
+      payments,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
 
 // Correctly export all functions
 module.exports = {
@@ -67,5 +138,7 @@ module.exports = {
   getAllPayments,
   getPaymentById,
   updatePayment,
-  deletePayment
+  deletePayment,
+  getPaymentReport,
+  getPaymentReportByDateRange,
 };
