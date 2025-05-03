@@ -7,12 +7,15 @@ import {
   Button,
 } from "@material-tailwind/react";
 
+import { useNavigate } from "react-router-dom";
+
+
 const CompletedPaymentsPage = () => {
   const [payments, setPayments] = useState([]);
   const [filteredPayments, setFilteredPayments] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("All");
-
+  const navigate = useNavigate(); // Assuming you have a navigate function from react-router-dom
   useEffect(() => {
     fetchPayments();
   }, []);
@@ -141,14 +144,15 @@ const CompletedPaymentsPage = () => {
 
       {/* Generate Report Button */}
       <div className="mt-6 flex justify-center">
-        <Button
-          size="sm"
-          className="bg-blue-700 text-white px-6 py-2 rounded hover:bg-blue-800 w-fit"
-          onClick={() => alert("Report generation triggered")}
-        >
-          Generate Report
-        </Button>
-      </div>
+  <Button
+    size="sm"
+    className="bg-blue-700 text-white px-6 py-2 rounded hover:bg-blue-800 w-fit"
+    onClick={() => navigate("/completed-payments-report")}
+  >
+    Generate Report
+  </Button>
+</div>
+
     </div>
   );
 };
