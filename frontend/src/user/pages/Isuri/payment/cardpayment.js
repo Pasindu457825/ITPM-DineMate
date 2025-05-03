@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Typography,
   Input,
@@ -9,8 +10,13 @@ import {
 import axios from "axios";
 
 const CardPaymentPage = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const { userId, orderId, total, customerEmail } = location.state || {};
+
   const [cardData, setCardData] = useState({
-    amount: "",
+    amount: total || "",
     cardNumber: "",
     expiryDate: "",
     cvv: "",
@@ -20,7 +26,13 @@ const CardPaymentPage = () => {
   const [successMsg, setSuccessMsg] = useState("");
   const [showAlert, setShowAlert] = useState(false);
 
-  // Reusable validation
+  useEffect(() => {
+    if (!userId || !orderId || !total ) {
+      alert("Missing payment details. Redirecting...");
+      navigate("/");
+    }
+  }, [userId, orderId, total, customerEmail, navigate]);
+
   const validateField = (name, value) => {
     switch (name) {
       case "amount":
@@ -57,12 +69,10 @@ const CardPaymentPage = () => {
     const { name, value } = e.target;
     let newValue = value;
 
-    // Mask card number
     if (name === "cardNumber") {
       newValue = value.replace(/\D/g, "").slice(0, 16).replace(/(.{4})/g, "$1 ").trim();
     }
 
-    // Mask expiry date
     if (name === "expiryDate") {
       newValue = value.replace(/\D/g, "").slice(0, 4);
       if (newValue.length >= 3) {
@@ -97,8 +107,8 @@ const CardPaymentPage = () => {
     const transactionId = getNextTransactionId();
 
     const paymentPayload = {
-      userId: "66042ec4fb8b6f95b22f08c3",
-      orderId: "66042ec4fb8b6f95b22f08c3",
+      userId,
+      orderId,
       amount: parseFloat(cardData.amount),
       paymentMethod: "Card",
       status: "Pending",
@@ -107,9 +117,14 @@ const CardPaymentPage = () => {
 
     try {
       await axios.post("http://localhost:5000/api/ITPM/payments", paymentPayload);
+
       setSuccessMsg(`Payment of Rs.${cardData.amount} Successful! Txn ID: ${transactionId}`);
       setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 5000);
+
+      setTimeout(() => {
+        navigate(`/my-orders/${customerEmail}`);
+      }, 1500);
+
       setCardData({ amount: "", cardNumber: "", expiryDate: "", cvv: "" });
       setErrors({});
     } catch (error) {
@@ -134,7 +149,6 @@ const CardPaymentPage = () => {
           </Typography>
 
           <div className="space-y-6">
-            {/* Amount */}
             <div>
               <label className="block text-sm font-medium text-blue-gray-700 mb-1">Amount</label>
               <Input
@@ -148,7 +162,6 @@ const CardPaymentPage = () => {
               {errors.amount && <p className="text-red-500 text-xs mt-1">{errors.amount}</p>}
             </div>
 
-            {/* Card Number */}
             <div>
               <label className="block text-sm font-medium text-blue-gray-700 mb-1">Card Number</label>
               <Input
@@ -161,7 +174,6 @@ const CardPaymentPage = () => {
               {errors.cardNumber && <p className="text-red-500 text-xs mt-1">{errors.cardNumber}</p>}
             </div>
 
-            {/* Expiry + CVV */}
             <div className="flex gap-4">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-blue-gray-700 mb-1">Expiry Date</label>
@@ -189,7 +201,6 @@ const CardPaymentPage = () => {
               </div>
             </div>
 
-            {/* Pay Button */}
             <Button
               onClick={handlePayment}
               className="mt-4 bg-blue-gray-900 text-white w-full text-md"

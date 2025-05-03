@@ -459,6 +459,16 @@ const CreateReservation = () => {
                 Book Now
               </button>
             </div>
+            <div className="flex items-center justify-end mt-4 mb-2 gap-4">
+              <button
+                onClick={() =>
+                  navigate(`/restaurant/${restaurant._id}/virtual-tour`)
+                }
+                className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow"
+              >
+                View 360° Tour
+              </button>
+            </div>
           </form>
           {/* Display Table Images with Numbering "001", "002", ... */}
           {/* Table Selection Section */}

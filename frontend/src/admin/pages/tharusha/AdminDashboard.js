@@ -35,7 +35,7 @@ function AdminDashboard() {
       title: "User Management",
       description: "Manage user accounts and permissions",
       icon: "👥",
-      link: "/user-management",
+      link: "/admin/users",
       color: "#27ae60",
       count: 156
     },
