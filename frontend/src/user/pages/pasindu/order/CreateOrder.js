@@ -153,12 +153,12 @@ const AddOrderForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!user) {
       setAuthError(true);
       return;
     }
-
+  
     if (
       !customerName ||
       !customerEmail ||
@@ -169,7 +169,7 @@ const AddOrderForm = () => {
       alert("❌ Missing required fields! Please check your order details.");
       return;
     }
-
+  
     const orderData = {
       restaurantId,
       customerName,
@@ -185,42 +185,47 @@ const AddOrderForm = () => {
         ? { reservationId: reservationId, status: "Available" }
         : { reservationId: "No", status: "Unavailable" },
     };
-
+  
     try {
       const response = await axios.post(
         "http://localhost:5000/api/ITPM/orders/add-order",
-        
         orderData,
         { headers: { "Content-Type": "application/json" } }
       );
-      console.log("✅ Order creation response:", response.data.orderId);
-
+  
+      const createdOrderId = response?.data?.orderId;
+      console.log("✅ Order ID created:", createdOrderId);
+  
       sessionStorage.removeItem("cart");
-
+  
+      // ✅ Common state for both payment types
+      const paymentState = {
+        customerEmail: orderData.customerEmail,
+        orderId: createdOrderId,
+        userId: user._id,
+        total: total,
+      };
+  
       if (isOnlinePayment) {
         navigate("/cardpay", {
           state: {
-            customerEmail: orderData.customerEmail,
-            orderId: "67dc309cf6069d6779388916",
-            userId: user._id,
-            total: total,
+            ...paymentState, // includes userId, orderId, total, customerEmail
+            paymentMethod: "Card",
           },
         });
       } else {
         navigate("/cashpay", {
           state: {
-            customerEmail: orderData.customerEmail,
-            orderId: "67dc309cf6069d6779388916", 
-            userId: user._id,
-            total: total,
+            ...paymentState,
+            paymentMethod: "Cash",
           },
         });
-      }      
+      }
+      
+      
+      
     } catch (error) {
-      console.error(
-        "❌ Order Submission Error:",
-        error.response?.data || error
-      );
+      console.error("❌ Order Submission Error:", error.response?.data || error);
       alert(
         `Order submission failed: ${
           error.response?.data?.message || "Unknown error"
@@ -228,6 +233,8 @@ const AddOrderForm = () => {
       );
     }
   };
+  
+  
 
   const updateItemQuantity = (index, change) => {
     setItems((prevItems) => {
