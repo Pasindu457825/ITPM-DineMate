@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {
-  Typography,
-  Card,
-  CardBody,
-  Button,
-} from "@material-tailwind/react";
+import { Typography, Card, CardBody, Button } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 
 const ManagerPaymentsPage = () => {
@@ -70,7 +65,7 @@ const ManagerPaymentsPage = () => {
   const filterByTab = (data, tab) => {
     if (tab === "Cash") return data.filter((p) => p.paymentMethod === "Cash");
     if (tab === "Card") return data.filter((p) => p.paymentMethod === "Card");
-    return data; // All
+    return data;
   };
 
   const handleSearch = (e) => {
@@ -78,7 +73,7 @@ const ManagerPaymentsPage = () => {
     setSearchTerm(value);
 
     const filtered = filterByTab(payments, activeTab).filter((p) =>
-      p.transactionId.toLowerCase().includes(value.toLowerCase())
+      p.orderId?.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredPayments(filtered);
   };
@@ -86,7 +81,7 @@ const ManagerPaymentsPage = () => {
   const handleTabClick = (tab) => {
     setActiveTab(tab);
     const filtered = filterByTab(payments, tab).filter((p) =>
-      p.transactionId.toLowerCase().includes(searchTerm.toLowerCase())
+      p.orderId?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredPayments(filtered);
   };
@@ -97,7 +92,6 @@ const ManagerPaymentsPage = () => {
         Pending Payments
       </Typography>
 
-      {/* Alert Message */}
       {showAlert && (
         <div
           className={`mb-4 px-4 py-3 rounded-lg text-sm ${
@@ -110,7 +104,6 @@ const ManagerPaymentsPage = () => {
         </div>
       )}
 
-      {/* Confirm Modal */}
       {confirmOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
           <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full border border-gray-200">
@@ -138,9 +131,7 @@ const ManagerPaymentsPage = () => {
         </div>
       )}
 
-      {/* Search & Tabs */}
       <div className="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
-        {/* Search Bar */}
         <div className="relative w-full max-w-sm">
           <span className="absolute left-3 top-2.5 text-gray-500">
             <svg
@@ -162,12 +153,11 @@ const ManagerPaymentsPage = () => {
             type="text"
             value={searchTerm}
             onChange={handleSearch}
-            placeholder="Search by Txn ID..."
+            placeholder="Search by Order ID..."
             className="w-full pl-10 pr-4 py-2 border border-blue-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           />
         </div>
 
-        {/* View History Button */}
         <Button
           size="sm"
           className="bg-blue-gray-900 text-white text-sm px-4 py-2 rounded"
@@ -176,7 +166,6 @@ const ManagerPaymentsPage = () => {
           View History
         </Button>
 
-        {/* Tabs */}
         <div className="flex gap-2">
           {["All", "Cash", "Card"].map((tab) => (
             <button
@@ -194,13 +183,12 @@ const ManagerPaymentsPage = () => {
         </div>
       </div>
 
-      {/* Table */}
       <Card className="overflow-x-auto">
         <CardBody className="p-0">
           <table className="w-full text-left min-w-max table-auto">
             <thead className="bg-blue-gray-100">
               <tr>
-                <th className="p-4">Txn ID</th>
+                <th className="p-4">Order ID</th>
                 <th className="p-4">Amount</th>
                 <th className="p-4">Method</th>
                 <th className="p-4">Status</th>
@@ -210,11 +198,13 @@ const ManagerPaymentsPage = () => {
             <tbody>
               {filteredPayments.map((payment) => (
                 <tr key={payment._id} className="border-b border-blue-gray-50">
-                  <td className="p-4">{payment.transactionId}</td>
+                  <td className="p-4">{payment.orderId}</td>
                   <td className="p-4">Rs.{payment.amount}</td>
                   <td className="p-4">{payment.paymentMethod}</td>
                   <td className="p-4">
-                    <span className="text-yellow-600 font-medium">{payment.status}</span>
+                    <span className="text-yellow-600 font-medium">
+                      {payment.status}
+                    </span>
                   </td>
                   <td className="p-4">
                     <div className="flex items-center gap-2">
@@ -236,7 +226,6 @@ const ManagerPaymentsPage = () => {
                   </td>
                 </tr>
               ))}
-
               {filteredPayments.length === 0 && (
                 <tr>
                   <td colSpan="5" className="text-center py-6 text-gray-500">
