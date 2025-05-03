@@ -187,7 +187,7 @@ const OrderDetails = () => {
                       </Typography>
                     </li>
 
-                    <li className="flex items-center gap-3">
+                    {/* <li className="flex items-center gap-3">
                       <span className="p-1 bg-blue-gray-900 rounded-full border border-blue-gray-900">
                         <CheckCircle
                           className={`h-4 w-4 ${
@@ -213,7 +213,7 @@ const OrderDetails = () => {
                           {order.orderStatus}
                         </span>
                       </Typography>
-                    </li>
+                    </li> */}
                   </ul>
                 </CardBody>
                 <CardFooter className="mt-6 p-0">

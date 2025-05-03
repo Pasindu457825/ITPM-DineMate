@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { RotateCw, CalendarCheck } from "lucide-react"; // Ensure these icons are imported
 
 const CreateReservation = () => {
   const { restaurantId } = useParams();
@@ -451,28 +452,29 @@ const CreateReservation = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-end mt-4 mb-2">
-              <button
-                type="submit"
-                className="bg-amber-700 font-sans font-bold text-white px-6 py-3 rounded-md hover:bg-amber-800 w-fit"
-              >
-                Book Now
-              </button>
-            </div>
-            <div className="flex items-center justify-end mt-4 mb-2 gap-4">
+            <div className="flex items-center justify-between mt-4 mb-2">
               <button
                 onClick={() =>
                   navigate(`/restaurant/${restaurant._id}/virtual-tour`)
                 }
-                className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow"
+                className="flex items-center gap-2 bg-blue-gray-800 font-sans font-bold text-white px-6 py-3 rounded-md hover:bg-blue-gray-500 w-fit"
               >
-                View 360° Tour
+                <RotateCw className="w-5 h-5" />
+                View Tables 360°
+              </button>
+
+              <button
+                type="submit"
+                className="flex items-center gap-2 bg-green-500 font-sans font-bold text-white px-6 py-3 rounded-md hover:bg-green-800 w-fit"
+              >
+                <CalendarCheck className="w-5 h-5" />
+                Book Now
               </button>
             </div>
           </form>
           {/* Display Table Images with Numbering "001", "002", ... */}
           {/* Table Selection Section */}
-          <h3 className="text-xl font-semibold text-gray-800 mt-4 mb-2">
+          <h3 className="text-xl font-semibold text-gray-800 mt-6 mb-2">
             Select Tables
           </h3>
           <p className="text-md text-gray-600 mb-2">
@@ -509,7 +511,7 @@ const CreateReservation = () => {
                             ? "bg-green-500 text-white"
                             : isReserved
                             ? "bg-red-500 text-white"
-                            : "bg-green-500 hover:bg-green-700"
+                            : "bg-amber-500 hover:bg-amber-700"
                         } cursor-pointer`}
                         onClick={() =>
                           !isReserved &&

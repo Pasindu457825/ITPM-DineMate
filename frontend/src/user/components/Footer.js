@@ -49,7 +49,7 @@ const Footer = () => {
               className="h-20 w-20"
             />
             <Typography variant="h5" className="font-bold text-white">
-              Restaurant Shop Management
+              DineMate
             </Typography>
             <p className="text-gray-500 mt-3 text-sm leading-relaxed">
               Manage your restaurant orders, reservations, and more seamlessly.
@@ -124,8 +124,7 @@ const Footer = () => {
         {/* Footer Bottom Section */}
         <div className="flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm w-full">
           <Typography>
-            Copyright &copy; {currentYear} Restaurant Shop Management. Made with
-            ❤️ for a better web.
+            Copyright &copy; {currentYear} DineMate
           </Typography>
         </div>
       </div>
