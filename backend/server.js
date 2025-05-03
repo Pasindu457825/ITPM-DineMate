@@ -1,10 +1,12 @@
+require('dotenv').config(); 
+
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs");
-require('dotenv').config();  // This should be at the very top
+ // This should be at the very top
 
 // Import your models
 const User = require("./models/tharusha/userModel");
@@ -17,7 +19,7 @@ const reservationRoutes = require("./routes/pasindu/reservationRoutes");
 
 // tharusha
 const userRoutes = require("./routes/tharusha/userRoute");
-
+const chatRoute=require("./routes/chatgpt/chatRoute");
 const foodItemRoutes = require("./routes/pamaa/foodItemRoutes");
 const restaurantRoutes = require("./routes/pamaa/restaurantRoutes");
 
@@ -32,6 +34,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
+
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -47,6 +50,7 @@ mongoose
   .catch((err) => console.log("MongoDB connection error:", err));
 
 // Route definitions
+app.use("/api/ITPM/chat", chatRoute);
 app.use("/api/ITPM/orders", orderRoutes);
 app.use("/api/ITPM/reservations", reservationRoutes);
 
