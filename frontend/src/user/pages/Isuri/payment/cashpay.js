@@ -14,9 +14,17 @@ const CashPaymentPage = () => {
   const navigate = useNavigate();
   const [successMsg, setSuccessMsg] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-  const { customerEmail = "", total = "" } = location.state || {};
-  const [amount, setAmount] = useState(total);
-  
+
+const locationState = location.state || {};
+const {
+  customerEmail = "",
+  total = "",
+  userId = "",
+  orderId = "",
+} = locationState;
+
+const [amount, setAmount] = useState(total);
+
   // ✅ Only check for customerEmail
   useEffect(() => {
     if (!customerEmail) {
@@ -42,11 +50,15 @@ const CashPaymentPage = () => {
   
     const paymentPayload = {
       customerEmail,
+      userId,
+      orderId,
       amount: parseFloat(amount),
       paymentMethod: "Cash",
       status: "Pending",
       transactionId,
     };
+    
+    
   
     try {
       await axios.post("http://localhost:5000/api/ITPM/payments", paymentPayload);

@@ -193,7 +193,8 @@ const AddOrderForm = () => {
         { headers: { "Content-Type": "application/json" } }
       );
   
-      const createdOrderId = response?.data?.orderId;
+      const createdOrderId = response?.data?.order?.orderId;
+
       console.log("✅ Order ID created:", createdOrderId);
   
       sessionStorage.removeItem("cart");
