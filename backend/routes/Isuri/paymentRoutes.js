@@ -12,5 +12,8 @@ router.get('/', paymentController.getAllPayments);
 router.get('/:id', paymentController.getPaymentById);
 router.put('/:id', paymentController.updatePayment);
 router.delete('/:id', paymentController.deletePayment);
+router.get('/report', paymentController.getPaymentReport);
+router.get('/report-range', paymentController.getPaymentReportByDateRange);
+
 
 module.exports = router;
