@@ -63,7 +63,7 @@ import CashPaymentPage from "./user/pages/Isuri/payment/cashpay";
 import ManagerPaymentsPage from "./manager/pages/Isuri/payment/receivedrequests";
 import CompletedPaymentsPage from "./manager/pages/Isuri/payment/viewcompletedpayments";
 import MyPayments from "./user/pages/Isuri/payment/mypayments";
-import PaymentReport from "./manager/pages/Isuri/payment/PaymentReport";
+import CompletedPaymentsReport from "./manager/pages/Isuri/payment/CompletedPaymentsReport";
 
 
 const AppContent = () => {
@@ -149,8 +149,8 @@ const AppContent = () => {
           <Route path="/payhistory" element={<CompletedPaymentsPage />} />
           <Route path="/myhistory/:email" element={<MyPayments />} />
 
-          <Route path="/payment-report" element={<PaymentReport />} />
-  
+          <Route path="/completed-payments-report" element={<CompletedPaymentsReport />} />
+
         </Route>
         
         {/* pasindu manager order */}
