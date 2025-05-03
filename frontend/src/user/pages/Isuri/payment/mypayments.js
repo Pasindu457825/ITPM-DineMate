@@ -6,21 +6,21 @@ import {
   Typography,
   Spinner,
 } from "@material-tailwind/react";
+import { useParams } from "react-router-dom";
 
 const MyPayments = () => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { email } = useParams(); // ⬅️ get email from route
 
   useEffect(() => {
-    if (!user || !user._id) return;
+    if (!email) return;
 
     const fetchPayments = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/ITPM/payments");
         const userPayments = res.data.filter(
-          (p) => p.userId?._id === user._id
+          (p) => p.userId?.email === email
         );
         setPayments(userPayments);
       } catch (err) {
@@ -31,7 +31,7 @@ const MyPayments = () => {
     };
 
     fetchPayments();
-  }, [user?._id]);
+  }, [email]);
 
   return (
     <div className="min-h-screen px-4 py-10 bg-gray-100 flex flex-col items-center">
@@ -61,9 +61,6 @@ const MyPayments = () => {
                     <th className="p-3">Amount</th>
                     <th className="p-3">Method</th>
                     <th className="p-3">Status</th>
-                    {/* Optional extra columns */}
-                    {/* <th className="p-3">Restaurant</th>
-                    <th className="p-3">Order Total</th> */}
                   </tr>
                 </thead>
                 <tbody>
@@ -73,9 +70,6 @@ const MyPayments = () => {
                       <td className="p-3">Rs.{payment.amount.toFixed(2)}</td>
                       <td className="p-3">{payment.paymentMethod}</td>
                       <td className="p-3">{payment.status}</td>
-                      {/* Optional: Access nested orderId fields */}
-                      {/* <td className="p-3">{payment.orderId?.restaurantId}</td>
-                      <td className="p-3">Rs.{payment.orderId?.total?.toFixed(2)}</td> */}
                     </tr>
                   ))}
                 </tbody>

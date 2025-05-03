@@ -83,8 +83,10 @@ const createOrder = async (req, res) => {
     // ✅ Send Response
     res.status(201).json({
       message: "✅ Order added successfully",
+      orderId: newOrder.orderId, // ✅ Include this
       order: newOrder,
     });
+    
   } catch (error) {
     console.error("❌ Error saving order:", error);
     res.status(500).json({

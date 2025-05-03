@@ -13,7 +13,14 @@ const CardPaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { userId, orderId, total, customerEmail } = location.state || {};
+  const {
+    userId,
+    orderId,
+    total,
+    customerEmail,
+    paymentMethod = "Card", // default
+  } = location.state || {};
+  
 
   const [cardData, setCardData] = useState({
     amount: total || "",
@@ -27,11 +34,54 @@ const CardPaymentPage = () => {
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    if (!userId || !orderId || !total ) {
-      alert("Missing payment details. Redirecting...");
-      navigate("/");
-    }
+    console.log("🎯 Received state in /cardpay:", {
+      userId,
+      orderId,
+      total,
+      customerEmail,
+      paymentMethod,
+    });
+  
+    // if (!userId || !orderId || !total || !customerEmail) {
+    //   alert("Missing payment details. Redirecting...");
+    //   navigate("/");
+    // }
+    
   }, [userId, orderId, total, customerEmail, navigate]);
+  
+  useEffect(() => {
+    console.log("🧾 Received Payment Info:", location.state);
+  }, []);
+
+  
+  // ✅ Show Cash Confirmation Screen
+  if (paymentMethod === "Cash") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+        <Card className="w-full max-w-md p-6 text-center border border-gray-200 shadow-lg rounded-2xl">
+          <CardBody>
+            <Typography variant="h4" className="text-blue-gray-900 mb-4">
+              Cash Payment Confirmed
+            </Typography>
+            <p className="text-lg text-gray-700 mb-4">
+              Thank you! Your cash payment for Order ID{" "}
+              <strong>{orderId}</strong> has been recorded.
+            </p>
+            <p className="text-lg font-semibold text-green-600 mb-6">
+              Rs. {Number(total).toFixed(2)}
+            </p>
+            <Button
+              color="green"
+              className="w-full"
+              onClick={() => navigate(`/my-orders/${customerEmail}`)}
+            >
+              Go to My Orders
+            </Button>
+          </CardBody>
+        </Card>
+      </div>
+    );
+  }
 
   const validateField = (name, value) => {
     switch (name) {
@@ -70,7 +120,11 @@ const CardPaymentPage = () => {
     let newValue = value;
 
     if (name === "cardNumber") {
-      newValue = value.replace(/\D/g, "").slice(0, 16).replace(/(.{4})/g, "$1 ").trim();
+      newValue = value
+        .replace(/\D/g, "")
+        .slice(0, 16)
+        .replace(/(.{4})/g, "$1 ")
+        .trim();
     }
 
     if (name === "expiryDate") {
@@ -118,7 +172,9 @@ const CardPaymentPage = () => {
     try {
       await axios.post("http://localhost:5000/api/ITPM/payments", paymentPayload);
 
-      setSuccessMsg(`Payment of Rs.${cardData.amount} Successful! Txn ID: ${transactionId}`);
+      setSuccessMsg(
+        `Payment of Rs.${cardData.amount} Successful! Txn ID: ${transactionId}`
+      );
       setShowAlert(true);
 
       setTimeout(() => {
@@ -144,13 +200,18 @@ const CardPaymentPage = () => {
             </div>
           )}
 
-          <Typography variant="h4" className="text-center text-blue-gray-900 mb-6">
+          <Typography
+            variant="h4"
+            className="text-center text-blue-gray-900 mb-6"
+          >
             Secure Card Payment
           </Typography>
 
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-blue-gray-700 mb-1">Amount</label>
+              <label className="block text-sm font-medium text-blue-gray-700 mb-1">
+                Amount
+              </label>
               <Input
                 type="number"
                 name="amount"
@@ -159,11 +220,15 @@ const CardPaymentPage = () => {
                 onChange={handleChange}
                 className="bg-white"
               />
-              {errors.amount && <p className="text-red-500 text-xs mt-1">{errors.amount}</p>}
+              {errors.amount && (
+                <p className="text-red-500 text-xs mt-1">{errors.amount}</p>
+              )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-blue-gray-700 mb-1">Card Number</label>
+              <label className="block text-sm font-medium text-blue-gray-700 mb-1">
+                Card Number
+              </label>
               <Input
                 name="cardNumber"
                 placeholder="1234 5678 9012 3456"
@@ -171,12 +236,16 @@ const CardPaymentPage = () => {
                 onChange={handleChange}
                 className="bg-white"
               />
-              {errors.cardNumber && <p className="text-red-500 text-xs mt-1">{errors.cardNumber}</p>}
+              {errors.cardNumber && (
+                <p className="text-red-500 text-xs mt-1">{errors.cardNumber}</p>
+              )}
             </div>
 
             <div className="flex gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-blue-gray-700 mb-1">Expiry Date</label>
+                <label className="block text-sm font-medium text-blue-gray-700 mb-1">
+                  Expiry Date
+                </label>
                 <Input
                   name="expiryDate"
                   placeholder="MM/YY"
@@ -184,11 +253,15 @@ const CardPaymentPage = () => {
                   onChange={handleChange}
                   className="bg-white"
                 />
-                {errors.expiryDate && <p className="text-red-500 text-xs mt-1">{errors.expiryDate}</p>}
+                {errors.expiryDate && (
+                  <p className="text-red-500 text-xs mt-1">{errors.expiryDate}</p>
+                )}
               </div>
 
               <div className="flex-1">
-                <label className="block text-sm font-medium text-blue-gray-700 mb-1">CVV</label>
+                <label className="block text-sm font-medium text-blue-gray-700 mb-1">
+                  CVV
+                </label>
                 <Input
                   name="cvv"
                   placeholder="123"
@@ -197,7 +270,9 @@ const CardPaymentPage = () => {
                   maxLength={3}
                   className="bg-white"
                 />
-                {errors.cvv && <p className="text-red-500 text-xs mt-1">{errors.cvv}</p>}
+                {errors.cvv && (
+                  <p className="text-red-500 text-xs mt-1">{errors.cvv}</p>
+                )}
               </div>
             </div>
 
