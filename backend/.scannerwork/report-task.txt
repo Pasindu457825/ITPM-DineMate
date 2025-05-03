@@ -1,0 +1,6 @@
+projectKey=ITPM_Backend
+serverUrl=http://localhost:9000
+serverVersion=25.4.0.105899
+dashboardUrl=http://localhost:9000/dashboard?id=ITPM_Backend
+ceTaskId=7a84296a-39ed-4278-9407-d3ad9dd306f1
+ceTaskUrl=http://localhost:9000/api/ce/task?id=7a84296a-39ed-4278-9407-d3ad9dd306f1

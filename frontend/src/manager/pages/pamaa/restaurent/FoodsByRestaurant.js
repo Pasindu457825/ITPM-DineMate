@@ -6,6 +6,9 @@ import ManagerHeader from "../../../components/ManagerHeader";
 import ManagerFooter from "../../../components/ManagerFooter";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2"; // Import SweetAlert2
+import { jsPDF } from "jspdf"; // Import jsPDF using named import
+import autoTable from 'jspdf-autotable'; // Import autotable as a separate function
 
 const FoodsByRestaurant = () => {
   const { restaurantId } = useParams();
@@ -60,9 +63,43 @@ const FoodsByRestaurant = () => {
     setFilteredFoods(result);
   }, [search, filter, foods]);
 
-  const handleDelete = (foodId) => {
-    deleteFood(foodId, setFoods, foods);
-    toast.success("Food item deleted successfully!");
+  const handleDelete = (foodId, foodName) => {
+    // Use SweetAlert2 for confirmation
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `You are about to delete "${foodName}". This action cannot be undone!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#276265',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+      backdrop: true,
+      showLoaderOnConfirm: true,
+      preConfirm: () => {
+        return deleteFood(foodId, setFoods, foods)
+          .then(() => {
+            return true;
+          })
+          .catch(error => {
+            Swal.showValidationMessage(
+              `Delete failed: ${error.message || 'Unknown error'}`
+            );
+          });
+      },
+      allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: 'Deleted!',
+          text: 'The food item has been deleted successfully.',
+          icon: 'success',
+          confirmButtonColor: '#276265'
+        });
+        // Update the filtered foods as well
+        setFilteredFoods(prevFoods => prevFoods.filter(food => food._id !== foodId));
+      }
+    });
   };
 
   const handleUpdate = (foodId) => {
@@ -102,6 +139,119 @@ const FoodsByRestaurant = () => {
     }
   };
 
+  const generatePDF = () => {
+    try {
+      const doc = new jsPDF();
+      const today = new Date().toLocaleDateString();
+      
+      // Add Title
+      doc.setFontSize(20);
+      doc.setTextColor(39, 98, 101);
+      doc.text(`${restaurantName} - Food Menu`, 105, 20, { align: 'center' });
+  
+      // Add Date
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text(`Generated on: ${today}`, 105, 30, { align: 'center' });
+  
+      // Group foods by category
+      const foodsByCategory = {};
+      filteredFoods.forEach(food => {
+        if (!foodsByCategory[food.category]) {
+          foodsByCategory[food.category] = [];
+        }
+        foodsByCategory[food.category].push(food);
+      });
+  
+      let yPos = 40;
+      let currentPage = 1;
+  
+      const addFooter = () => {
+        const pageCount = doc.internal.getNumberOfPages();
+        doc.setFontSize(10);
+        doc.setTextColor(150);
+        doc.text(`Page ${currentPage} of ${pageCount}`, 105, 290, { align: 'center' });
+        doc.text(`© ${new Date().getFullYear()} ${restaurantName}. All rights reserved.`, 105, 280, { align: 'center' });
+      };
+  
+      Object.keys(foodsByCategory).forEach((category, index) => {
+        if (yPos > 250 && index > 0) {
+          addFooter();
+          doc.addPage();
+          currentPage++;
+          yPos = 20;
+        }
+  
+        // Category Header
+        doc.setFontSize(14);
+        doc.setTextColor(39, 98, 101);
+        doc.setFont(undefined, 'bold');
+        doc.text(category.toUpperCase(), 14, yPos);
+        yPos += 10;
+  
+        const tableData = [];
+        foodsByCategory[category].forEach(food => {
+          tableData.push([
+            food.name,
+            food.description,
+            `Rs. ${food.price.toFixed(2)}`,
+            food.availability
+          ]);
+        });
+  
+        if (tableData.length === 0) {
+          yPos -= 10;
+          return;
+        }
+  
+        if (typeof autoTable === 'function') {
+          autoTable(doc, {
+            startY: yPos,
+            head: [['Item', 'Description', 'Price', 'Status']],
+            body: tableData,
+            theme: 'striped',
+            headStyles: {
+              fillColor: [39, 98, 101],
+              textColor: [255, 255, 255],
+              fontSize: 11,
+              halign: 'center'
+            },
+            bodyStyles: {
+              fontSize: 10,
+              valign: 'top'
+            },
+            columnStyles: {
+              0: { cellWidth: 40 },
+              1: { cellWidth: 80 },
+              2: { cellWidth: 25, halign: 'right' },
+              3: { cellWidth: 25, halign: 'center' }
+            },
+            styles: {
+              overflow: 'linebreak',
+              minCellHeight: 10
+            },
+            margin: { left: 14, right: 14 },
+            didDrawPage: (data) => {
+              if (data.pageNumber !== currentPage) {
+                currentPage = data.pageNumber;
+                addFooter();
+              }
+            }
+          });
+  
+          yPos = doc.lastAutoTable.finalY + 15;
+        }
+      });
+  
+      addFooter();
+      doc.save(`${restaurantName.replace(/\s+/g, '-').toLowerCase()}-menu.pdf`);
+      toast.success("Menu PDF generated successfully!");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast.error("Failed to generate PDF. Please try again.");
+    }
+  };
+  
   if (loading)
     return <p className="text-center text-gray-600">Loading food items...</p>;
   if (error) return <p className="text-red-600 text-center">{error}</p>;
@@ -114,15 +264,26 @@ const FoodsByRestaurant = () => {
         <ToastContainer position="top-right" autoClose={3000} />
         <div className="flex justify-between items-center mb-6 border-b border-[#276265] pb-3">
           <h2 className="text-3xl font-bold text-gray-800">{restaurantName} - Food Menu</h2>
-          <button 
-            onClick={handleAddFood}
-            className="bg-[#276265] hover:bg-[#1e4e50] text-white font-medium py-2 px-4 rounded-lg shadow transition-colors duration-200 flex items-center"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            Add New Food Item
-          </button>
+          <div className="flex space-x-3">
+            <button 
+              onClick={generatePDF}
+              className="bg-[#276265] hover:bg-[#1e4e50] text-white font-medium py-2 px-4 rounded-lg shadow transition-colors duration-200 flex items-center"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+              Generate Menu PDF
+            </button>
+            <button 
+              onClick={handleAddFood}
+              className="bg-[#276265] hover:bg-[#1e4e50] text-white font-medium py-2 px-4 rounded-lg shadow transition-colors duration-200 flex items-center"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Add New Food Item
+            </button>
+          </div>
         </div>
         <div className="flex items-center space-x-4 mb-6">
           {/* Search Input with Icon */}
@@ -247,7 +408,7 @@ const FoodsByRestaurant = () => {
                     Update
                   </button>
                   <button
-                    onClick={() => handleDelete(food._id)}
+                    onClick={() => handleDelete(food._id, food.name)}
                     className="bg-red-100 text-red-700 py-1 px-3 rounded text-sm hover:bg-red-200 transition-colors shadow-sm"
                   >
                     Delete
@@ -271,8 +432,17 @@ const FoodsByRestaurant = () => {
           </ul>
         )}
         
-        {/* Floating Add Button for Mobile */}
-        <div className="fixed bottom-6 right-6 md:hidden">
+        {/* Floating Action Buttons for Mobile */}
+        <div className="fixed bottom-6 right-6 md:hidden flex flex-col space-y-3">
+          <button 
+            onClick={generatePDF}
+            className="bg-[#276265] hover:bg-[#1e4e50] text-white rounded-full p-4 shadow-lg transition-colors duration-200"
+            aria-label="Generate Menu PDF"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+          </button>
           <button 
             onClick={handleAddFood}
             className="bg-[#276265] hover:bg-[#1e4e50] text-white rounded-full p-4 shadow-lg transition-colors duration-200"
