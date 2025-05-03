@@ -10,9 +10,13 @@ import {
   Button,
   IconButton,
   Tooltip,
+  Dialog,
+  DialogHeader,
+  DialogBody,
 } from "@material-tailwind/react";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as ChartTooltip, ResponsiveContainer, Legend } from "recharts";
 
 const AdminUsersPage = () => {
   const [users, setUsers] = useState([]);
@@ -21,6 +25,7 @@ const AdminUsersPage = () => {
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [openChartModal, setOpenChartModal] = useState(false);
 
   // fetch all users (public endpoint)
   useEffect(() => {
@@ -52,27 +57,90 @@ const AdminUsersPage = () => {
     });
   }, [users, search, startDate, endDate]);
 
-  // PDF export
+  // Prepare chart data
+  const chartData = useMemo(() => {
+    const dateMap = {};
+    
+    // Count users by registration date
+    users.forEach(user => {
+      const date = new Date(user.createdAt).toISOString().slice(0, 10);
+      dateMap[date] = (dateMap[date] || 0) + 1;
+    });
+    
+    // Convert to array and sort by date
+    const sortedData = Object.entries(dateMap)
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+    
+    // Get last 15 dates only if there are more than 15 entries
+    return sortedData.length > 15 ? sortedData.slice(-15) : sortedData;
+  }, [users]);
+
+  // PDF export with logo and title
   const handleDownloadPdf = () => {
     if (!filtered.length) {
       alert("Nothing to export – change filters or add users.");
       return;
     }
+    
     const doc = new jsPDF({ orientation: "landscape" });
+    
+    // Add logo placeholder (in a real implementation, you would load an actual image)
+    const logoWidth = 30;
+    const logoHeight = 15;
+    doc.setFillColor(200, 200, 200);
+    doc.rect(14, 10, logoWidth, logoHeight, "F");
+    doc.setFontSize(8);
+    doc.setTextColor(100, 100, 100);
+    doc.text("LOGO", 14 + logoWidth/2 - 6, 10 + logoHeight/2 + 2);
+    
+    // Add title
+    doc.setFontSize(18);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Dinemate", 14 + logoWidth + 5, 18);
     
     // Add header with date
     const today = new Date().toLocaleDateString();
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
-    doc.text(`Generated on: ${today}`, 14, 10);
+    doc.text(`Generated on: ${today}`, doc.internal.pageSize.width - 60, 15);
     
-    // Add title
-    doc.setFontSize(16);
-    doc.setTextColor(0, 0, 0);
-    doc.text("Users Management Report", 14, 20);
+    // Add subtitle
+    doc.setFontSize(14);
+    doc.setTextColor(60, 60, 60);
+    doc.text("User Management Report", 14, 35);
     
+    // Add registration chart
+    if (chartData.length > 0) {
+      doc.setFontSize(12);
+      doc.text("User Registrations by Date", 14, 45);
+      
+      // Draw simple bar representation
+      const chartStartY = 50;
+      const chartHeight = 40;
+      const barWidth = Math.min(8, (doc.internal.pageSize.width - 28) / chartData.length);
+      const maxCount = Math.max(...chartData.map(d => d.count));
+      
+      chartData.forEach((item, index) => {
+        const barHeight = (item.count / maxCount) * chartHeight;
+        const barX = 14 + index * barWidth;
+        const barY = chartStartY + chartHeight - barHeight;
+        
+        doc.setFillColor(71, 85, 105);
+        doc.rect(barX, barY, barWidth - 1, barHeight, "F");
+        
+        // Add date labels for every 3rd bar
+        if (index % 3 === 0) {
+          doc.setFontSize(6);
+          doc.setTextColor(100, 100, 100);
+          doc.text(item.date.slice(5), barX, chartStartY + chartHeight + 5, { angle: 45 });
+        }
+      });
+    }
+    
+    // Add users table
     autoTable(doc, {
-      startY: 30,
+      startY: chartData.length > 0 ? 100 : 45,
       head: [["#", "First Name", "Last Name", "Email", "Phone", "Role", "Joined"]],
       body: filtered.map((u, i) => [
         i + 1,
@@ -87,7 +155,7 @@ const AdminUsersPage = () => {
       headStyles: { fillColor: [71, 85, 105] },
     });
     
-    doc.save("users_report.pdf");
+    doc.save("dinemate_users_report.pdf");
   };
 
   // Reset all filters
@@ -136,12 +204,22 @@ const AdminUsersPage = () => {
             </Button>
             <Button 
               size="sm"
-              className="flex items-center gap-2 bg-green-500 shadow-md"
+              className="flex items-center gap-2 bg-black-500 shadow-md"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               Add User
+            </Button>
+            <Button 
+              size="sm"
+              className="flex items-center gap-2 bg-indigo-500 shadow-md"
+              onClick={() => setOpenChartModal(true)}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+              </svg>
+              View Registration Chart
             </Button>
           </div>
         </div>
@@ -330,7 +408,7 @@ const AdminUsersPage = () => {
                                     ? "bg-blue-100 text-blue-800" 
                                     : user.role === "manager" 
                                     ? "bg-purple-100 text-purple-800"
-                                    : "bg-green-100 text-green-800"
+                                    : "bg-black-100 text-green-800"
                                 }`}>
                                   {user.role}
                                 </div>
@@ -371,6 +449,110 @@ const AdminUsersPage = () => {
           </>
         )}
       </div>
+
+      {/* Registration Chart Modal */}
+      <Dialog
+        open={openChartModal}
+        handler={() => setOpenChartModal(!openChartModal)}
+        className="min-w-[80%]"
+      >
+        <DialogHeader className="flex items-center justify-between">
+          <Typography variant="h5" color="blue-gray">
+            Dinemate - User Registration Analytics
+          </Typography>
+          <IconButton
+            color="blue-gray"
+            size="sm"
+            variant="text"
+            onClick={() => setOpenChartModal(false)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+              className="h-5 w-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </IconButton>
+        </DialogHeader>
+        <DialogBody divider>
+          <div className="mb-4">
+            <Typography variant="small" color="blue-gray" className="mb-2 font-medium">
+              User Registrations by Date
+            </Typography>
+            <Typography variant="small" color="gray" className="mb-6">
+              {chartData.length > 0 
+                ? `Showing the last ${chartData.length} days with registration activity` 
+                : "No registration data available"}
+            </Typography>
+          </div>
+          
+          {chartData.length > 0 ? (
+            <div className="h-[400px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={chartData}
+                  margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 50,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis 
+                    dataKey="date" 
+                    angle={-45} 
+                    textAnchor="end"
+                    height={70} 
+                    tick={{ fontSize: 12 }} 
+                  />
+                  <YAxis 
+                    allowDecimals={false}
+                    tick={{ fontSize: 12 }}
+                    label={{ 
+                      value: 'Number of Users', 
+                      angle: -90, 
+                      position: 'insideLeft',
+                      style: { textAnchor: 'middle' }
+                    }}
+                  />
+                  <ChartTooltip 
+                    formatter={(value) => [`${value} registrations`, 'Count']}
+                    labelFormatter={(label) => `Date: ${label}`}
+                  />
+                  <Legend />
+                  <Bar 
+                    dataKey="count" 
+                    name="User Registrations" 
+                    fill="#3b82f6" 
+                    radius={[4, 4, 0, 0]} 
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-10">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor" className="w-16 h-16 text-blue-gray-200 mb-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+              </svg>
+              <Typography color="blue-gray" className="font-medium">
+                No registration data available
+              </Typography>
+              <Typography variant="small" color="gray" className="max-w-xs mt-1 text-center">
+                User registration data will appear here once users begin to register on the platform
+              </Typography>
+            </div>
+          )}
+        </DialogBody>
+      </Dialog>
     </div>
   );
 };
