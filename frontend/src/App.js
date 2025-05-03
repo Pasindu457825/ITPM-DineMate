@@ -41,6 +41,7 @@ import MyProfilePage from "./user/pages/tharusha/MyProfilePage";
 import AdminDashboard from "./admin/pages/tharusha/AdminDashboard";
 import ForgotPasswordPage from "./user/pages/tharusha/ForgotPasswordPage";
 import ResetPasswordOtpPage from "./user/pages/tharusha/ResetPasswordOtpPage";
+import AdminUsersPage from "./admin/pages/tharusha/AdminUsersPage";
 
 // Pamalka FoodItem
 import AddFood from "./manager/pages/pamaa/foodmenu/AddFood";
@@ -136,6 +137,8 @@ const AppContent = () => {
             path="/reset-password-otp"
             element={<ResetPasswordOtpPage />}
           />
+            <Route path="/admin/users" element={<AdminUsersPage />} />
+
           {/* Payment Management (User) */}
           <Route path="/user/payments" element={<UserPayments />} />
           <Route path="/cardpay" element={<CardPaymentPage />} />
