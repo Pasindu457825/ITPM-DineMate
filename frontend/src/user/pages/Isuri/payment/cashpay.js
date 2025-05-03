@@ -12,18 +12,26 @@ import axios from "axios";
 const CashPaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-
-  const { userId, orderId, total, customerEmail } = location.state || {};
-  const [amount, setAmount] = useState(total || "");
   const [successMsg, setSuccessMsg] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-  
+
+const locationState = location.state || {};
+const {
+  customerEmail = "",
+  total = "",
+  userId = "",
+  orderId = "",
+} = locationState;
+
+const [amount, setAmount] = useState(total);
+
+  // ✅ Only check for customerEmail
   useEffect(() => {
-    if (!userId || !orderId || !total ) {
-      alert("Missing payment details. Redirecting...");
+    if (!customerEmail) {
+      alert("Missing customer email. Redirecting...");
       navigate("/");
     }
-  }, [userId, orderId, total, customerEmail, navigate]);
+  }, [customerEmail, navigate]);
 
   const getNextTransactionId = () => {
     const lastId = parseInt(localStorage.getItem("lastTxnId") || "1000");
@@ -37,10 +45,11 @@ const CashPaymentPage = () => {
       alert("Please enter a valid amount.");
       return;
     }
-
+  
     const transactionId = getNextTransactionId();
-
+  
     const paymentPayload = {
+      customerEmail,
       userId,
       orderId,
       amount: parseFloat(amount),
@@ -48,27 +57,34 @@ const CashPaymentPage = () => {
       status: "Pending",
       transactionId,
     };
-
+    
+    
+  
     try {
       await axios.post("http://localhost:5000/api/ITPM/payments", paymentPayload);
-      setSuccessMsg(`Cash payment of Rs.${amount} requested. Txn ID: ${transactionId}`);
+  
+      setSuccessMsg(`Cash payment of Rs.${amount} was successful. Txn ID: ${transactionId}`);
       setShowAlert(true);
-
+  
+      // ✅ Navigate to home page after delay
       setTimeout(() => {
-        navigate(`/my-orders/${customerEmail}`);
+        navigate("/"); // Home page
       }, 1500);
+  
     } catch (error) {
       console.error("Payment failed:", error.response?.data || error.message);
       alert("Payment failed. Please try again.");
     }
   };
+  
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <Card className="w-full max-w-md shadow-lg p-6 rounded-2xl border border-blue-gray-100">
         <CardBody>
           {showAlert && (
-            <div className="mb-4 p-4 text-green-800 bg-green-100 rounded-lg border border-green-300 transition duration-300 ease-in-out">
+            <div className="mb-4 p-4 text-green-800 bg-green-100 rounded-lg border border-green-300">
               <strong className="block font-medium">Success!</strong>
               <span className="text-sm">{successMsg}</span>
             </div>

@@ -111,12 +111,12 @@ const ManagerDashboard = () => {
               </svg>
             </div>
             <h2 className="text-2xl font-semibold text-white mb-2">Payments</h2>
-            <p className="text-gray-300 mb-6">Add or manage properties</p>
+            <p className="text-gray-300 mb-6">Add or manage payments</p>
             <button 
               className="w-full py-2 px-4 bg-[#276265] text-white rounded-lg hover:bg-[#276265]/80 transition-colors duration-300 flex items-center justify-center"
-              onClick={() => navigate('/add-restaurant')}
+              onClick={() => navigate('/viewrequests')}
             >
-              Add New Restaurant
+              View Payments
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
               </svg>

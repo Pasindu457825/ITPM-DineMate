@@ -147,7 +147,8 @@ const AppContent = () => {
           <Route path="/cashpay" element={<CashPaymentPage />} />
           <Route path="/viewrequests" element={<ManagerPaymentsPage />} />
           <Route path="/payhistory" element={<CompletedPaymentsPage />} />
-          <Route path="/myhistory" element={<MyPayments />} />
+          <Route path="/myhistory/:email" element={<MyPayments />} />
+
           <Route path="/payment-report" element={<PaymentReport />} />
   
         </Route>
