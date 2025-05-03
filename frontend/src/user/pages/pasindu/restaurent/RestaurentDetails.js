@@ -270,21 +270,31 @@ const RestaurantDetails = () => {
 
                 {/* Toggle Button for Order Type */}
                 <div className="relative w-40">
-                  <div className="flex items-center bg-gray-400 rounded-full p-1 cursor-pointer">
+                  <div className="relative flex items-center bg-gray-400 rounded-full p-1 cursor-pointer overflow-hidden">
+                    {/* Sliding background indicator */}
+                    {orderType && (
+                      <div
+                        className={`absolute top-1 bottom-1 w-1/2 bg-amber-700 rounded-full transition-all duration-300 ${
+                          orderType === "Dine-in" ? "left-0" : "left-1/2"
+                        }`}
+                      />
+                    )}
+
+                    {/* Dine-in button */}
                     <div
-                      className={`w-1/2 text-center py-2 rounded-full transition ${
-                        orderType === "Dine-in"
-                          ? "bg-amber-700 text-white"
-                          : "text-gray-800"
+                      className={`w-1/2 text-center py-2 z-10 transition-all duration-300 ${
+                        orderType === "Dine-in" ? "text-white" : "text-gray-800"
                       }`}
                       onClick={() => setOrderType("Dine-in")}
                     >
                       Dine-in
                     </div>
+
+                    {/* Takeaway button */}
                     <div
-                      className={`w-1/2 text-center py-2 rounded-full transition ${
+                      className={`w-1/2 text-center py-2 z-10 transition-all duration-300 ${
                         orderType === "Takeaway"
-                          ? "bg-amber-700 text-white"
+                          ? "text-white"
                           : "text-gray-800"
                       }`}
                       onClick={() => setOrderType("Takeaway")}

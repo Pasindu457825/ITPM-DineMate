@@ -25,14 +25,24 @@ const MyProfilePage = () => {
   });
 
   // Notification / error states
-  const [notification, setNotification] = useState({ show: false, message: "", type: "" });
+  const [notification, setNotification] = useState({
+    show: false,
+    message: "",
+    type: "",
+  });
 
   // For delete account modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteInput, setDeleteInput] = useState("");
   const [deleting, setDeleting] = useState(false);
 
+  const [customerEmail, setCustomerEmail] = useState("");
   const navigate = useNavigate();
+  useEffect(() => {
+    if (user) {
+      setCustomerEmail(user.email);
+    }
+  }, [user]);
 
   // Fetch profile on mount
   useEffect(() => {
@@ -58,7 +68,10 @@ const MyProfilePage = () => {
           website: res.data.website || "",
         });
       } catch (error) {
-        console.error("Error fetching profile:", error.response?.data || error.message);
+        console.error(
+          "Error fetching profile:",
+          error.response?.data || error.message
+        );
         showNotification("Failed to load profile", "error");
       } finally {
         setLoading(false);
@@ -86,7 +99,9 @@ const MyProfilePage = () => {
     e.preventDefault();
 
     // Confirm dialog before saving
-    const confirmed = window.confirm("Are you sure you want to change your profile information?");
+    const confirmed = window.confirm(
+      "Are you sure you want to change your profile information?"
+    );
     if (!confirmed) return;
 
     setLoading(true);
@@ -112,7 +127,10 @@ const MyProfilePage = () => {
       setUser(res.data);
       showNotification("Profile updated successfully!", "success");
     } catch (error) {
-      console.error("Error updating profile:", error.response?.data || error.message);
+      console.error(
+        "Error updating profile:",
+        error.response?.data || error.message
+      );
       showNotification("Failed to update profile", "error");
     } finally {
       setLoading(false);
@@ -215,14 +233,20 @@ const MyProfilePage = () => {
       )}
 
       {/* Delete Confirmation Modal */}
-      <Dialog open={showDeleteModal} handler={closeDeleteModal}  className="bg-gray-900 bg-opacity-90 backdrop-blur-sm border border-gray-700">
-        <DialogHeader  className="text-white">Delete Account</DialogHeader>
+      <Dialog
+        open={showDeleteModal}
+        handler={closeDeleteModal}
+        className="bg-gray-900 bg-opacity-90 backdrop-blur-sm border border-gray-700"
+      >
+        <DialogHeader className="text-white">Delete Account</DialogHeader>
         <DialogBody>
-          <Typography  className="text-white">
-            Are you sure you want to delete your account? This action is permanent.
+          <Typography className="text-white">
+            Are you sure you want to delete your account? This action is
+            permanent.
           </Typography>
-          <Typography  className="mt-4 text-white">
-            To confirm, type <span className="text-red-500 font-bold">deleteme</span> below:
+          <Typography className="mt-4 text-white">
+            To confirm, type{" "}
+            <span className="text-red-500 font-bold">deleteme</span> below:
           </Typography>
           <Input
             variant="outlined"
@@ -234,7 +258,11 @@ const MyProfilePage = () => {
           />
         </DialogBody>
         <DialogFooter className="space-x-2">
-          <Button variant="text" onClick={closeDeleteModal} className="text-gray-500">
+          <Button
+            variant="text"
+            onClick={closeDeleteModal}
+            className="text-gray-500"
+          >
             Cancel
           </Button>
           <Button
@@ -271,6 +299,47 @@ const MyProfilePage = () => {
               </button>
             </li>
             <li>
+              <button
+                className="w-full text-left p-3 flex items-center bg-blue-gray-900 text-white rounded-md"
+                onClick={() => navigate(`/my-orders/${customerEmail}`)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-3"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                My Orders
+              </button>
+            </li>
+            <li>
+  <button
+    className="w-full text-left p-3 flex items-center bg-blue-gray-900 text-white rounded-md"
+    onClick={() => navigate(`/myhistory/${customerEmail}`)}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-5 w-5 mr-3"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fillRule="evenodd"
+        d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+        clipRule="evenodd"
+      />
+    </svg>
+    My Payment History
+  </button>
+</li>
+
+            <li>
               <button className="w-full text-left p-3 flex items-center bg-blue-gray-900 text-white rounded-md">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -288,7 +357,10 @@ const MyProfilePage = () => {
               </button>
             </li>
             <li>
-              <button className="w-full text-left p-3 flex items-center bg-blue-gray-900 text-white rounded-md">
+              <button
+                className="w-full text-left p-3 flex items-center bg-blue-gray-900 text-white rounded-md"
+                onClick={() => navigate("/forgot-password")}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-3"
@@ -347,12 +419,16 @@ const MyProfilePage = () => {
 
       {/* Main Content */}
       <div className="flex-1 p-8">
-        <h1 className="text-3xl font-semibold text-gray-800 mb-8">Account Settings</h1>
+        <h1 className="text-3xl font-semibold text-gray-800 mb-8">
+          Account Settings
+        </h1>
 
         <form onSubmit={handleSubmit}>
           <div className="space-y-6 max-w-2xl">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email address
+              </label>
               <Input
                 type="email"
                 name="email"
@@ -361,12 +437,14 @@ const MyProfilePage = () => {
                 className="w-full"
                 placeholder="Email address"
                 required
-                disabled  // <--- Email is not editable
+                disabled // <--- Email is not editable
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">First name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                First name
+              </label>
               <Input
                 type="text"
                 name="fname"
@@ -379,7 +457,9 @@ const MyProfilePage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Last name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Last name
+              </label>
               <Input
                 type="text"
                 name="lname"
@@ -392,7 +472,9 @@ const MyProfilePage = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Phone Number
+              </label>
               <Input
                 type="text"
                 name="phone_no"
@@ -409,7 +491,11 @@ const MyProfilePage = () => {
                 className="bg-blue-gray-900 text-white"
                 disabled={loading}
               >
-                {loading ? <Spinner className="h-4 w-4 mx-auto" /> : "Save Changes"}
+                {loading ? (
+                  <Spinner className="h-4 w-4 mx-auto" />
+                ) : (
+                  "Save Changes"
+                )}
               </Button>
             </div>
           </div>

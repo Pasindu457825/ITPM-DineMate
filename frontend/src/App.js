@@ -22,6 +22,7 @@ import CartPage from "./user/pages/pasindu/order/CartPage"; // ✅ Fixed path
 import AddReservationForm from "./user/pages/pasindu/reservation/CreateReservation";
 import ReservationsList from "./user/pages/pasindu/reservation/ReservationList";
 import UpdateReservationForm from "./user/pages/pasindu/reservation/UpdateReservation";
+import RestaurantVirtualTour  from "./user/pages/pasindu/virtualView/RestaurantVirtualTour";
 
 // Pasindu Restaurant
 import RestaurentList from "./user/pages/pasindu/restaurent/RestaurentList";
@@ -40,6 +41,7 @@ import MyProfilePage from "./user/pages/tharusha/MyProfilePage";
 import AdminDashboard from "./admin/pages/tharusha/AdminDashboard";
 import ForgotPasswordPage from "./user/pages/tharusha/ForgotPasswordPage";
 import ResetPasswordOtpPage from "./user/pages/tharusha/ResetPasswordOtpPage";
+import AdminUsersPage from "./admin/pages/tharusha/AdminUsersPage";
 
 // Pamalka FoodItem
 import AddFood from "./manager/pages/pamaa/foodmenu/AddFood";
@@ -56,14 +58,13 @@ import FoodLists from "./admin/pages/pamaa/restaurent/FoodLists";
 
 // Payment Management
 import UserPayments from "./user/pages/Isuri/payment/userPayment";
-import CreatePayments from "./user/pages/Isuri/payment/createPayment";
-import UpdateUserPayment from "./user/pages/Isuri/payment/updatePayment";
-import DeleteUserPayment from "./user/pages/Isuri/payment/deletePayment";
+import CardPaymentPage from "./user/pages/Isuri/payment/cardpayment";
+import CashPaymentPage from "./user/pages/Isuri/payment/cashpay";
+import ManagerPaymentsPage from "./manager/pages/Isuri/payment/receivedrequests";
+import CompletedPaymentsPage from "./manager/pages/Isuri/payment/viewcompletedpayments";
+import MyPayments from "./user/pages/Isuri/payment/mypayments";
+import PaymentReport from "./manager/pages/Isuri/payment/PaymentReport";
 
-import ManagerPayments from "./manager/pages/Isuri/payment/managerPayment";
-import UpdateManagerPayment from "./manager/pages/Isuri/payment/updatePayment";
-import DeleteManagerPayment from "./manager/pages/Isuri/payment/deletePayment";
-import ApproveManagerPayment from "./manager/pages/Isuri/payment/ApprovePayment";
 
 const AppContent = () => {
   const location = useLocation();
@@ -120,6 +121,8 @@ const AppContent = () => {
             path="/update-reservation/:id"
             element={<UpdateReservationForm />}
           />
+          <Route path="/restaurant/:id/virtual-tour" element={<RestaurantVirtualTour />} />
+
           {/* Pasindu Restaurant */}
           <Route path="/user/display-restaurent" element={<RestaurentList />} />
           <Route
@@ -136,18 +139,20 @@ const AppContent = () => {
             path="/reset-password-otp"
             element={<ResetPasswordOtpPage />}
           />
+            <Route path="/admin/users" element={<AdminUsersPage />} />
+
           {/* Payment Management (User) */}
           <Route path="/user/payments" element={<UserPayments />} />
-          <Route path="/user/payment/create/:id" element={<CreatePayments />} />
-          <Route
-            path="/user/payment/update/:id"
-            element={<UpdateUserPayment />}
-          />
-          <Route
-            path="/user/payment/delete/:id"
-            element={<DeleteUserPayment />}
-          />
+          <Route path="/cardpay" element={<CardPaymentPage />} />
+          <Route path="/cashpay" element={<CashPaymentPage />} />
+          <Route path="/viewrequests" element={<ManagerPaymentsPage />} />
+          <Route path="/payhistory" element={<CompletedPaymentsPage />} />
+          <Route path="/myhistory/:email" element={<MyPayments />} />
+
+          <Route path="/payment-report" element={<PaymentReport />} />
+  
         </Route>
+        
         {/* pasindu manager order */}
         <Route
           path="/restaurant-orders/:restaurantId"
@@ -171,20 +176,8 @@ const AppContent = () => {
         <Route path="/myrestaurant" element={<MyRestaurant />} />
         {/* Tharusha Authentication */}
         <Route path="/admindashboard" element={<AdminDashboard />} />
-        {/* Payment Management (Manager) */}
-        <Route path="/manager/payments" element={<ManagerPayments />} />
-        <Route
-          path="/manager/payment/update/:id"
-          element={<UpdateManagerPayment />}
-        />
-        <Route
-          path="/manager/payment/delete/:id"
-          element={<DeleteManagerPayment />}
-        />
-        <Route
-          path="/manager/payment/approve/:id"
-          element={<ApproveManagerPayment />}
-        />
+        
+        
       </Routes>
     </>
   );

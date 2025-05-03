@@ -19,8 +19,13 @@ const UpdateRestaurant = () => {
     phoneNumber: "",
     tables: [{ seats: "", quantity: "" }],
     image: "",
+    image360: "", // NEW
     userId: userId,
   });
+
+  const [image360File, setImage360File] = useState(null);
+  const [image360Preview, setImage360Preview] = useState(null);
+  const [uploadProgress360, setUploadProgress360] = useState(0);
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
@@ -43,10 +48,16 @@ const UpdateRestaurant = () => {
           tables: response.data.tables || [{ seats: "", quantity: "" }],
           cuisine: response.data.cuisine || "",
           openingHours: response.data.openingHours || "",
+          image360: response.data.image360 || "", // ✅ add this line
         };
 
         setFormData(restaurantData);
         setImagePreview(restaurantData.image);
+
+        if (restaurantData.image360) {
+          setImage360Preview(restaurantData.image360); // ✅ set preview for 360 image
+        }
+
         setLoading(false);
         toast.success("Restaurant details loaded successfully");
       } catch (err) {
@@ -70,32 +81,58 @@ const UpdateRestaurant = () => {
   const validateForm = () => {
     let isValid = true;
     let newErrors = {};
+    let toastShown = false;
 
     if (!formData.name.trim()) {
       newErrors.name = "Restaurant name is required";
+      if (!toastShown) {
+        toast.error("Restaurant name is required");
+        toastShown = true;
+      }
       isValid = false;
     }
 
     if (!formData.description.trim()) {
       newErrors.description = "Description is required";
+      if (!toastShown) {
+        toast.error("Description is required");
+        toastShown = true;
+      }
       isValid = false;
     }
 
     if (!formData.location.trim()) {
       newErrors.location = "Location is required";
+      if (!toastShown) {
+        toast.error("Location is required");
+        toastShown = true;
+      }
       isValid = false;
     }
 
     if (!formData.phoneNumber.trim()) {
       newErrors.phoneNumber = "Phone number is required";
+      if (!toastShown) {
+        toast.error("Phone number is required");
+        toastShown = true;
+      }
       isValid = false;
-    } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
-      newErrors.phoneNumber = "Phone number must be 10 digits";
+    } else if (!/^(077|076|078|075|011)\d{7}$/.test(formData.phoneNumber)) {
+      newErrors.phoneNumber =
+        "Please enter a valid 10-digit phone number starting with 077, 076, 078, 075, or 011";
+      if (!toastShown) {
+        toast.error("Please enter a valid phone number format");
+        toastShown = true;
+      }
       isValid = false;
     }
 
     if (!formData.tables.length) {
       newErrors.tables = "At least one table configuration is required";
+      if (!toastShown) {
+        toast.error("At least one table configuration is required");
+        toastShown = true;
+      }
       isValid = false;
     } else {
       const tableErrors = [];
@@ -103,10 +140,18 @@ const UpdateRestaurant = () => {
         const tableError = {};
         if (!table.seats || parseInt(table.seats) <= 0) {
           tableError.seats = "Seats must be greater than 0";
+          if (!toastShown) {
+            toast.error(`Table ${index + 1}: Seats must be greater than 0`);
+            toastShown = true;
+          }
           isValid = false;
         }
         if (!table.quantity || parseInt(table.quantity) <= 0) {
           tableError.quantity = "Quantity must be greater than 0";
+          if (!toastShown) {
+            toast.error(`Table ${index + 1}: Quantity must be greater than 0`);
+            toastShown = true;
+          }
           isValid = false;
         }
         if (Object.keys(tableError).length > 0) {
@@ -120,6 +165,13 @@ const UpdateRestaurant = () => {
     }
 
     setErrors(newErrors);
+
+    if (!isValid && !toastShown) {
+      toast.error("Please fix all errors before submitting");
+    } else if (isValid) {
+      toast.info("Form validation successful");
+    }
+
     return isValid;
   };
 
@@ -138,6 +190,7 @@ const UpdateRestaurant = () => {
     // Clear error when field is changed
     if (errors[name]) {
       setErrors({ ...errors, [name]: null });
+      toast.info(`Updating ${name.charAt(0).toUpperCase() + name.slice(1)}`);
     }
   };
 
@@ -201,13 +254,42 @@ const UpdateRestaurant = () => {
     }
   };
 
+  const handleImage360Upload = (file) => {
+    if (!file.type.match("image.*")) {
+      toast.error("Please select a valid 360° image");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("360° image must be smaller than 5MB");
+      return;
+    }
+
+    setImage360File(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setImage360Preview(reader.result);
+    reader.readAsDataURL(file);
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
-      toast.error("Please fix the errors in the form");
+      toast.error("Please fix the errors in the form before submitting");
       return;
+    }
+
+    let image360Url = formData.image360;
+
+    if (image360File) {
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(image360File); // converts to base64
+      });
+      image360Url = base64; // assign base64 to send to MongoDB
     }
 
     setSubmitLoading(true);
@@ -228,6 +310,13 @@ const UpdateRestaurant = () => {
               const progress =
                 (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
               setUploadProgress(progress);
+              if (progress === 25) {
+                toast.info("Image upload 25% complete");
+              } else if (progress === 50) {
+                toast.info("Image upload 50% complete");
+              } else if (progress === 75) {
+                toast.info("Image upload 75% complete");
+              }
             },
             (error) => {
               console.error("Error uploading image:", error);
@@ -245,7 +334,7 @@ const UpdateRestaurant = () => {
       const userId = localStorage.getItem("userId");
       await axios.put(
         `http://localhost:5000/api/ITPM/restaurants/update-restaurant/${id}`,
-        { ...formData, image: imageUrl, userId }
+        { ...formData, image: imageUrl, image360: image360Url, userId }
       );
 
       toast.success("Restaurant updated successfully!");
@@ -283,7 +372,10 @@ const UpdateRestaurant = () => {
               Update Restaurant
             </h1>
             <button
-              onClick={() => navigate("/myrestaurant")}
+              onClick={() => {
+                toast.info("Returning to restaurant list");
+                navigate("/myrestaurant");
+              }}
               className="flex items-center px-4 py-2 text-sm font-medium text-white bg-[#3D5A73] border border-gray-300 rounded-md hover:bg-[#2D4A63] transition-colors"
             >
               <svg
@@ -324,6 +416,7 @@ const UpdateRestaurant = () => {
                               ? "border-red-300 bg-red-50"
                               : "border-gray-200"
                           } focus:ring-2 focus:ring-[#3D5A73] focus:border-transparent`}
+                          onFocus={() => toast.info("Editing restaurant name")}
                         />
                         {errors.name && (
                           <p className="mt-1 text-sm text-red-500">
@@ -347,6 +440,11 @@ const UpdateRestaurant = () => {
                               ? "border-red-300 bg-red-50"
                               : "border-gray-200"
                           } focus:ring-2 focus:ring-[#3D5A73] focus:border-transparent`}
+                          onFocus={() =>
+                            toast.info(
+                              "Editing phone number - Format: 07XXXXXXXX or 011XXXXXXX"
+                            )
+                          }
                         />
                         {errors.phoneNumber && (
                           <p className="mt-1 text-sm text-red-500">
@@ -370,6 +468,9 @@ const UpdateRestaurant = () => {
                               ? "border-red-300 bg-red-50"
                               : "border-gray-200"
                           } focus:ring-2 focus:ring-[#3D5A73] focus:border-transparent`}
+                          onFocus={() =>
+                            toast.info("Editing restaurant location")
+                          }
                         />
                         {errors.location && (
                           <p className="mt-1 text-sm text-red-500">
@@ -393,6 +494,9 @@ const UpdateRestaurant = () => {
                               ? "border-red-300 bg-red-50"
                               : "border-gray-200"
                           } focus:ring-2 focus:ring-[#3D5A73] focus:border-transparent`}
+                          onFocus={() =>
+                            toast.info("Editing restaurant description")
+                          }
                         />
                         {errors.description && (
                           <p className="mt-1 text-sm text-red-500">
@@ -456,6 +560,13 @@ const UpdateRestaurant = () => {
                                     ? "border-red-300"
                                     : "border-gray-200"
                                 } focus:ring-2 focus:ring-[#3D5A73] focus:border-transparent`}
+                                onFocus={() =>
+                                  toast.info(
+                                    `Editing seats for table configuration ${
+                                      index + 1
+                                    }`
+                                  )
+                                }
                               />
                               {errors.tableErrors?.[index]?.seats && (
                                 <p className="mt-1 text-xs text-red-500">
@@ -479,6 +590,13 @@ const UpdateRestaurant = () => {
                                     ? "border-red-300"
                                     : "border-gray-200"
                                 } focus:ring-2 focus:ring-[#3D5A73] focus:border-transparent`}
+                                onFocus={() =>
+                                  toast.info(
+                                    `Editing quantity for table configuration ${
+                                      index + 1
+                                    }`
+                                  )
+                                }
                               />
                               {errors.tableErrors?.[index]?.quantity && (
                                 <p className="mt-1 text-xs text-red-500">
@@ -491,7 +609,7 @@ const UpdateRestaurant = () => {
                               <button
                                 type="button"
                                 onClick={() => removeTable(index)}
-                                className="px-3 py-2 text-xs text-white bg-[#7D8491] hover:bg-[#626978] rounded-full focus:outline-none focus:ring-2 focus:ring-[#7D8491] focus:ring-offset-1 transition-colors"
+                                className="px-3 py-2 text-xs text-white bg-red-500 hover:bg-red-600 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition-colors"
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -551,7 +669,12 @@ const UpdateRestaurant = () => {
                       </label>
 
                       <div className="flex items-center justify-center w-full">
-                        <label className="flex flex-col w-full h-32 border-2 border-gray-200 border-dashed rounded-lg cursor-pointer hover:bg-gray-100">
+                        <label
+                          className="flex flex-col w-full h-32 border-2 border-gray-200 border-dashed rounded-lg cursor-pointer hover:bg-gray-100"
+                          onClick={() =>
+                            toast.info("Select a new restaurant image")
+                          }
+                        >
                           <div className="flex flex-col items-center justify-center pt-5 pb-6">
                             <svg
                               className="w-8 h-8 mb-2 text-gray-400"
@@ -603,6 +726,49 @@ const UpdateRestaurant = () => {
                       )}
                     </div>
                   </div>
+                  {/* 360° View Image Upload */}
+                  <div className="mt-6">
+                    <h3 className="text-lg font-medium text-gray-700 mb-2">
+                      360° View Image
+                    </h3>
+                    {image360Preview ? (
+                      <img
+                        src={image360Preview}
+                        alt="360 Preview"
+                        className="w-full h-48 object-cover rounded-lg shadow-md mb-2"
+                      />
+                    ) : (
+                      <div className="w-full h-48 flex items-center justify-center bg-gray-100 rounded-lg mb-2">
+                        <span className="text-gray-400">
+                          No 360° image preview
+                        </span>
+                      </div>
+                    )}
+
+                    <label className="block mb-2 text-sm font-medium text-gray-700">
+                      Upload 360° Image
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleImage360Upload(e.target.files[0])}
+                      className="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+                    />
+
+                    {uploadProgress360 > 0 && uploadProgress360 < 100 && (
+                      <div className="mt-2">
+                        <div className="w-full bg-gray-200 rounded-full h-2.5">
+                          <div
+                            className="bg-[#3D5A73] h-2.5 rounded-full"
+                            style={{ width: `${uploadProgress360}%` }}
+                          ></div>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Uploading: {Math.round(uploadProgress360)}%
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Action Buttons */}
@@ -622,6 +788,11 @@ const UpdateRestaurant = () => {
                         ? "bg-[#7D8491] cursor-not-allowed"
                         : "bg-[#3D5A73] hover:bg-[#2D4A63]"
                     } text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3D5A73] transition-colors`}
+                    onClick={() => {
+                      if (!hasChanges) {
+                        toast.warning("No changes have been made to update");
+                      }
+                    }}
                   >
                     {submitLoading ? (
                       <div className="flex items-center">
