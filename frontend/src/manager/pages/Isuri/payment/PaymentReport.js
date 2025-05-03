@@ -47,8 +47,10 @@ const PaymentReport = () => {
 
     const rows = reportData.payments.map((p) => [
       p.transactionId,
-      p.userId || "N/A",
-      `Rs. ${p.amount}`,
+      typeof p.userId === "object"
+        ? `${p.userId.fname} ${p.userId.lname}`
+        : p.userId || "N/A",
+      `Rs. ${p.amount.toFixed(2)}`,
       p.paymentMethod,
       p.status,
       new Date(p.createdAt).toLocaleDateString(),
@@ -135,8 +137,12 @@ const PaymentReport = () => {
                   {reportData.payments.map((p, idx) => (
                     <tr key={idx} className="border-t">
                       <td className="p-2">{p.transactionId}</td>
-                      <td className="p-2">{p.userId || "N/A"}</td>
-                      <td className="p-2">Rs. {p.amount}</td>
+                      <td className="p-2">
+                        {typeof p.userId === "object"
+                          ? `${p.userId.fname} ${p.userId.lname}`
+                          : p.userId || "N/A"}
+                      </td>
+                      <td className="p-2">Rs. {p.amount.toFixed(2)}</td>
                       <td className="p-2">{p.paymentMethod}</td>
                       <td className="p-2">{p.status}</td>
                       <td className="p-2">
