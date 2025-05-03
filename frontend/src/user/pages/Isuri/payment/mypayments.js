@@ -14,10 +14,14 @@ const MyPayments = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
+    if (!user || !user._id) return;
+
     const fetchPayments = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/ITPM/payments");
-        const userPayments = res.data.filter(p => p.userId === user._id);
+        const userPayments = res.data.filter(
+          (p) => p.userId?._id === user._id
+        );
         setPayments(userPayments);
       } catch (err) {
         console.error("Failed to fetch payments", err);
@@ -27,13 +31,16 @@ const MyPayments = () => {
     };
 
     fetchPayments();
-  }, [user._id]);
+  }, [user?._id]);
 
   return (
     <div className="min-h-screen px-4 py-10 bg-gray-100 flex flex-col items-center">
       <Card className="w-full max-w-4xl p-6 shadow-lg rounded-2xl border border-blue-gray-100">
         <CardBody>
-          <Typography variant="h4" className="mb-6 text-center text-blue-gray-900">
+          <Typography
+            variant="h4"
+            className="mb-6 text-center text-blue-gray-900"
+          >
             My Payments
           </Typography>
 
@@ -42,7 +49,9 @@ const MyPayments = () => {
               <Spinner color="blue" />
             </div>
           ) : payments.length === 0 ? (
-            <p className="text-center text-blue-gray-600">No payments found.</p>
+            <p className="text-center text-blue-gray-600">
+              No payments found.
+            </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full table-auto border text-left">
@@ -52,6 +61,9 @@ const MyPayments = () => {
                     <th className="p-3">Amount</th>
                     <th className="p-3">Method</th>
                     <th className="p-3">Status</th>
+                    {/* Optional extra columns */}
+                    {/* <th className="p-3">Restaurant</th>
+                    <th className="p-3">Order Total</th> */}
                   </tr>
                 </thead>
                 <tbody>
@@ -61,6 +73,9 @@ const MyPayments = () => {
                       <td className="p-3">Rs.{payment.amount.toFixed(2)}</td>
                       <td className="p-3">{payment.paymentMethod}</td>
                       <td className="p-3">{payment.status}</td>
+                      {/* Optional: Access nested orderId fields */}
+                      {/* <td className="p-3">{payment.orderId?.restaurantId}</td>
+                      <td className="p-3">Rs.{payment.orderId?.total?.toFixed(2)}</td> */}
                     </tr>
                   ))}
                 </tbody>

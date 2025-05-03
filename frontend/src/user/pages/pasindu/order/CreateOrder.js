@@ -189,19 +189,33 @@ const AddOrderForm = () => {
     try {
       const response = await axios.post(
         "http://localhost:5000/api/ITPM/orders/add-order",
+        
         orderData,
         { headers: { "Content-Type": "application/json" } }
       );
+      console.log("✅ Order creation response:", response.data.orderId);
 
       sessionStorage.removeItem("cart");
 
       if (isOnlinePayment) {
-        navigate(`/my-orders/${customerEmail}`, {
-          state: { orderId: response.data._id, total },
+        navigate("/cardpay", {
+          state: {
+            customerEmail: orderData.customerEmail,
+            orderId: "67dc309cf6069d6779388916",
+            userId: user._id,
+            total: total,
+          },
         });
       } else {
-        navigate(`/my-orders/${customerEmail}`);
-      }
+        navigate("/cashpay", {
+          state: {
+            customerEmail: orderData.customerEmail,
+            orderId: "67dc309cf6069d6779388916", 
+            userId: user._id,
+            total: total,
+          },
+        });
+      }      
     } catch (error) {
       console.error(
         "❌ Order Submission Error:",

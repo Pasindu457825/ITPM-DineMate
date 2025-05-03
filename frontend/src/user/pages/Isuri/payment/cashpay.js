@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Typography,
   Input,
@@ -9,11 +10,21 @@ import {
 import axios from "axios";
 
 const CashPaymentPage = () => {
-  const [amount, setAmount] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const { userId, orderId, total, customerEmail } = location.state || {};
+  const [amount, setAmount] = useState(total || "");
   const [successMsg, setSuccessMsg] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  
+  useEffect(() => {
+    if (!userId || !orderId || !total ) {
+      alert("Missing payment details. Redirecting...");
+      navigate("/");
+    }
+  }, [userId, orderId, total, customerEmail, navigate]);
 
-  //this is for taking the track of transaction ID
   const getNextTransactionId = () => {
     const lastId = parseInt(localStorage.getItem("lastTxnId") || "1000");
     const nextId = lastId + 1;
@@ -22,7 +33,7 @@ const CashPaymentPage = () => {
   };
 
   const handlePayment = async () => {
-    if (!amount || isNaN(amount)) {
+    if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
       alert("Please enter a valid amount.");
       return;
     }
@@ -30,8 +41,8 @@ const CashPaymentPage = () => {
     const transactionId = getNextTransactionId();
 
     const paymentPayload = {
-      userId: "66042ec4fb8b6f95b22f08c3",     // replace with actual userid
-      orderId: "66042ed9fb8b6f95b22f08c5",    // replace with acual orderid
+      userId,
+      orderId,
       amount: parseFloat(amount),
       paymentMethod: "Cash",
       status: "Pending",
@@ -39,10 +50,13 @@ const CashPaymentPage = () => {
     };
 
     try {
-      const res = await axios.post("http://localhost:5000/api/ITPM/payments", paymentPayload);
+      await axios.post("http://localhost:5000/api/ITPM/payments", paymentPayload);
       setSuccessMsg(`Cash payment of Rs.${amount} requested. Txn ID: ${transactionId}`);
       setShowAlert(true);
-      setTimeout(() => setShowAlert(false), 5000);
+
+      setTimeout(() => {
+        navigate(`/my-orders/${customerEmail}`);
+      }, 1500);
     } catch (error) {
       console.error("Payment failed:", error.response?.data || error.message);
       alert("Payment failed. Please try again.");
@@ -53,7 +67,6 @@ const CashPaymentPage = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <Card className="w-full max-w-md shadow-lg p-6 rounded-2xl border border-blue-gray-100">
         <CardBody>
-          {/* Success Alert */}
           {showAlert && (
             <div className="mb-4 p-4 text-green-800 bg-green-100 rounded-lg border border-green-300 transition duration-300 ease-in-out">
               <strong className="block font-medium">Success!</strong>
