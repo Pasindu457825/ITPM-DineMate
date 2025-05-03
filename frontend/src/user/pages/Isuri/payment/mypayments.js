@@ -6,18 +6,22 @@ import {
   Typography,
   Spinner,
 } from "@material-tailwind/react";
+import { useParams } from "react-router-dom";
 
 const MyPayments = () => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { email } = useParams(); // ⬅️ get email from route
 
   useEffect(() => {
+    if (!email) return;
+
     const fetchPayments = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/ITPM/payments");
-        const userPayments = res.data.filter(p => p.userId === user._id);
+        const userPayments = res.data.filter(
+          (p) => p.userId?.email === email
+        );
         setPayments(userPayments);
       } catch (err) {
         console.error("Failed to fetch payments", err);
@@ -27,13 +31,16 @@ const MyPayments = () => {
     };
 
     fetchPayments();
-  }, [user._id]);
+  }, [email]);
 
   return (
     <div className="min-h-screen px-4 py-10 bg-gray-100 flex flex-col items-center">
       <Card className="w-full max-w-4xl p-6 shadow-lg rounded-2xl border border-blue-gray-100">
         <CardBody>
-          <Typography variant="h4" className="mb-6 text-center text-blue-gray-900">
+          <Typography
+            variant="h4"
+            className="mb-6 text-center text-blue-gray-900"
+          >
             My Payments
           </Typography>
 
@@ -42,7 +49,9 @@ const MyPayments = () => {
               <Spinner color="blue" />
             </div>
           ) : payments.length === 0 ? (
-            <p className="text-center text-blue-gray-600">No payments found.</p>
+            <p className="text-center text-blue-gray-600">
+              No payments found.
+            </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full table-auto border text-left">

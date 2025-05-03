@@ -22,6 +22,7 @@ import CartPage from "./user/pages/pasindu/order/CartPage"; // ✅ Fixed path
 import AddReservationForm from "./user/pages/pasindu/reservation/CreateReservation";
 import ReservationsList from "./user/pages/pasindu/reservation/ReservationList";
 import UpdateReservationForm from "./user/pages/pasindu/reservation/UpdateReservation";
+import RestaurantVirtualTour  from "./user/pages/pasindu/virtualView/RestaurantVirtualTour";
 
 // Pasindu Restaurant
 import RestaurentList from "./user/pages/pasindu/restaurent/RestaurentList";
@@ -40,6 +41,7 @@ import MyProfilePage from "./user/pages/tharusha/MyProfilePage";
 import AdminDashboard from "./admin/pages/tharusha/AdminDashboard";
 import ForgotPasswordPage from "./user/pages/tharusha/ForgotPasswordPage";
 import ResetPasswordOtpPage from "./user/pages/tharusha/ResetPasswordOtpPage";
+import AdminUsersPage from "./admin/pages/tharusha/AdminUsersPage";
 
 // Pamalka FoodItem
 import AddFood from "./manager/pages/pamaa/foodmenu/AddFood";
@@ -61,6 +63,8 @@ import CashPaymentPage from "./user/pages/Isuri/payment/cashpay";
 import ManagerPaymentsPage from "./manager/pages/Isuri/payment/receivedrequests";
 import CompletedPaymentsPage from "./manager/pages/Isuri/payment/viewcompletedpayments";
 import MyPayments from "./user/pages/Isuri/payment/mypayments";
+import PaymentReport from "./manager/pages/Isuri/payment/PaymentReport";
+
 
 const AppContent = () => {
   const location = useLocation();
@@ -117,6 +121,8 @@ const AppContent = () => {
             path="/update-reservation/:id"
             element={<UpdateReservationForm />}
           />
+          <Route path="/restaurant/:id/virtual-tour" element={<RestaurantVirtualTour />} />
+
           {/* Pasindu Restaurant */}
           <Route path="/user/display-restaurent" element={<RestaurentList />} />
           <Route
@@ -133,14 +139,18 @@ const AppContent = () => {
             path="/reset-password-otp"
             element={<ResetPasswordOtpPage />}
           />
+            <Route path="/admin/users" element={<AdminUsersPage />} />
+
           {/* Payment Management (User) */}
           <Route path="/user/payments" element={<UserPayments />} />
           <Route path="/cardpay" element={<CardPaymentPage />} />
           <Route path="/cashpay" element={<CashPaymentPage />} />
           <Route path="/viewrequests" element={<ManagerPaymentsPage />} />
           <Route path="/payhistory" element={<CompletedPaymentsPage />} />
-          <Route path="/myhistory" element={<MyPayments />} />
-          
+          <Route path="/myhistory/:email" element={<MyPayments />} />
+
+          <Route path="/payment-report" element={<PaymentReport />} />
+  
         </Route>
         
         {/* pasindu manager order */}
