@@ -65,6 +65,7 @@ import CompletedPaymentsPage from "./manager/pages/Isuri/payment/viewcompletedpa
 import MyPayments from "./user/pages/Isuri/payment/mypayments";
 import PaymentReport from "./manager/pages/Isuri/payment/PaymentReport";
 
+import ChatPage from "./Components/chatPage";
 
 const AppContent = () => {
   const location = useLocation();
@@ -139,6 +140,8 @@ const AppContent = () => {
             path="/reset-password-otp"
             element={<ResetPasswordOtpPage />}
           />
+           <Route path="/chat" element={<ChatPage />} />
+
             <Route path="/admin/users" element={<AdminUsersPage />} />
 
           {/* Payment Management (User) */}
