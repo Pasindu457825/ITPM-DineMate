@@ -155,28 +155,32 @@ const ChatPage = () => {
 
         {/* Input form - using div instead of form */}
         <div className="flex items-center gap-2 bg-white rounded-lg shadow-lg p-2">
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSend(e)}
-              placeholder="Ask about reservations, menu, inventory..."
-              className="w-full rounded-lg bg-gray-100 p-3 pl-10 text-gray-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
-            />
-            <MessageSquare className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-          </div>
-          <button
-            onClick={handleSend}
-            disabled={loading}
-            className={`rounded-lg bg-amber-600 px-4 py-3 text-white hover:bg-amber-700 transition-colors flex items-center ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-          >
-            <Send className="h-5 w-5 mr-2" />
-            <span>Send</span>
-          </button>
-        </div>
+  {/* Input Field - takes most of the space */}
+  <div className="flex-grow relative">
+    <input
+      type="text"
+      value={input}
+      onChange={(e) => setInput(e.target.value)}
+      onKeyPress={(e) => e.key === 'Enter' && handleSend(e)}
+      placeholder="Ask about reservations, menu, inventory..."
+      className="w-full rounded-md bg-gray-100 p-3 pl-10 text-gray-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
+    />
+    <MessageSquare className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+  </div>
+
+  {/* Send Button - fixed width and height */}
+  <button
+    onClick={handleSend}
+    disabled={loading}
+    className={`flex-shrink-0 w-32 h-12 rounded-md bg-amber-600 text-white hover:bg-amber-700 transition-colors flex items-center justify-center ${
+      loading ? "opacity-50 cursor-not-allowed" : ""
+    }`}
+  >
+    <Send className="h-5 w-5 mr-1" />
+    <span>Send</span>
+  </button>
+</div>
+
       </div>
     </div>
   );
