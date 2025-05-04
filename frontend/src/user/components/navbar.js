@@ -9,9 +9,45 @@ import {
   MenuList,
   MenuItem,
   Avatar,
+  IconButton,
+  Popover,
+  PopoverHandler,
+  PopoverContent,
 } from "@material-tailwind/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Logo from "../../assets/logo/logo.png";
+
+// =========================
+// ChatBot Icon Component
+// =========================
+function ChatBot() {
+  const navigate = useNavigate();
+  
+  return (
+    <IconButton
+      variant="text"
+      className="flex items-center justify-center text-white bg-blue-gray-900 rounded-full w-10 h-10
+               transition duration-300 ease-in-out transform hover:scale-105 hover:bg-amber-700 hover:shadow-lg"
+      onClick={() => navigate("/chat")}
+    >
+      {/* Chat Icon (SVG) */}
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        fill="none" 
+        viewBox="0 0 24 24" 
+        stroke="currentColor" 
+        className="w-6 h-6"
+      >
+        <path 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          strokeWidth={2} 
+          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" 
+        />
+      </svg>
+    </IconButton>
+  );
+}
 
 // =========================
 // Profile Menu Component
@@ -134,6 +170,9 @@ export function UserNavbar() {
 
         {/* Right-side Buttons + Profile Menu (Desktop) */}
         <div className="hidden lg:flex items-center gap-4">
+          {/* Chat Bot Icon */}
+          <ChatBot />
+          
           {/* Login Button */}
           <Button
             onClick={() => navigate("/login")}
@@ -145,18 +184,6 @@ export function UserNavbar() {
           >
             Login
           </Button>
-
-          {/* Logout Button */}
-          {/* <Button
-            variant="filled"
-            onClick={handleLogout}
-            className="bg-amber-700 text-black hover:text-white
-                       px-4 py-2 rounded-lg transition duration-300
-                       ease-in-out transform hover:scale-105 hover:shadow-lg 
-                       hover:bg-amber-800"
-          >
-            Logout
-          </Button> */}
 
           {/* Profile Menu (Avatar Dropdown) */}
           <ProfileMenu items={profileMenuItems} />
@@ -185,6 +212,11 @@ export function UserNavbar() {
               {label}
             </a>
           ))}
+
+          {/* Chat Bot Icon (Mobile) */}
+          <div className="flex justify-center mt-2">
+            <ChatBot />
+          </div>
 
           {/* Login & Logout (Mobile) */}
           <div className="flex gap-4 mt-2">
