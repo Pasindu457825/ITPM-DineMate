@@ -21,7 +21,7 @@ const userRoutes = require("./routes/tharusha/userRoute");
 const foodItemRoutes = require("./routes/pamaa/foodItemRoutes");
 const restaurantRoutes = require("./routes/pamaa/restaurantRoutes");
 
-// isuri - Payment Management
+// isuri - Payment Managements
 const paymentRoutes = require("./routes/Isuri/paymentRoutes");
 
 
